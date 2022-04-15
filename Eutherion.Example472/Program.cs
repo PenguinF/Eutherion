@@ -93,6 +93,13 @@ namespace Eutherion.Example472
                     : $"There are {count - 1} or fewer elements.";
 
                 new[] { 5, 6, 7 }.ForEach(n => Console.WriteLine(CheckNumberOfElements(unionValues, n)));
+                Console.WriteLine();
+
+                Dictionary<string, string> dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                Console.WriteLine("GetOrAdd(1): " + dictionary.GetOrAdd("1", key => "one"));
+                Console.WriteLine("GetOrAdd(2): " + dictionary.GetOrAdd("2", key => "two"));
+                Console.WriteLine("GetOrAdd(1): " + dictionary.GetOrAdd("1", key => "another one"));
+                Console.WriteLine($"Dictionary.Count: {dictionary.Count}");
             }
             catch (Exception e)
             {
