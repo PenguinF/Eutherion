@@ -38,6 +38,7 @@ namespace Eutherion.Example472
             // Between '/*' and '*/' below is commented out what would have to be added in later C# versions and .NET targets.
 
             const string prettyNullString = "<null>";
+            const string prettyVoidString = "<void>";
 
             try
             {
@@ -74,6 +75,17 @@ namespace Eutherion.Example472
                     Console.Write($" {parsedInt.Bind(i => Maybe<string>.Just(Convert.ToString(i + 1)))}");
                     Console.WriteLine();
                 }
+
+                Console.WriteLine();
+
+                var unionValues = new Union<_void, int, string>[] { _void._, 8, "x", _void._, -1, "-1" };
+
+                string PrintUnionValue(Union<_void, int, string> x) => x.Match(
+                    whenOption1: _ => prettyVoidString,
+                    whenOption2: i => $"int: {i}",
+                    whenOption3: s => $"string: \"{s}\"");
+
+                Console.WriteLine("Union values: " + string.Join(", ", unionValues.Select(PrintUnionValue)));
             }
             catch (Exception e)
             {
