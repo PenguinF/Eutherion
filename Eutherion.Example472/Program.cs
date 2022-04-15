@@ -100,6 +100,11 @@ namespace Eutherion.Example472
                 Console.WriteLine("GetOrAdd(2): " + dictionary.GetOrAdd("2", key => "two"));
                 Console.WriteLine("GetOrAdd(1): " + dictionary.GetOrAdd("1", key => "another one"));
                 Console.WriteLine($"Dictionary.Count: {dictionary.Count}");
+                Console.WriteLine();
+
+                Console.Write("Writing 20 X'es: ");
+                20.Times(() => Console.Write("X"));
+                Console.WriteLine();
             }
             catch (Exception e)
             {
