@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Eutherion.Example472
 {
@@ -104,6 +105,11 @@ namespace Eutherion.Example472
 
                 Console.Write("Writing 20 X'es: ");
                 20.Times(() => Console.Write("X"));
+                Console.WriteLine();
+                Console.WriteLine();
+
+                Console.Write("Enumerating set bits in 89: ");
+                Console.Write(string.Join(" + ", 89u.SetBits().Select(bit => $"{bit} (index: {BitOperations.Log2(bit)})")));
                 Console.WriteLine();
             }
             catch (Exception e)
