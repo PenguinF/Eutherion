@@ -23,11 +23,6 @@
 #nullable enable
 #endif
 
-#if !DEBUG
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-#endif
-
 namespace System.Numerics
 {
 #if NET5_0_OR_GREATER || NETCOREAPP3_0_OR_GREATER
