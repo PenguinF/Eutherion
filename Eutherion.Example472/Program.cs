@@ -86,6 +86,13 @@ namespace Eutherion.Example472
                     whenOption3: s => $"string: \"{s}\"");
 
                 Console.WriteLine("Union values: " + string.Join(", ", unionValues.Select(PrintUnionValue)));
+
+                string CheckNumberOfElements(IEnumerable<Union<_void, int, string>> collection, int count)
+                    => collection.Skip(count - 1).Any(out var element)
+                    ? $"There are at least {count} elements, such as this {PrintUnionValue(element)}"
+                    : $"There are {count - 1} or fewer elements.";
+
+                new[] { 5, 6, 7 }.ForEach(n => Console.WriteLine(CheckNumberOfElements(unionValues, n)));
             }
             catch (Exception e)
             {
