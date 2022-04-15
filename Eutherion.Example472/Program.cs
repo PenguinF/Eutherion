@@ -28,8 +28,20 @@ namespace Eutherion.Example472
     /// </summary>
     class Program
     {
+        // This provides a unique type value for StringKey<>.
+        struct Dummy { }
+
         static void Main()
         {
+            try
+            {
+                Console.WriteLine($"hashes of \"1\", \"2\": {new StringKey<Dummy>("1").GetHashCode()}, {new StringKey<Dummy>("2").GetHashCode()}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
             Console.ReadLine();
         }
     }
