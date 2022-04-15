@@ -20,6 +20,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Eutherion.Example472
 {
@@ -33,9 +35,45 @@ namespace Eutherion.Example472
 
         static void Main()
         {
+            // Between '/*' and '*/' below is commented out what would have to be added in later C# versions and .NET targets.
+
+            const string prettyNullString = "<null>";
+
             try
             {
                 Console.WriteLine($"hashes of \"1\", \"2\": {new StringKey<Dummy>("1").GetHashCode()}, {new StringKey<Dummy>("2").GetHashCode()}");
+
+                var possibleIntStrings = new Maybe<string>[] { Maybe<string>.Nothing, "-20", "x", "20" };
+
+                Maybe<int> ParseInt(string input) => int.TryParse(input, out int result) ? result : Maybe<int>.Nothing;
+                string DisplayWithPrettyNullString<T>(Maybe<T> maybeX) /*where T : notnull*/ => maybeX.Match(() => prettyNullString, x => Convert.ToString(x) ?? string.Empty);
+                string DisplayNothingJust<T>(Maybe<T> maybeX) /*where T : notnull*/
+                {
+                    string s = $"[IsNothing: {maybeX.IsNothing} IsJust(): ";
+                    if (maybeX.IsJust(out T/*?*/ someX)) s += $"{bool.TrueString}({someX})"; else s += bool.FalseString;
+                    return s + "]";
+                };
+                string Join<T>(IEnumerable<T> collection) => string.Join(", ", collection);
+
+                Console.WriteLine($"Direct string interpolation of inputs: {Join(possibleIntStrings)}");
+                Console.WriteLine($"Using '{prettyNullString}' for Maybe<T>.Nothing: {Join(possibleIntStrings.Select(DisplayWithPrettyNullString))}");
+                Console.WriteLine($"Of parsed integers: {Join(possibleIntStrings.Select(maybeStr => from str in maybeStr select ParseInt(str)))}");
+                Console.WriteLine();
+
+                foreach (Maybe<string> possibleIntString in possibleIntStrings)
+                {
+                    Console.WriteLine($"{DisplayWithPrettyNullString(possibleIntString)}:");
+                    Console.Write($" {DisplayNothingJust(possibleIntString)}");
+                    Console.Write($" {from str in possibleIntString from i in ParseInt(str) select i - 1}");
+                    Console.Write($" {from str in possibleIntString select ParseInt(str)}");
+
+                    var parsedInt = possibleIntString.Bind(ParseInt);
+                    Console.Write($" {parsedInt}");
+                    Console.Write($" {DisplayWithPrettyNullString(parsedInt)}");
+                    Console.Write($" {DisplayNothingJust(parsedInt)}");
+                    Console.Write($" {parsedInt.Bind(i => Maybe<string>.Just(Convert.ToString(i + 1)))}");
+                    Console.WriteLine();
+                }
             }
             catch (Exception e)
             {
