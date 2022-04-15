@@ -86,7 +86,16 @@ namespace Eutherion.Example472
                     whenOption2: i => $"int: {i}",
                     whenOption3: s => $"string: \"{s}\"");
 
+                string PrintUnionValue2(Union<_void, int, string> x)
+                {
+                    if (x.IsOption1(out _)) return prettyVoidString;
+                    if (x.IsOption2(out int i)) return $"int: {i}";
+                    if (x.IsOption3(out string s)) return $"string: \"{s}\"";
+                    throw new UnreachableException();
+                }
+
                 Console.WriteLine("Union values: " + string.Join(", ", unionValues.Select(PrintUnionValue)));
+                Console.WriteLine("Union values (2): " + string.Join(", ", unionValues.Select(PrintUnionValue2)));
 
                 string CheckNumberOfElements(IEnumerable<Union<_void, int, string>> collection, int count)
                     => collection.Skip(count - 1).Any(out var element)
