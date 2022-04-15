@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31829.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eutherion.Common", "Eutherion.Common\Eutherion.Common.csproj", "{0CD9C050-31B3-4E14-97DF-58ABFF0D984D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eutherion.Example472", "Eutherion.Example472\Eutherion.Example472.csproj", "{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CD9C050-31B3-4E14-97DF-58ABFF0D984D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CD9C050-31B3-4E14-97DF-58ABFF0D984D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CD9C050-31B3-4E14-97DF-58ABFF0D984D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CD9C050-31B3-4E14-97DF-58ABFF0D984D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {563AE451-DB5F-4225-B031-9E82B480A1BE}
+	EndGlobalSection
+EndGlobal
