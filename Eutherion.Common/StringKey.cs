@@ -52,6 +52,15 @@ namespace Eutherion
         public StringKey(string key)
             => Key = key ?? throw new ArgumentNullException(nameof(key));
 
+        /// <summary>
+        /// Indicates whether this <see cref="StringKey{T}"/> is equal to another <see cref="StringKey{T}"/>.
+        /// </summary>
+        /// <param name="other">
+        /// A <see cref="StringKey{T}"/> to compare with this <see cref="StringKey{T}"/>.
+        /// </param>
+        /// <returns>
+        /// true if the specified <see cref="StringKey{T}"/> is equal to this <see cref="StringKey{T}"/>; otherwise, false.
+        /// </returns>
 #if NET472
         public bool Equals(StringKey<T> other)
 #else
@@ -60,6 +69,15 @@ namespace Eutherion
             => this == other
             || !(other is null) && Key == other.Key;
 
+        /// <summary>
+        /// Indicates whether the specified object is equal to this <see cref="StringKey{T}"/>.
+        /// </summary>
+        /// <param name="obj">
+        /// The object to compare with this <see cref="StringKey{T}"/>.
+        /// </param>
+        /// <returns>
+        /// true if the specified object is equal to this <see cref="StringKey{T}"/>; otherwise, false.
+        /// </returns>
 #if NET472
         public override bool Equals(object obj)
 #else
@@ -67,9 +85,27 @@ namespace Eutherion
 #endif
             => Equals(obj as StringKey<T>);
 
+        /// <summary>
+        /// Generates a hash code based on the stored internal string key.
+        /// </summary>
+        /// <returns>
+        /// The generated hash code.
+        /// </returns>
         public override int GetHashCode()
             => Key.GetHashCode();
 
+        /// <summary>
+        /// Indicates whether one <see cref="StringKey{T}"/> is equal to another <see cref="StringKey{T}"/>.
+        /// </summary>
+        /// <param name="first">
+        /// The first <see cref="StringKey{T}"/> to compare.
+        /// </param>
+        /// <param name="second">
+        /// The second <see cref="StringKey{T}"/> to compare.
+        /// </param>
+        /// <returns>
+        /// true if both specified <see cref="StringKey{T}"/>s are equal; otherwise, false.
+        /// </returns>
 #if NET472
         public static bool operator ==(StringKey<T> first, StringKey<T> second)
 #else
@@ -81,6 +117,18 @@ namespace Eutherion
             return first.Key == second.Key;
         }
 
+        /// <summary>
+        /// Indicates whether one <see cref="StringKey{T}"/> is different from another <see cref="StringKey{T}"/>.
+        /// </summary>
+        /// <param name="first">
+        /// The first <see cref="StringKey{T}"/> to compare.
+        /// </param>
+        /// <param name="second">
+        /// The second <see cref="StringKey{T}"/> to compare.
+        /// </param>
+        /// <returns>
+        /// true if both specified <see cref="StringKey{T}"/>s are different; otherwise, false.
+        /// </returns>
 #if NET472
         public static bool operator !=(StringKey<T> first, StringKey<T> second)
 #else

@@ -26,7 +26,7 @@
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// Contains extension methods for <see cref="Dictionary{TKey, TValue}">.
+    /// Contains extension methods for <see cref="Dictionary{TKey, TValue}" />.
     /// </summary>
     public static class DictionaryExtensions
     {
