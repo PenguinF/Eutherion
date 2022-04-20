@@ -28,6 +28,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System.Linq
 {
+    /// <summary>
+    /// Contains extension methods for <see cref="IEnumerable{T}"/>.
+    /// </summary>
     public static class LinqExtensions
     {
         /// <summary>

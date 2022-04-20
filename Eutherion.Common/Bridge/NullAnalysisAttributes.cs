@@ -28,6 +28,9 @@ namespace System.Diagnostics.CodeAnalysis
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false)]
     public sealed class AllowNullAttribute : Attribute
     {
+        /// <summary>
+        /// Creates a new <see cref="AllowNullAttribute"/> instance.
+        /// </summary>
         public AllowNullAttribute() { }
     }
 
@@ -37,8 +40,14 @@ namespace System.Diagnostics.CodeAnalysis
     [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
     public sealed class MaybeNullWhenAttribute : Attribute
     {
+        /// <summary>
+        /// Creates a new <see cref="MaybeNullWhenAttribute"/> instance.
+        /// </summary>
         public MaybeNullWhenAttribute(bool returnValue) => ReturnValue = returnValue;
 
+        /// <summary>
+        /// Gets the return value.
+        /// </summary>
         public bool ReturnValue { get; }
     }
 
@@ -48,8 +57,14 @@ namespace System.Diagnostics.CodeAnalysis
     [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
     public sealed class NotNullWhenAttribute : Attribute
     {
+        /// <summary>
+        /// Creates a new <see cref="NotNullWhenAttribute"/> instance.
+        /// </summary>
         public NotNullWhenAttribute(bool returnValue) => ReturnValue = returnValue;
 
+        /// <summary>
+        /// Gets the return value.
+        /// </summary>
         public bool ReturnValue { get; }
     }
 }

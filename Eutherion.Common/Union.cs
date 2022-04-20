@@ -128,8 +128,10 @@ namespace System
         /// </summary>
         public static Union<T1, T2> Option2(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2>(T2 value) => new ValueOfType2(value);
 
         private Union() { }
@@ -404,10 +406,13 @@ namespace System
         /// </summary>
         public static Union<T1, T2, T3> Option3(T3 value) => new ValueOfType3(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3>(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3>(T3 value) => new ValueOfType3(value);
 
         private Union() { }
@@ -779,12 +784,16 @@ namespace System
         /// </summary>
         public static Union<T1, T2, T3, T4> Option4(T4 value) => new ValueOfType4(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4>(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4>(T3 value) => new ValueOfType3(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4>(T4 value) => new ValueOfType4(value);
 
         private Union() { }
@@ -1257,14 +1266,19 @@ namespace System
         /// </summary>
         public static Union<T1, T2, T3, T4, T5> Option5(T5 value) => new ValueOfType5(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5>(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5>(T3 value) => new ValueOfType3(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5>(T4 value) => new ValueOfType4(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5>(T5 value) => new ValueOfType5(value);
 
         private Union() { }
@@ -1842,16 +1856,22 @@ namespace System
         /// </summary>
         public static Union<T1, T2, T3, T4, T5, T6> Option6(T6 value) => new ValueOfType6(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6>(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6>(T3 value) => new ValueOfType3(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6>(T4 value) => new ValueOfType4(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6>(T5 value) => new ValueOfType5(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6>(T6 value) => new ValueOfType6(value);
 
         private Union() { }
@@ -2538,18 +2558,25 @@ namespace System
         /// </summary>
         public static Union<T1, T2, T3, T4, T5, T6, T7> Option7(T7 value) => new ValueOfType7(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T3 value) => new ValueOfType3(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T4 value) => new ValueOfType4(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T5 value) => new ValueOfType5(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T6 value) => new ValueOfType6(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7>(T7 value) => new ValueOfType7(value);
 
         private Union() { }
@@ -3349,20 +3376,28 @@ namespace System
         /// </summary>
         public static Union<T1, T2, T3, T4, T5, T6, T7, T8> Option8(T8 value) => new ValueOfType8(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T1 value) => new ValueOfType1(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T2 value) => new ValueOfType2(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T3 value) => new ValueOfType3(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T4 value) => new ValueOfType4(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T5 value) => new ValueOfType5(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T6 value) => new ValueOfType6(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T7 value) => new ValueOfType7(value);
 
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator Union<T1, T2, T3, T4, T5, T6, T7, T8>(T8 value) => new ValueOfType8(value);
 
         private Union() { }

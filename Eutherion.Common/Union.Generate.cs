@@ -179,6 +179,7 @@ namespace System
 
         private static Func<int, string> ImplicitCastOperator(int optionCount)
             => typeIndex => $@"
+        /// <summary>Converts a value to a Union instance.</summary>
         public static implicit operator {ClassName}<{TypeParameters(optionCount)}>({TypeParameter(typeIndex)} value) => new {SubClassName(typeIndex)}(value);
 ";
 

@@ -110,6 +110,9 @@ namespace System
         /// </returns>
         public static Maybe<T> Just(T value) => new JustValue(value);
 
+        /// <summary>
+        /// Converts a value to a Maybe instance.
+        /// </summary>
         public static implicit operator Maybe<T>(T value) => new JustValue(value);
 
         private Maybe() { }

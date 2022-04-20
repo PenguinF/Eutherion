@@ -33,6 +33,9 @@ namespace System
     /// </remarks>
     public class UnreachableException : Exception
     {
+        /// <summary>
+        /// Gets the standard message for an <see cref="UnreachableException"/>. This message is never supposed to be shown, and so is not multilingual.
+        /// </summary>
         public static readonly string UnreachableExceptionMessage = "This part of the software was assumed to be unreachable.";
 
         /// <summary>
