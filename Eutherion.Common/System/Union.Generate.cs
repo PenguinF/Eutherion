@@ -24,20 +24,21 @@ using System.Linq;
 
 namespace System
 {
-#if DEBUG
-    public static class Union
-#else
     internal static class Union
-#endif
     {
         private static string TypeParameter(int typeIndex)
             => $"T{typeIndex}";
 
+        private static string WhenOptionParamName(int typeIndex)
+            => $"whenOption{typeIndex}";
+
+        private static readonly string OtherwiseParamName = "otherwise";
+
         internal static ArgumentException InvalidPatternMatchArgumentException(int typeIndex)
 #if NET5_0_OR_GREATER
-            => new($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both whenOption{typeIndex} and otherwise parameters are null.");
+            => new($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
 #else
-            => new ArgumentException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both whenOption{typeIndex} and otherwise parameters are null.");
+            => new ArgumentException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
 #endif
 
 #if DEBUG
@@ -93,9 +94,6 @@ namespace System
         private static string ToOptionMethodName(int typeIndex)
             => $"ToOption{typeIndex}";
 
-        private static string WhenOptionParamName(int typeIndex)
-            => $"whenOption{typeIndex}";
-
         private static string WhenOptionParamRef(int typeIndex)
             => $@"<paramref name=""{WhenOptionParamName(typeIndex)}""/>";
 
@@ -134,7 +132,7 @@ namespace System
 
         private static Func<int, string> SubClass(int optionCount)
             => typeIndex => $@"
-        private sealed class {SubClassName(typeIndex)} : Union<{TypeParameters(optionCount)}>
+        private sealed class {SubClassName(typeIndex)} : {ClassName}<{TypeParameters(optionCount)}>
         {{
             public readonly {TypeParameter(typeIndex)} Value;
 
@@ -152,17 +150,17 @@ namespace System
 
             public override TResult Match<TResult>({ConcatList(optionCount, paramOption => $@"
                 {MatchMethodFuncOverloadParameter(paramOption)}")}
-                [AllowNull] Func<TResult> otherwise = null)
+                [AllowNull] Func<TResult> {OtherwiseParamName} = null)
                 => {WhenOptionParamName(typeIndex)} != null ? {WhenOptionParamName(typeIndex)}(Value)
-                : otherwise != null ? otherwise()
-                : throw Union.InvalidPatternMatchArgumentException({typeIndex});
+                : {OtherwiseParamName} != null ? {OtherwiseParamName}()
+                : throw {ClassName}.InvalidPatternMatchArgumentException({typeIndex});
 
             public override void Match({ConcatList(optionCount, paramOption => $@"
                 {MatchMethodActionOverloadParameter(paramOption)}")}
-                [AllowNull] Action otherwise = null)
+                [AllowNull] Action {OtherwiseParamName} = null)
             {{
                 if ({WhenOptionParamName(typeIndex)} != null) {WhenOptionParamName(typeIndex)}(Value);
-                else otherwise?.Invoke();
+                else {OtherwiseParamName}?.Invoke();
             }}
 
             public override string ToString() => Value.ToString() ?? string.Empty;
@@ -179,7 +177,7 @@ namespace System
 
         private static Func<int, string> ImplicitCastOperator(int optionCount)
             => typeIndex => $@"
-        /// <summary>Converts a value to a Union instance.</summary>
+        /// <summary>Converts a value to a {ClassName} instance.</summary>
         public static implicit operator {ClassName}<{TypeParameters(optionCount)}>({TypeParameter(typeIndex)} value) => new {SubClassName(typeIndex)}(value);
 ";
 
@@ -248,7 +246,7 @@ namespace System
 
         private static string MatchMethodFuncOverload(int optionCount)
             => $@"
-        /// <param name=""otherwise"">
+        /// <param name=""{OtherwiseParamName}"">
         /// The <see cref=""Func{{TResult}}""/> to invoke if no function is specified for the type of the value.
         /// If {CommaSeparatedList(optionCount - 1, WhenOptionParamRef)} and {WhenOptionParamRef(optionCount)} are given, this parameter is not used.
         /// </param>
@@ -260,7 +258,7 @@ namespace System
         /// </exception>
         public abstract TResult Match<TResult>({ConcatList(optionCount, typeIndex => $@"
             {MatchMethodFuncOverloadParameter(typeIndex)}")}
-            [AllowNull] Func<TResult> otherwise = null)
+            [AllowNull] Func<TResult> {OtherwiseParamName} = null)
 #if !NET472
             where TResult : notnull
 #endif
@@ -281,13 +279,13 @@ namespace System
 
         private static string MatchMethodActionOverload(int optionCount)
             => $@"
-        /// <param name=""otherwise"">
+        /// <param name=""{OtherwiseParamName}"">
         /// The <see cref=""Action""/> to invoke if no action is specified for the type of the value.
         /// If {CommaSeparatedList(optionCount - 1, WhenOptionParamRef)} and {WhenOptionParamRef(optionCount)} are given, this parameter is not used.
         /// </param>
         public abstract void Match({ConcatList(optionCount, typeIndex => $@"
             {MatchMethodActionOverloadParameter(typeIndex)}")}
-            [AllowNull] Action otherwise = null);
+            [AllowNull] Action {OtherwiseParamName} = null);
 ";
 
         private static string ClassBody(int optionCount)
@@ -319,9 +317,7 @@ namespace System
 {{{string.Concat(GenerateList(2, MaxOptionsToGenerate - 1, UnionClass))}}}
 ";
 
-        /// <summary>
-        /// Generates code for the Union<> classes.
-        /// </summary>
+        // Generates code for the Union<> classes.
         public static void Generate()
         {
             GeneratedCode = GenerateCode();

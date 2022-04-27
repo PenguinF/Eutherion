@@ -34,6 +34,8 @@ namespace Eutherion.Example472
         // This provides a unique type value for StringKey<>.
         struct Dummy { }
 
+        private static readonly Random random = new Random();
+
         static void Main()
         {
             // Between '/*' and '*/' below is commented out what would have to be added in later C# versions and .NET targets.
@@ -43,8 +45,10 @@ namespace Eutherion.Example472
 
             try
             {
+                // StringKey<T>
                 Console.WriteLine($"hashes of \"1\", \"2\": {new StringKey<Dummy>("1").GetHashCode()}, {new StringKey<Dummy>("2").GetHashCode()}");
 
+                // Maybe<T>
                 var possibleIntStrings = new Maybe<string>[] { Maybe<string>.Nothing, "-20", "x", "20" };
 
                 Maybe<int> ParseInt(string input) => int.TryParse(input, out int result) ? result : Maybe<int>.Nothing;
@@ -79,6 +83,7 @@ namespace Eutherion.Example472
 
                 Console.WriteLine();
 
+                // Union<T1, T2, T3>, UnreachableException, _void
                 var unionValues = new Union<_void, int, string>[] { _void._, 8, "x", _void._, -1, "-1" };
 
                 string PrintUnionValue(Union<_void, int, string> x) => x.Match(
@@ -97,6 +102,7 @@ namespace Eutherion.Example472
                 Console.WriteLine("Union values: " + string.Join(", ", unionValues.Select(PrintUnionValue)));
                 Console.WriteLine("Union values (2): " + string.Join(", ", unionValues.Select(PrintUnionValue2)));
 
+                // LinqExtensions.ForEach
                 string CheckNumberOfElements(IEnumerable<Union<_void, int, string>> collection, int count)
                     => collection.Skip(count - 1).Any(out var element)
                     ? $"There are at least {count} elements, such as this {PrintUnionValue(element)}"
@@ -105,6 +111,7 @@ namespace Eutherion.Example472
                 new[] { 5, 6, 7 }.ForEach(n => Console.WriteLine(CheckNumberOfElements(unionValues, n)));
                 Console.WriteLine();
 
+                // DictionaryExtensions.GetOrAdd
                 Dictionary<string, string> dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 Console.WriteLine("GetOrAdd(1): " + dictionary.GetOrAdd("1", key => "one"));
                 Console.WriteLine("GetOrAdd(2): " + dictionary.GetOrAdd("2", key => "two"));
@@ -112,13 +119,28 @@ namespace Eutherion.Example472
                 Console.WriteLine($"Dictionary.Count: {dictionary.Count}");
                 Console.WriteLine();
 
-                Console.Write("Writing 20 X'es: ");
-                20.Times(() => Console.Write("X"));
-                Console.WriteLine();
-                Console.WriteLine();
-
+                // UIntExtensions.SetBits
                 Console.Write("Enumerating set bits in 89: ");
                 Console.Write(string.Join(" + ", 89u.SetBits().Select(bit => $"{bit} (index: {BitOperations.Log2(bit)})")));
+                Console.WriteLine();
+
+                // LinqExtensions.Sequence, UtilityExtensions.Times
+                5.Times(() =>
+                {
+                    Console.WriteLine();
+                    Console.Write("Random values between 0 and 5, until a 0 is generated: ");
+                    Func<int> generateRandomInt = () => random.Next(5);
+                    Console.Write(string.Join(", ", generateRandomInt.Sequence().TakeWhile(i => i > 0)));
+                });
+
+                // LinqExtensions.Iterate, UtilityExtensions.Times
+                5.Times(() =>
+                {
+                    Console.WriteLine();
+                    Console.Write("Adding random values between 0 and 5, until reaching 20: ");
+                    Func<int, int> addRandomInt = i => i + random.Next(5);
+                    Console.Write(string.Join(", ", addRandomInt.Iterate(0).TakeWhile(i => i <= 20)));
+                });
                 Console.WriteLine();
             }
             catch (Exception e)
