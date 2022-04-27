@@ -148,6 +148,54 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Calls a generator function an infinite amount of times to generate a sequence.
+        /// </summary>
+        /// <typeparam name="TResult">
+        /// The type of the value to be generated in the result sequence.
+        /// </typeparam>
+        /// <param name="generator">
+        /// The function to generate values in the sequence.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is null (Nothing in Visual Basic).
+        /// </exception>
+        public static IEnumerable<TResult> Sequence<TResult>(this Func<TResult> generator)
+        {
+            if (generator == null) throw new ArgumentNullException(nameof(generator));
+            for (; ; ) yield return generator();
+        }
+
+        /// <summary>
+        /// Applies a generator function on a seed value an infinite amount of times to generate a sequence.
+        /// </summary>
+        /// <typeparam name="TResult">
+        /// The type of the value to be generated in the result sequence.
+        /// </typeparam>
+        /// <param name="generator">
+        /// The function to apply repeatedly on the seed value to generate values in the sequence.
+        /// </param>
+        /// <param name="seed">
+        /// The initial seed value for the first call to <paramref name="generator"/>.
+        /// </param>
+        /// <returns>
+        /// A <see cref="IEnumerable{T}"/> with the generated values.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is null (Nothing in Visual Basic).
+        /// </exception>
+        public static IEnumerable<TResult> Iterate<TResult>(this Func<TResult, TResult> generator, TResult seed)
+        {
+            if (generator == null) throw new ArgumentNullException(nameof(generator));
+            for (; ; )
+            {
+                seed = generator(seed);
+                yield return seed;
+            }
+        }
+
+        /// <summary>
         /// Performs an action on each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">

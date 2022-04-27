@@ -34,6 +34,8 @@ namespace Eutherion.Example472
         // This provides a unique type value for StringKey<>.
         struct Dummy { }
 
+        private static readonly Random random = new Random();
+
         static void Main()
         {
             // Between '/*' and '*/' below is commented out what would have to be added in later C# versions and .NET targets.
@@ -117,15 +119,28 @@ namespace Eutherion.Example472
                 Console.WriteLine($"Dictionary.Count: {dictionary.Count}");
                 Console.WriteLine();
 
-                // UtilityExtensions.Times
-                Console.Write("Writing 20 X'es: ");
-                20.Times(() => Console.Write("X"));
-                Console.WriteLine();
-                Console.WriteLine();
-
                 // UIntExtensions.SetBits
                 Console.Write("Enumerating set bits in 89: ");
                 Console.Write(string.Join(" + ", 89u.SetBits().Select(bit => $"{bit} (index: {BitOperations.Log2(bit)})")));
+                Console.WriteLine();
+
+                // LinqExtensions.Sequence, UtilityExtensions.Times
+                5.Times(() =>
+                {
+                    Console.WriteLine();
+                    Console.Write("Random values between 0 and 5, until a 0 is generated: ");
+                    Func<int> generateRandomInt = () => random.Next(5);
+                    Console.Write(string.Join(", ", generateRandomInt.Sequence().TakeWhile(i => i > 0)));
+                });
+
+                // LinqExtensions.Iterate, UtilityExtensions.Times
+                5.Times(() =>
+                {
+                    Console.WriteLine();
+                    Console.Write("Adding random values between 0 and 5, until reaching 20: ");
+                    Func<int, int> addRandomInt = i => i + random.Next(5);
+                    Console.Write(string.Join(", ", addRandomInt.Iterate(0).TakeWhile(i => i <= 20)));
+                });
                 Console.WriteLine();
             }
             catch (Exception e)
