@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.1;net5.0;netcoreapp3.1;net472</TargetFrameworks>
     <FileVersion>1.1.0.0</FileVersion>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <Version>1.1.0-rc</Version>
+    <Version>1.1.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Contains utilities and extensions to the .NET standard libraries.</Description>
     <Authors>Henk Nicolai</Authors>
