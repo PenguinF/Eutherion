@@ -4,20 +4,27 @@
     <TargetFrameworks>netstandard2.1;net5.0;netcoreapp3.1;net472</TargetFrameworks>
     <FileVersion>1.1.0.0</FileVersion>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <Version>1.1.0-rc</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Contains utilities and extensions to the .NET standard libraries.</Description>
     <Authors>Henk Nicolai</Authors>
     <Copyright>Copyright © 2004-2022 - Henk Nicolai</Copyright>
+    <Summary>Contains utilities and extensions to the .NET standard libraries.</Summary>
     <PackageProjectUrl>https://github.com/PenguinF/Eutherion</PackageProjectUrl>
     <PackageIcon>penguinf128x128.png</PackageIcon>
     <PackageIconUrl />
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.0-rc</Version>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net472'">
     <PackageReference Include="System.Memory" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
