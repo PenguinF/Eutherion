@@ -35,6 +35,18 @@ namespace System.Diagnostics.CodeAnalysis
     }
 
     /// <summary>
+    /// Defines the [DoesNotReturn] attribute for .NET targets in which it does not exist yet.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public sealed class DoesNotReturnAttribute : Attribute
+    {
+        /// <summary>
+        /// Creates a new <see cref="DoesNotReturnAttribute"/> instance.
+        /// </summary>
+        public DoesNotReturnAttribute() { }
+    }
+
+    /// <summary>
     /// Defines the [MaybeNullWhen] attribute for .NET targets in which it does not exist yet.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
