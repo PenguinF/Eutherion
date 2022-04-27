@@ -152,6 +152,9 @@ namespace System
         /// <returns>
         /// The result of the invoked function.
         /// </returns>
+        /// <exception cref="NullReferenceException">
+        /// <paramref name="whenNothing"/> and/or <paramref name="whenJust"/> are null.
+        /// </exception>
         public abstract TResult Match<TResult>(
             Func<TResult> whenNothing,
             Func<T, TResult> whenJust)
