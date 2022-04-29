@@ -22,6 +22,14 @@
     <EnablePackageValidation>true</EnablePackageValidation>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(TargetFramework)'=='net472'">
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
