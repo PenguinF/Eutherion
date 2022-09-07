@@ -53,6 +53,14 @@
       <Project>{0cd9c050-31b3-4e14-97df-58abff0d984d}</Project>
       <Name>Eutherion.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Eutherion.UIActions\Eutherion.UIActions.csproj">
+      <Project>{6d9243d9-8524-4eb1-bda8-2c3f66b72c07}</Project>
+      <Name>Eutherion.UIActions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Eutherion.Utilities\Eutherion.Utilities.csproj">
+      <Project>{a718d660-7cff-4874-89fc-c83cb39cf544}</Project>
+      <Name>Eutherion.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
