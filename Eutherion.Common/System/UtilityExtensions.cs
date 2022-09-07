@@ -42,7 +42,7 @@ namespace System
         /// The integer to convert.
         /// </param>
         /// <returns>
-        /// The locale invariant representation
+        /// The locale invariant representation.
         /// </returns>
         public static string ToStringInvariant(this int value)
             => value.ToString(CultureInfo.InvariantCulture);
@@ -54,7 +54,7 @@ namespace System
         /// The integer to convert.
         /// </param>
         /// <returns>
-        /// The locale invariant representation
+        /// The locale invariant representation.
         /// </returns>
         public static string ToStringInvariant(this BigInteger value)
             => value.ToString(CultureInfo.InvariantCulture);
