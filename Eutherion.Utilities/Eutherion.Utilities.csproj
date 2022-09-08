@@ -6,10 +6,10 @@
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <Version>1.2.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Description>Contains extensions to the .NET standard libraries.</Description>
+    <Description>Contains miscellaneous utilities to supplement .NET standard libraries.</Description>
     <Authors>Henk Nicolai</Authors>
     <Copyright>Copyright © 2004-2022 - Henk Nicolai</Copyright>
-    <Summary>Contains extensions to the .NET standard libraries.</Summary>
+    <Summary>Contains miscellaneous utilities to supplement .NET standard libraries.</Summary>
     <PackageProjectUrl>https://github.com/PenguinF/Eutherion</PackageProjectUrl>
     <PackageIcon>penguinf128x128.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -43,6 +43,10 @@
       <Visible>False</Visible>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eutherion.Common\Eutherion.Common.csproj" />
   </ItemGroup>
 
 </Project>

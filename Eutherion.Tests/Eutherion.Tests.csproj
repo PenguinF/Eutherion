@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eutherion.Common\Eutherion.Common.csproj" />
+    <ProjectReference Include="..\Eutherion.UIActions\Eutherion.UIActions.csproj" />
+    <ProjectReference Include="..\Eutherion.Utilities\Eutherion.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

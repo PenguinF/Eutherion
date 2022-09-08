@@ -64,6 +64,18 @@ namespace System.Diagnostics.CodeAnalysis
     }
 
     /// <summary>
+    /// Defines the [NotNull] attribute for .NET targets in which it does not exist yet.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    public sealed class NotNullAttribute : Attribute
+    {
+        /// <summary>
+        /// Creates a new <see cref="NotNullAttribute"/> instance.
+        /// </summary>
+        public NotNullAttribute() {}
+    }
+
+    /// <summary>
     /// Defines the [NotNullWhen] attribute for .NET targets in which it does not exist yet.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]

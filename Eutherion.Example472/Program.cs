@@ -34,6 +34,8 @@ namespace Eutherion.Example472
         // This provides a unique type value for StringKey<>.
         struct Dummy { }
 
+        enum ChessPiece { Pawn = 0, Knight, Bishop, Rook, Queen, King }
+
         private static readonly Random random = new Random();
 
         static void Main()
@@ -142,6 +144,20 @@ namespace Eutherion.Example472
                     Console.Write(string.Join(", ", addRandomInt.Iterate(0).TakeWhile(i => i <= 20)));
                 });
                 Console.WriteLine();
+                Console.WriteLine();
+
+                // EnumValues<TEnum> (via EnumArray<TEnum>)
+                EnumArray<ChessPiece, int> chessPieceValues = EnumArray<ChessPiece, int>.New();
+                chessPieceValues[ChessPiece.Pawn] = 1;
+                chessPieceValues[ChessPiece.Knight] = 3;
+                chessPieceValues[ChessPiece.Bishop] = 3;
+                chessPieceValues[ChessPiece.Rook] = 5;
+                chessPieceValues[ChessPiece.Queen] = 9;
+
+                for (ChessPiece piece = ChessPiece.Pawn; piece <= ChessPiece.King; piece++)
+                {
+                    Console.WriteLine($"{piece} is worth {chessPieceValues[piece]} points.");
+                }
             }
             catch (Exception e)
             {

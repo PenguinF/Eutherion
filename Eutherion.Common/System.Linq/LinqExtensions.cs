@@ -266,22 +266,13 @@ namespace System.Linq
                         array = new TSource[length];
                         int index = 0;
 
-                        try
+                        foreach (var element in readOnlyCollection)
                         {
-                            foreach (var element in readOnlyCollection)
-                            {
-                                array[index] = element;
+                            array[index] = element;
 
-                                // Don't check if index >= length, assume that readOnlyCollection
-                                // satisfies the contract that the number of enumerated elements is always equal to Count.
-                                // Do catch IndexOutOfRangeExceptions in case the readOnlyCollection returns more
-                                // elements than it should.
-                                index++;
-                            }
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            // Ignore this exception, the IReadOnlyCollection does not honor its contract.
+                            // Don't check if index >= length, assume that readOnlyCollection
+                            // satisfies the contract that the number of enumerated elements is always equal to Count.
+                            index++;
                         }
 
                         return array;
