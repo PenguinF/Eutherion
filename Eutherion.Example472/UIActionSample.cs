@@ -65,6 +65,8 @@ namespace Eutherion.Example472
     // generator to not just use an action's ContextMenuUIActionInterface, but also look for a
     // ShortcutKeysUIActionInterface so it can display an action's shortcut key.
 
+    // Note that this example does not contain code to build a context menu given a UIActionHandler.
+
     /// <summary>
     /// Defines how a <see cref="UIAction"/> is shown in a context menu.
     /// </summary>
@@ -85,8 +87,8 @@ namespace Eutherion.Example472
 
     #region Shared action definitions
 
-    // Knowing now how to define actions, the only thing remaining is the definitions themselves,
-    // and they probably look something like this:
+    // Knowing now how to define actions, what remains to be declared is the definitions themselves,
+    // and they could look something like this:
 
     public static class ShardUIActions
     {
@@ -121,7 +123,7 @@ namespace Eutherion.Example472
     }
 
     // The advantage of this approach is that actions which are common between several types of components
-    // can share their action definitions, without having to share the implementation of how the action is performed.
+    // can share their action definitions, without having to share their implementation of how the action is performed.
 
     // In a ribbon for example, you may have a button at a fixed position for 'Select all', and then the button's click event handler
     // could check if the focused control implements IUIActionHandlerProvider, look for a Select All handler, and invoke it.
@@ -146,6 +148,8 @@ namespace Eutherion.Example472
     public class Form : Control
     {
         protected virtual bool ProcessCmdKey(ref Message msg, Keys keyData) => false;
+
+        public void Close() { }
     }
 
     #endregion Stubs for System.Windows.Forms
@@ -181,6 +185,16 @@ namespace Eutherion.Example472
         {
             if (perform) SelectAll();
             return UIActionVisibility.Enabled;
+        }
+
+        // And for convenience, you could suggest default action bindings as well:
+        public IEnumerable<(UIAction, UIActionHandlerFunc)> DefaultUIActionBindings
+        {
+            get
+            {
+                yield return (ShardUIActions.Copy, TryCopy);
+                yield return (ShardUIActions.SelectAll, TrySelectAll);
+            }
         }
     }
 
@@ -219,7 +233,7 @@ namespace Eutherion.Example472
             // When instantiating a TextBox, also declare what actions it exposes.
             TextBox textBox = new TextBox();
 
-            // These two lines of code now have the effect that the textbox's action handler registers
+            // These two lines of code have the effect that the textbox's action handler registers
             // methods to handle two actions. If e.g. Ctrl+C is pressed, event handler code can then
             // iterate through controls, and discover this text box has a handler registered
             // for Ctrl+C, which it can then invoke.
@@ -230,17 +244,60 @@ namespace Eutherion.Example472
             textBox.BindAction(ShardUIActions.Copy, textBox.TryCopy);
             textBox.BindAction(ShardUIActions.SelectAll, textBox.TrySelectAll);
 
+            // Alternatively:
+            foreach ((UIAction action, UIActionHandlerFunc handler) in textBox.DefaultUIActionBindings)
+            {
+                textBox.BindAction(action, handler);
+            }
+
+            // It is possible to bind actions to components which have their handler defined elsewhere.
+            // Displaying a 'Close' menu item for example in the text box's context menu to close this window,
+            // along with menu items for 'Select All' and 'Copy', looks like this:
+            textBox.BindAction(ShardUIActions.Close, TryClose);
+
+            // Again, this assumes code exists that builds a context menu for a Control that is also a IUIActionHandlerProvider.
+
+            // To hide the shortcut key for closing the Form in the context menu, the default suggested bindings
+            // in ShardUIActions.Close can be overridden:
+            textBox.BindAction(
+                ShardUIActions.Close.Key,
+                new ImplementationSet<IUIActionInterface>
+                {
+                    // Only use the context menu interface.
+                    ShardUIActions.Close.DefaultInterfaces.Get<ContextMenuUIActionInterface>(),
+                },
+                TryClose);
+
+            // Replacing the shortcut key with e.g. Ctrl+F4 for the text box can be done like this:
+            textBox.BindAction(
+                ShardUIActions.Close.Key,
+                new ImplementationSet<IUIActionInterface>
+                {
+                    new ShortcutKeysUIActionInterface { Shortcuts = new Keys[] { new Keys { Control = true, Key = ConsoleKey.F4 } } },
+                    ShardUIActions.Close.DefaultInterfaces.Get<ContextMenuUIActionInterface>(),
+                },
+                TryClose);
+
+            // Remember that above example code (if unmodified) will throw exceptions, because each action can be bound at most once to a single handler.
+
             Controls.Add(textBox);
+        }
+
+        public UIActionState TryClose(bool perform)
+        {
+            if (perform) Close();
+            return UIActionVisibility.Enabled;
         }
     }
 
     #endregion Attaching handlers to the UI
 
-    #region Connecting the dots
+    #region Processing events
 
     // The only thing remaining is to tie everything together by making sure user events trigger the right action handler.
+    // Here is an example for implementing shortcut keys.
 
-    public class UIActionForm : Form
+    public class ShortcutHandlerForm : Form
     {
         // This helper method starts with a focused control, then goes up in the control tree
         // until it reaches the topmost control which is a Form.
@@ -266,7 +323,7 @@ namespace Eutherion.Example472
         {
             try
             {
-                Control bottomLevelControl = Control.GetFocusedControl();
+                Control bottomLevelControl = GetFocusedControl();
 
                 // Try to find an action with given shortcut.
                 if ((from actionHandler in EnumerateUIActionHandlers(bottomLevelControl)
@@ -301,5 +358,5 @@ namespace Eutherion.Example472
         }
     }
 
-    #endregion Connecting the dots
+    #endregion Processing events
 }
