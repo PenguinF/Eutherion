@@ -68,8 +68,8 @@ namespace Eutherion.UIActions
         {
             if (binding == null) throw new ArgumentNullException(nameof(binding));
 
-            handlers.Add(binding.Action, binding.Handler);
-            interfaceSets.Add((binding.Interfaces, binding.Action));
+            handlers.Add(binding.ActionKey, binding.Handler);
+            interfaceSets.Add((binding.Interfaces, binding.ActionKey));
 
             Invalidate();
         }

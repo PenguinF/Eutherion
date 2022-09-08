@@ -37,7 +37,7 @@ namespace Eutherion.UIActions
         /// <summary>
         /// Gets the identifier for the bound <see cref="UIAction"/>.
         /// </summary>
-        public StringKey<UIAction> Action { get; }
+        public StringKey<UIAction> ActionKey { get; }
 
         /// <summary>
         /// Gets the <see cref="IUIActionInterface"/> set which defines how the action is exposed to the user interface.
@@ -64,7 +64,7 @@ namespace Eutherion.UIActions
         public UIActionBinding(UIAction action, UIActionHandlerFunc handler)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
-            Action = action.Key;
+            ActionKey = action.Key;
             Interfaces = action.DefaultInterfaces;
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }
@@ -86,7 +86,7 @@ namespace Eutherion.UIActions
         /// </exception>
         public UIActionBinding(StringKey<UIAction> actionKey, ImplementationSet<IUIActionInterface> interfaces, UIActionHandlerFunc handler)
         {
-            Action = actionKey ?? throw new ArgumentNullException(nameof(actionKey));
+            ActionKey = actionKey ?? throw new ArgumentNullException(nameof(actionKey));
             Interfaces = interfaces ?? throw new ArgumentNullException(nameof(interfaces));
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }
