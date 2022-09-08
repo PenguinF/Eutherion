@@ -64,7 +64,7 @@ namespace Eutherion.UIActions
         public UIActionBinding(UIAction action, UIActionHandlerFunc handler)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
-            Action = action.Action;
+            Action = action.Key;
             Interfaces = action.DefaultInterfaces;
             Handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }

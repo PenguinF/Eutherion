@@ -95,8 +95,8 @@ namespace Eutherion.UIActions
         /// <summary>
         /// Verifies if an action can be performed, and optionally performs it.
         /// </summary>
-        /// <param name="action">
-        /// The <see cref="UIAction"/> to perform.
+        /// <param name="actionKey">
+        /// The key of the <see cref="UIAction"/> to perform.
         /// </param>
         /// <param name="perform">
         /// Whether or not to perform the action.
@@ -106,13 +106,13 @@ namespace Eutherion.UIActions
         /// or a <see cref="UIActionState"/> indicating whether or not the action was performed successfully, if <paramref name="perform"/> is true.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="action"/> is null.
+        /// <paramref name="actionKey"/> is null.
         /// </exception>
-        public UIActionState TryPerformAction(StringKey<UIAction> action, bool perform)
+        public UIActionState TryPerformAction(StringKey<UIAction> actionKey, bool perform)
         {
-            if (action == null) throw new ArgumentNullException(nameof(action));
+            if (actionKey == null) throw new ArgumentNullException(nameof(actionKey));
 
-            if (handlers.TryGetValue(action, out var handler))
+            if (handlers.TryGetValue(actionKey, out var handler))
             {
                 // Call the handler.
                 UIActionState result = handler(perform);

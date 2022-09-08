@@ -36,7 +36,7 @@ namespace Eutherion.UIActions
         /// <summary>
         /// Gets the key which identifies this <see cref="UIAction"/>.
         /// </summary>
-        public StringKey<UIAction> Action { get; }
+        public StringKey<UIAction> Key { get; }
 
         /// <summary>
         /// Gets the suggested default <see cref="ImplementationSet{TInterface}"/> which defines how the action is exposed to the user interface.
@@ -57,7 +57,7 @@ namespace Eutherion.UIActions
         /// </exception>
         public UIAction(StringKey<UIAction> action, ImplementationSet<IUIActionInterface> defaultInterfaces)
         {
-            Action = action ?? throw new ArgumentNullException(nameof(action));
+            Key = action ?? throw new ArgumentNullException(nameof(action));
             DefaultInterfaces = defaultInterfaces ?? throw new ArgumentNullException(nameof(defaultInterfaces));
         }
     }
