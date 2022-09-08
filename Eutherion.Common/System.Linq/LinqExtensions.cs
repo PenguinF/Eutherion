@@ -272,8 +272,6 @@ namespace System.Linq
 
                             // Don't check if index >= length, assume that readOnlyCollection
                             // satisfies the contract that the number of enumerated elements is always equal to Count.
-                            // Do catch IndexOutOfRangeExceptions in case the readOnlyCollection returns more
-                            // elements than it should.
                             index++;
                         }
 
