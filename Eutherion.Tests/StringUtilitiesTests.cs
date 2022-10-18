@@ -46,5 +46,35 @@ namespace Eutherion.Tests
         {
             Assert.Equal(expectedResult, StringUtilities.ToDefaultParameterListDisplayString(parameters));
         }
+
+        public static object?[][] FormatStringRequiredArgumentCountCases() => new object?[][]
+        {
+            new object?[] { "{a}", 0, true },
+            new object?[] { "{0}}", 1, true },
+            new object?[] { "{0:}}", 1, true },
+            new object?[] { "{0}{1", 1, true },
+            new object?[] { "{-1}", 0, true },
+            new object?[] { "{5}{-1}", 6, true },
+            new object?[] { "{5}{0}{0}{0}{0}{0}{0}{0}{0}{0}{0}{0}{-1}", 6, true },
+
+            new object?[] { "z{0}z", 1, false },
+            new object?[] { "z{10}z", 11, false },
+            new object?[] { "z{1}z{3,20}z", 4, false },
+            new object?[] { "z{1,-20}z{1,20}z{1:X2}z{1:{{X2,-1}{{ }}", 2, false },
+        };
+
+        [Fact]
+        public void FormatStringRequiredArgumentCountArgumentCheck()
+        {
+            Assert.Throws<ArgumentNullException>(() => StringUtilities.FormatStringRequiredArgumentCount(null!, out _));
+        }
+
+        [Theory]
+        [MemberData(nameof(FormatStringRequiredArgumentCountCases))]
+        public void FormatStringRequiredArgumentCounts(string format, int expectedCount, bool expectedThrowsException)
+        {
+            Assert.Equal(expectedCount, StringUtilities.FormatStringRequiredArgumentCount(format, out bool wouldThrowFormatException));
+            Assert.Equal(expectedThrowsException, wouldThrowFormatException);
+        }
     }
 }
