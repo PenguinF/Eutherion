@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 using System.Diagnostics.CodeAnalysis;
 
 namespace System

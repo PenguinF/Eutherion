@@ -19,15 +19,14 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 namespace Eutherion.Text
 {
     /// <summary>
     /// Provides a type value for <see cref="StringKey{T}"/> to define an immutable identifier for formatted text.
     /// </summary>
+    /// <remarks>
+    /// See also: <seealso cref="TextFormatter"/>.
+    /// </remarks>
     public abstract class ForFormattedText
     {
         // Never construct an instance of this type.

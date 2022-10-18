@@ -44,7 +44,11 @@ namespace System
 #if DEBUG
         public const int MaxOptionsToGenerate = 8;
 
+#if NET472
         public static string GeneratedCode { get; private set; }
+#else
+        public static string? GeneratedCode { get; private set; }
+#endif
 
         private static string Cardinal(int number)
             => number == 1 ? "one"

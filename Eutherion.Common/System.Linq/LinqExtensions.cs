@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -190,8 +186,8 @@ namespace System.Linq
             if (generator == null) throw new ArgumentNullException(nameof(generator));
             for (; ; )
             {
-                seed = generator(seed);
                 yield return seed;
+                seed = generator(seed);
             }
         }
 
@@ -235,6 +231,10 @@ namespace System.Linq
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is null (Nothing in Visual Basic).
+        /// </exception>
+        /// <exception cref="IndexOutOfRangeException">
+        /// <paramref name="source"/> is a <see cref="IReadOnlyCollection{T}"/>, but enumerates more elements
+        /// than its <see cref="IReadOnlyCollection{T}.Count"/> property specifies.
         /// </exception>
         /// <remarks>
         /// This is similar to the regular <see cref="Enumerable.ToArray{TSource}(IEnumerable{TSource})"/>,

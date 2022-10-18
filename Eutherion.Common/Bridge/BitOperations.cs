@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 namespace System.Numerics
 {
 #if NET5_0_OR_GREATER || NETCOREAPP3_0_OR_GREATER

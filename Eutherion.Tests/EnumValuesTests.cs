@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 using Eutherion.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
