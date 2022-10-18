@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eutherion.Utilities", "Euth
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eutherion.UIActions", "Eutherion.UIActions\Eutherion.UIActions.csproj", "{6D9243D9-8524-4EB1-BDA8-2C3F66B72C07}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eutherion.Text.Json", "Eutherion.Text.Json\Eutherion.Text.Json.csproj", "{256A739E-BB0F-4FB6-9220-E86226DA59C6}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eutherion.Example472", "Eutherion.Example472\Eutherion.Example472.csproj", "{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eutherion.Tests", "Eutherion.Tests\Eutherion.Tests.csproj", "{5A7630EB-9B9E-4A52-A283-E33193B2249A}"
@@ -31,6 +33,10 @@ Global
 		{6D9243D9-8524-4EB1-BDA8-2C3F66B72C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D9243D9-8524-4EB1-BDA8-2C3F66B72C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D9243D9-8524-4EB1-BDA8-2C3F66B72C07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{256A739E-BB0F-4FB6-9220-E86226DA59C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{256A739E-BB0F-4FB6-9220-E86226DA59C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{256A739E-BB0F-4FB6-9220-E86226DA59C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{256A739E-BB0F-4FB6-9220-E86226DA59C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12694B67-6AC5-4ADD-A3AC-0E71D0B0AF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
