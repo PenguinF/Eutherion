@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 using Eutherion.Text;
 using System;
 using System.Collections.Generic;

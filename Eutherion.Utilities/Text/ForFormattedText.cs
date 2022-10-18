@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 namespace Eutherion.Text
 {
     /// <summary>

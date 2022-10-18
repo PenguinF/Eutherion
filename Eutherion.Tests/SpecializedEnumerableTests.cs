@@ -19,10 +19,6 @@
 **********************************************************************************/
 #endregion
 
-#if !NET472
-#nullable enable
-#endif
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
