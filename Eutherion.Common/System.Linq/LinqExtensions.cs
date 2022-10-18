@@ -186,8 +186,8 @@ namespace System.Linq
             if (generator == null) throw new ArgumentNullException(nameof(generator));
             for (; ; )
             {
-                seed = generator(seed);
                 yield return seed;
+                seed = generator(seed);
             }
         }
 
