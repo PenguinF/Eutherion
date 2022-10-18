@@ -47,6 +47,18 @@ namespace System.Diagnostics.CodeAnalysis
     }
 
     /// <summary>
+    /// Defines the [MaybeNull] attribute for .NET targets in which it does not exist yet.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
+    public sealed class MaybeNullAttribute : Attribute
+    {
+        /// <summary>
+        /// Creates a new <see cref="MaybeNullAttribute"/> instance.
+        /// </summary>
+        public MaybeNullAttribute() { }
+    }
+
+    /// <summary>
     /// Defines the [MaybeNullWhen] attribute for .NET targets in which it does not exist yet.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
@@ -72,7 +84,7 @@ namespace System.Diagnostics.CodeAnalysis
         /// <summary>
         /// Creates a new <see cref="NotNullAttribute"/> instance.
         /// </summary>
-        public NotNullAttribute() {}
+        public NotNullAttribute() { }
     }
 
     /// <summary>
