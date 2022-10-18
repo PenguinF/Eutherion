@@ -1,0 +1,108 @@
+﻿#region License
+/*********************************************************************************
+ * JsonKeyValueSyntax.cs
+ *
+ * Copyright (c) 2004-2022 Henk Nicolai
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+**********************************************************************************/
+#endregion
+
+using Eutherion.Collections;
+
+namespace Eutherion.Text.Json
+{
+    /// <summary>
+    /// Represents a single key-value pair in a <see cref="JsonMapSyntax"/>.
+    /// </summary>
+    public sealed class JsonKeyValueSyntax : JsonSyntax
+    {
+        /// <summary>
+        /// Gets the parent syntax node of this instance.
+        /// </summary>
+        public JsonMapSyntax Parent { get; }
+
+        /// <summary>
+        /// Gets the index of this key-value pair in the key-value pair collection of its parent.
+        /// </summary>
+        public int ParentKeyValueNodeIndex { get; }
+
+        /// <summary>
+        /// Gets the bottom-up only 'green' representation of this syntax node.
+        /// </summary>
+        public GreenJsonKeyValueSyntax Green { get; }
+
+        /// <summary>
+        /// Gets the value section node collection separated by colon characters.
+        /// </summary>
+        public SafeLazyObjectCollection<JsonMultiValueSyntax> ValueSectionNodes { get; }
+
+        /// <summary>
+        /// Gets the child colon syntax node collection.
+        /// </summary>
+        public SafeLazyObjectCollection<JsonColonSyntax> Colons { get; }
+
+        /// <summary>
+        /// Gets the start position of this syntax node relative to its parent's start position.
+        /// </summary>
+        public override int Start => JsonSpecialCharacter.SingleCharacterLength + Parent.Green.KeyValueNodes.GetElementOffset(ParentKeyValueNodeIndex);
+
+        /// <summary>
+        /// Gets the length of the text span corresponding with this syntax node.
+        /// </summary>
+        public override int Length => Green.Length;
+
+        /// <summary>
+        /// Gets the parent syntax node of this instance.
+        /// </summary>
+        public override JsonSyntax ParentSyntax => Parent;
+
+        /// <summary>
+        /// Gets the number of children of this syntax node.
+        /// </summary>
+        public override int ChildCount => ValueSectionNodes.Count + Colons.Count;
+
+        /// <summary>
+        /// Initializes the child at the given <paramref name="index"/> and returns it.
+        /// </summary>
+        public override JsonSyntax GetChild(int index)
+        {
+            // '>>' has the happy property that (-1) >> 1 evaluates to -1, which correctly throws an IndexOutOfRangeException.
+            if ((index & 1) == 0) return ValueSectionNodes[index >> 1];
+            return Colons[index >> 1];
+        }
+
+        /// <summary>
+        /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
+        /// </summary>
+        public override int GetChildStartPosition(int index) => Green.ValueSectionNodes.GetElementOrSeparatorOffset(index);
+
+        internal JsonKeyValueSyntax(JsonMapSyntax parent, int parentKeyValueNodeIndex)
+        {
+            Parent = parent;
+            ParentKeyValueNodeIndex = parentKeyValueNodeIndex;
+            Green = parent.Green.KeyValueNodes[parentKeyValueNodeIndex];
+
+            int valueSectionNodeCount = Green.ValueSectionNodes.Count;
+
+            ValueSectionNodes = new SafeLazyObjectCollection<JsonMultiValueSyntax>(
+                valueSectionNodeCount,
+                index => new JsonMultiValueSyntax(this, index));
+
+            Colons = new SafeLazyObjectCollection<JsonColonSyntax>(
+                valueSectionNodeCount - 1,
+                index => new JsonColonSyntax(this, index));
+        }
+    }
+}

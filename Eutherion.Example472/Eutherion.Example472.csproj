@@ -56,6 +56,10 @@
       <Project>{0cd9c050-31b3-4e14-97df-58abff0d984d}</Project>
       <Name>Eutherion.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Eutherion.Text.Json\Eutherion.Text.Json.csproj">
+      <Project>{256a739e-bb0f-4fb6-9220-e86226da59c6}</Project>
+      <Name>Eutherion.Text.Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eutherion.UIActions\Eutherion.UIActions.csproj">
       <Project>{6d9243d9-8524-4eb1-bda8-2c3f66b72c07}</Project>
       <Name>Eutherion.UIActions</Name>
