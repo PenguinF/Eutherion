@@ -159,6 +159,52 @@ namespace System
         }
 
         /// <summary>
+        /// Returns an array with a minimum required length from an existing array, and initializes it
+        /// with a value at each index outside of the bounds of the original array. At indexes within
+        /// the bounds of the original array, the values of the original and returned array are the same.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the elements of the array.
+        /// </typeparam>
+        /// <param name="array">
+        /// The one-dimensional, zero-based array to pad.
+        /// </param>
+        /// <param name="minimumLength">
+        /// The minimum length of the array to return.
+        /// </param>
+        /// <param name="value">
+        /// The value to set at each index of the array outside of the bounds of the original array.
+        /// </param>
+        /// <returns>
+        /// The original array if its length is equal to or greater than <paramref name="minimumLength"/>,
+        /// or a new array with the minimum required length and padded to the right with <paramref name="value"/>.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="minimumLength"/> is less than zero.
+        /// </exception>
+        public static T[] PadRight<T>(this T[] array, int minimumLength, T value)
+        {
+            if (minimumLength < 0) throw new ArgumentOutOfRangeException(nameof(minimumLength), minimumLength, $"{nameof(minimumLength)} should be 0 or greater.");
+
+            int len = array.Length;
+            if (minimumLength <= len) return array;
+
+            T[] paddedArray = new T[minimumLength];
+            Array.Copy(array, paddedArray, len);
+
+#if NET472
+            for (int i = len; i < minimumLength; i++)
+            {
+                paddedArray[i] = value;
+            }
+#else
+            Array.Fill(paddedArray, value, len, minimumLength - len);
+#endif
+
+            return paddedArray;
+        }
+
+        /// <summary>
         /// Iterates an action a fixed number of times.
         /// If the number of iterations is zero or lower, nothing happens.
         /// </summary>
