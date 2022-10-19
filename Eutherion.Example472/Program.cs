@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -158,6 +159,31 @@ namespace Eutherion.Example472
                 {
                     Console.WriteLine($"{piece} is worth {chessPieceValues[piece]} points.");
                 }
+
+                Console.WriteLine();
+                Console.WriteLine();
+
+                // JsonParser
+                string json = "{0, \"error\": [error,, true], \"ok\": -1 ] } /*";
+                Console.Write("Parsing json: ");
+                Console.WriteLine(json);
+                Console.WriteLine();
+
+                RootJsonSyntax rootSyntax = JsonParser.Parse(json);
+                Console.WriteLine("Errors:");
+                Console.Write(string.Join(Environment.NewLine, rootSyntax.Errors.Select(error => $"{error.ErrorLevel}: {error.ErrorCode} at {error.Start}-{error.Start + error.Length}")));
+                Console.WriteLine();
+                Console.WriteLine();
+
+                Console.WriteLine("Parse tree:");
+                List<(string, string)> formattedSyntaxNodes = new List<(string, string)>(FormattedJsonSyntaxNodes(json, rootSyntax.Syntax, 0));
+                int maxLength = formattedSyntaxNodes.Select(x => x.Item1.Length).Max();
+                string formatString = "{0,-" + maxLength + "}{1}";
+                foreach (var formatted in formattedSyntaxNodes)
+                {
+                    Console.WriteLine(string.Format(formatString, formatted.Item1, formatted.Item2 == null ? "" : $" '{formatted.Item2}'"));
+                }
+                Console.WriteLine();
             }
             catch (Exception e)
             {
@@ -165,6 +191,36 @@ namespace Eutherion.Example472
             }
 
             Console.ReadLine();
+        }
+
+        // Returns type name and optional terminal character string for each node in the tree.
+        // Indents nested syntax nodes.
+        static IEnumerable<(string, string)> FormattedJsonSyntaxNodes(string json, JsonSyntax node, int indent)
+        {
+            int start = node.AbsoluteStart;
+            int length = node.Length;
+            string typeName = node.GetType().Name;
+            string shortenedTypeName = typeName;
+            if (shortenedTypeName.StartsWith("Json")) shortenedTypeName = shortenedTypeName.Substring(4);
+            if (shortenedTypeName.EndsWith("Syntax")) shortenedTypeName = shortenedTypeName.Substring(0, shortenedTypeName.Length - 6);
+            string typeNameAndSpan = length == 0
+                ? $"{new string(' ', indent)}{shortenedTypeName}[]"
+                : $"{new string(' ', indent)}{shortenedTypeName}[{start}-{start + node.Length - 1}]";
+
+            if (node.IsTerminalSymbol(out _))
+            {
+                yield return (typeNameAndSpan, json.Substring(start, length));
+            }
+            else
+            {
+                yield return (typeNameAndSpan, null);
+
+                int nestedIndent = indent + 2;
+                for (int i = 0; i < node.ChildCount; i++)
+                {
+                    foreach (var formatted in FormattedJsonSyntaxNodes(json, node.GetChild(i), nestedIndent)) yield return formatted;
+                }
+            }
         }
     }
 }
