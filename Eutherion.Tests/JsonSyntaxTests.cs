@@ -41,7 +41,7 @@ namespace Eutherion.Text.Json.Tests
         [Fact]
         public void ArgumentChecks()
         {
-            Assert.Throws<ArgumentNullException>("source", () => GreenJsonBackgroundListSyntax.Create(null));
+            Assert.Throws<ArgumentNullException>("source", () => GreenJsonBackgroundListSyntax.Create(null!));
 
             Assert.Throws<ArgumentOutOfRangeException>("length", () => GreenJsonCommentSyntax.Create(-1));
             Assert.Throws<ArgumentOutOfRangeException>("length", () => GreenJsonCommentSyntax.Create(0));
@@ -50,26 +50,26 @@ namespace Eutherion.Text.Json.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonIntegerLiteralSyntax(0, -1));
 
-            Assert.Throws<ArgumentNullException>("validKey", () => new GreenJsonKeyValueSyntax(null, EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance));
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, null));
+            Assert.Throws<ArgumentNullException>("validKey", () => new GreenJsonKeyValueSyntax(null!, EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, null!));
             Assert.Throws<ArgumentException>("valueSectionNodes", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance));
 
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonListSyntax(null, false));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonListSyntax(null!, false));
             Assert.Throws<ArgumentException>("listItemNodes", () => new GreenJsonListSyntax(EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance, false));
 
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMapSyntax(null, false));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMapSyntax(null!, false));
             Assert.Throws<ArgumentException>("keyValueNodes", () => new GreenJsonMapSyntax(EmptyEnumerable<GreenJsonKeyValueSyntax>.Instance, false));
 
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMultiValueSyntax(null, GreenJsonBackgroundListSyntax.Empty));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMultiValueSyntax(null!, GreenJsonBackgroundListSyntax.Empty));
             Assert.Throws<ArgumentException>("valueNodes", () => new GreenJsonMultiValueSyntax(EmptyEnumerable<GreenJsonValueWithBackgroundSyntax>.Instance, GreenJsonBackgroundListSyntax.Empty));
             Assert.Throws<ArgumentNullException>("backgroundAfter", () => new GreenJsonMultiValueSyntax(
                 new SingleElementEnumerable<GreenJsonValueWithBackgroundSyntax>(new GreenJsonValueWithBackgroundSyntax(
-                    GreenJsonBackgroundListSyntax.Empty, GreenJsonMissingValueSyntax.Value)), null));
+                    GreenJsonBackgroundListSyntax.Empty, GreenJsonMissingValueSyntax.Value)), null!));
 
-            Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonCurlyCloseSyntax)null));
-            Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonSquareBracketCloseSyntax)null));
+            Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonCurlyCloseSyntax)null!));
+            Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonSquareBracketCloseSyntax)null!));
 
-            Assert.Throws<ArgumentNullException>("value", () => new GreenJsonStringLiteralSyntax(null, 2));
+            Assert.Throws<ArgumentNullException>("value", () => new GreenJsonStringLiteralSyntax(null!, 2));
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonStringLiteralSyntax(string.Empty, -1));
 
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonUndefinedValueSyntax(0));
@@ -77,21 +77,21 @@ namespace Eutherion.Text.Json.Tests
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonUnterminatedMultiLineCommentSyntax(-1));
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonUnterminatedMultiLineCommentSyntax(0));
 
-            Assert.Throws<ArgumentNullException>("backgroundBefore", () => new GreenJsonValueWithBackgroundSyntax(null, GreenJsonBooleanLiteralSyntax.False.Instance));
-            Assert.Throws<ArgumentNullException>("contentNode", () => new GreenJsonValueWithBackgroundSyntax(GreenJsonBackgroundListSyntax.Empty, null));
+            Assert.Throws<ArgumentNullException>("backgroundBefore", () => new GreenJsonValueWithBackgroundSyntax(null!, GreenJsonBooleanLiteralSyntax.False.Instance));
+            Assert.Throws<ArgumentNullException>("contentNode", () => new GreenJsonValueWithBackgroundSyntax(GreenJsonBackgroundListSyntax.Empty, null!));
 
             Assert.Throws<ArgumentOutOfRangeException>("length", () => GreenJsonWhitespaceSyntax.Create(-1));
             Assert.Throws<ArgumentOutOfRangeException>("length", () => GreenJsonWhitespaceSyntax.Create(0));
 
-            Assert.Throws<ArgumentNullException>("value", () => JsonValue.TryCreate((string)null));
+            Assert.Throws<ArgumentNullException>("value", () => JsonValue.TryCreate((string)null!));
             Assert.Throws<ArgumentException>("value", () => JsonValue.TryCreate(string.Empty));
 
             Assert.Throws<ArgumentNullException>("syntax", () => new RootJsonSyntax(
-                null,
+                null!,
                 EmptyEnumerable<JsonErrorInfo>.Instance));
             Assert.Throws<ArgumentNullException>("errors", () => new RootJsonSyntax(
                 CreateMultiValue(new GreenJsonIntegerLiteralSyntax(0, 1)),
-                null));
+                null!));
 
             // Both GreenJsonStringLiteralSyntax instances should be the same, and in below test they are not.
             Assert.Throws<ArgumentException>("validKey", () => new GreenJsonKeyValueSyntax(
@@ -263,13 +263,13 @@ namespace Eutherion.Text.Json.Tests
                 });
 
             // The first GreenJsonMultiValueSyntax must be exactly equal to the valid key.
-            Assert.True(keyValue.ValidKey.IsJust(out GreenJsonStringLiteralSyntax validKey));
+            Assert.True(keyValue.ValidKey.IsJust(out var validKey));
             Assert.Same(stringLiteral, validKey);
             Assert.Same(stringLiteral, keyValue.KeyNode.ValueNode.ContentNode);
 
             // The second GreenJsonMultiValueSyntax must be exactly equal to the first value node.
-            Assert.True(keyValue.FirstValueNode.IsJust(out GreenJsonMultiValueSyntax firstValueNode));
-            Assert.Same(integerLiteral, firstValueNode.ValueNode.ContentNode);
+            Assert.True(keyValue.FirstValueNode.IsJust(out var firstValueNode));
+            Assert.Same(integerLiteral, firstValueNode!.ValueNode.ContentNode);
         }
 
         [Fact]

@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Xunit;
 
@@ -31,7 +32,7 @@ namespace Eutherion.Text.Json.Tests
         /// <summary>
         /// Indicates if two symbols of the same type should combine into one.
         /// </summary>
-        private static bool WillCombine(Type tokenType1, Type tokenType2, out Type resultTokenType)
+        private static bool WillCombine(Type tokenType1, Type tokenType2, [AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out Type resultTokenType)
         {
             if (tokenType1 == typeof(GreenJsonWhitespaceSyntax))
             {
@@ -105,8 +106,8 @@ namespace Eutherion.Text.Json.Tests
         [Fact]
         public void NullSourceThrows()
         {
-            Assert.Throws<ArgumentNullException>(() => JsonParser.TokenizeAll(null));
-            Assert.Throws<ArgumentNullException>(() => JsonParser.Parse(null));
+            Assert.Throws<ArgumentNullException>(() => JsonParser.TokenizeAll(null!));
+            Assert.Throws<ArgumentNullException>(() => JsonParser.Parse(null!));
         }
 
         [Theory]
@@ -342,7 +343,7 @@ namespace Eutherion.Text.Json.Tests
             // first test the combination of 2 tokens, and then if that succeeds
             // test every other token that could precede it in a loop.
             {
-                if (WillCombine(type1, type2, out Type type12))
+                if (WillCombine(type1, type2, out var type12))
                 {
                     AssertTokens(
                         json1 + json2,
@@ -368,9 +369,9 @@ namespace Eutherion.Text.Json.Tests
                     Type type0 = x0.Item2;
 
                     // Exceptions for when 2 or 3 symbols go together and make 1.
-                    if (WillCombine(type0, type1, out Type type01))
+                    if (WillCombine(type0, type1, out var type01))
                     {
-                        if (WillCombine(type01, type2, out Type type012))
+                        if (WillCombine(type01, type2, out var type012))
                         {
                             AssertTokens(
                                 json0 + json1 + json2,
@@ -384,7 +385,7 @@ namespace Eutherion.Text.Json.Tests
                                 ExpectToken(type2, json2.Length));
                         }
                     }
-                    else if (WillCombine(type1, type2, out Type type12))
+                    else if (WillCombine(type1, type2, out var type12))
                     {
                         AssertTokens(
                             json0 + json1 + json2,
