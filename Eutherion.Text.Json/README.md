@@ -12,4 +12,4 @@ It accomplishes this by:
 
 Note that this implementation is stack-based, with the disadvantage that it imposes a maximum depth to the syntax tree. This makes it useful for parsing e.g. settings files, but not for deeply nested data structures.
 
-This implementation is fully tested, however does not expose a complete public API. In particular, it is not possible to create syntax trees from scratch that contain all information necessary to serialize to Json.
+This implementation is fully tested, however does not expose a feature-complete public API. In particular, it is not possible to create syntax trees from scratch that contain all information necessary to serialize to Json.
