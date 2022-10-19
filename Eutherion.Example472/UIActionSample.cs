@@ -90,7 +90,7 @@ namespace Eutherion.Example472
     // Knowing now how to define actions, what remains to be declared is the definitions themselves,
     // and they could look something like this:
 
-    public static class ShardUIActions
+    public static class SharedUIActions
     {
         public static readonly UIAction Close = new UIAction(
             new StringKey<UIAction>(nameof(Close)),
@@ -192,8 +192,8 @@ namespace Eutherion.Example472
         {
             get
             {
-                yield return (ShardUIActions.Copy, TryCopy);
-                yield return (ShardUIActions.SelectAll, TrySelectAll);
+                yield return (SharedUIActions.Copy, TryCopy);
+                yield return (SharedUIActions.SelectAll, TrySelectAll);
             }
         }
     }
@@ -238,11 +238,11 @@ namespace Eutherion.Example472
             // iterate through controls, and discover this text box has a handler registered
             // for Ctrl+C, which it can then invoke.
             // Using this overload of BindAction() means that the default suggested ways of exposing an action are used,
-            // as they are defined in ShardUIActions. A different overload allows you to override the default, for example
+            // as they are defined in SharedUIActions. A different overload allows you to override the default, for example
             // if you wouldn't want this particular instance to show in a context menu, but would still like to have
             // Ctrl+C work as expected.
-            textBox.BindAction(ShardUIActions.Copy, textBox.TryCopy);
-            textBox.BindAction(ShardUIActions.SelectAll, textBox.TrySelectAll);
+            textBox.BindAction(SharedUIActions.Copy, textBox.TryCopy);
+            textBox.BindAction(SharedUIActions.SelectAll, textBox.TrySelectAll);
 
             // Alternatively:
             foreach ((UIAction action, UIActionHandlerFunc handler) in textBox.DefaultUIActionBindings)
@@ -253,28 +253,28 @@ namespace Eutherion.Example472
             // It is possible to bind actions to components which have their handler defined elsewhere.
             // Displaying a 'Close' menu item for example in the text box's context menu to close this window,
             // along with menu items for 'Select All' and 'Copy', looks like this:
-            textBox.BindAction(ShardUIActions.Close, TryClose);
+            textBox.BindAction(SharedUIActions.Close, TryClose);
 
             // Again, this assumes code exists that builds a context menu for a Control that is also a IUIActionHandlerProvider.
 
             // To hide the shortcut key for closing the Form in the context menu, the default suggested bindings
-            // in ShardUIActions.Close can be overridden:
+            // in SharedUIActions.Close can be overridden:
             textBox.BindAction(
-                ShardUIActions.Close.Key,
+                SharedUIActions.Close.Key,
                 new ImplementationSet<IUIActionInterface>
                 {
                     // Only use the context menu interface.
-                    ShardUIActions.Close.DefaultInterfaces.Get<ContextMenuUIActionInterface>(),
+                    SharedUIActions.Close.DefaultInterfaces.Get<ContextMenuUIActionInterface>(),
                 },
                 TryClose);
 
             // Replacing the shortcut key with e.g. Ctrl+F4 for the text box can be done like this:
             textBox.BindAction(
-                ShardUIActions.Close.Key,
+                SharedUIActions.Close.Key,
                 new ImplementationSet<IUIActionInterface>
                 {
                     new ShortcutKeysUIActionInterface { Shortcuts = new Keys[] { new Keys { Control = true, Key = ConsoleKey.F4 } } },
-                    ShardUIActions.Close.DefaultInterfaces.Get<ContextMenuUIActionInterface>(),
+                    SharedUIActions.Close.DefaultInterfaces.Get<ContextMenuUIActionInterface>(),
                 },
                 TryClose);
 
