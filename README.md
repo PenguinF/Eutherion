@@ -1,12 +1,8 @@
-# Eutherion
+# Eutherion .NET libraries
 
-Contains utilities and extensions to the .NET standard libraries:
+* Eutherion.Common - Basic extensions to the .NET standard libraries.
+* Eutherion.Utilities - Miscellaneous .NET utilities.
+* Eutherion.Text.Json - Lightweight Json parser with error correction and recovery.
+* Eutherion.UIActions - A basic framework for modeling user actions.
 
-  * Extra LINQ extensions, such as _Any(out TValue value)_, _ForEach(Action\<T\>)_, and _ToArrayEx()_ which has a clause for IReadOnlyCollection\<T\>.
-  * Optional values (_Maybe\<TValue\>_).
-  * Discriminated unions, implemented without branching (_Union\<T1...Tn\>_).
-  * A way to create string keys of different types without having to copy the implementation (_StringKey\<T\>_ where 'T' is an otherwise meaningless type value to add type safety).
-  * Specialized IEnumerable\<T\> implementations for zero or one elements.
-  * _ReadOnlyList\<T\>_, a light-weight wrapper around an array to make it read-only/immutable.
-  * Bit vector (uint/ulong) extensions, such as _UIntExtensions.SetBits()_, to enumerate over all set bits of a value.
-  * Other, miscellaneous members (_void_, _Box\<T\>_, etc.)
+Eutherion.Example472 contains a project with sample code using these four libraries, and is written for a .NET 4.7.2. target.

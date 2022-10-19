@@ -176,7 +176,7 @@ namespace Eutherion.Text.Json.Tests
                 }, JsonTokenizerTests.JsonTestSymbols().Count()).ToArray());
         }
 
-        private static int AssertParseTree(ExpectedJsonTree expectedParseTree, JsonSyntax expectedParent, int expectedStart, JsonSyntax actualParseTree)
+        private static int AssertParseTree(ExpectedJsonTree expectedParseTree, JsonSyntax? expectedParent, int expectedStart, JsonSyntax actualParseTree)
         {
             Assert.IsType(expectedParseTree.ExpectedType, actualParseTree);
             Assert.Same(expectedParent, actualParseTree.ParentSyntax);
@@ -198,8 +198,8 @@ namespace Eutherion.Text.Json.Tests
             {
                 if (actualParseTree.Length > 0)
                 {
-                    Assert.True(actualParseTree.IsTerminalSymbol(out IJsonSymbol jsonSymbol));
-                    length = jsonSymbol.Length;
+                    Assert.True(actualParseTree.IsTerminalSymbol(out var jsonSymbol));
+                    length = jsonSymbol!.Length;
                 }
                 else
                 {
