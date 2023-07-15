@@ -43,6 +43,10 @@ namespace Eutherion.Tests
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.AppendIfAny((null as IEnumerable<int>)!, 0));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.AppendIfAny((null as IEnumerable<int>)!, Array.Empty<int>()));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.AppendIfAny(Array.Empty<int>(), null!));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny((null as IEnumerable<int>)!, 0, 0));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny((null as IEnumerable<int>)!, Array.Empty<int>(), Array.Empty<int>()));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny(Array.Empty<int>(), (null as IEnumerable<int>)!, Array.Empty<int>()));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny(Array.Empty<int>(), Array.Empty<int>(), (null as IEnumerable<int>)!));
         }
 
         // Implicit predicate is x => x == 0.
@@ -229,6 +233,27 @@ namespace Eutherion.Tests
                 : new string(charCollection.ToArray()) + appendChar + appendChar;
 
             Assert.Equal(expectedString2, new string(charCollection.AppendIfAny(new string(appendChar, 2)).ToArray()));
+        }
+        
+        public static IEnumerable<object?[]> SurroundIfAnyParameters()
+            => TestUtilities.Wrap(TestUtilities.CrossJoin(CharCollections(), JoinCharacters(), JoinCharacters()));
+
+        [Theory]
+        [MemberData(nameof(SurroundIfAnyParameters))]
+        public void TestSurroundIfAny(IEnumerable<char> charCollection, char prependChar, char appendChar)
+        {
+            char[] charArray = charCollection.ToArray();
+            string expectedString = charArray.Length == 0
+                ? string.Empty
+                : prependChar + new string(charCollection.ToArray()) + appendChar;
+
+            Assert.Equal(expectedString, new string(charCollection.SurroundIfAny(prependChar, appendChar).ToArray()));
+
+            string expectedString2 = charArray.Length == 0
+                ? string.Empty
+                : prependChar + (prependChar + new string(charCollection.ToArray()) + appendChar + appendChar);
+
+            Assert.Equal(expectedString2, new string(charCollection.SurroundIfAny(new string(prependChar, 2), new string(appendChar, 2)).ToArray()));
         }
     }
 }

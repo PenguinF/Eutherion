@@ -408,6 +408,111 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Surrounds a sequence with start and end elements if and only if the sequence is non-empty.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="startElement">
+        /// The element to prepend to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <param name="endElement">
+        /// The element to append to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with <paramref name="startElement"/> followed by all elements of <paramref name="source"/>
+        /// and ends with <paramref name="endElement"/> if <paramref name="source"/> is non-empty, otherwise an empty sequence.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> SurroundIfAny<TSource>(this IEnumerable<TSource> source, TSource startElement, TSource endElement)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            return SurroundIfAnyYielder(source, startElement, endElement);
+        }
+
+        private static IEnumerable<TSource> SurroundIfAnyYielder<TSource>(IEnumerable<TSource> source, TSource startElement, TSource endElement)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    yield return startElement;
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
+
+                    yield return endElement;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Surrounds a sequence with start and end sequences if and only if the sequence is non-empty.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="startSequence">
+        /// The sequence of elements to prepend to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <param name="endSequence">
+        /// The sequence of elements to append to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with all elements of <paramref name="startSequence"/> followed by all elements of <paramref name="source"/>
+        /// and ends with all elements of <paramref name="endSequence"/> if <paramref name="source"/> is non-empty, otherwise an empty sequence.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> or <paramref name="startSequence"/> or <paramref name="endSequence"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> SurroundIfAny<TSource>(this IEnumerable<TSource> source, IEnumerable<TSource> startSequence, IEnumerable<TSource> endSequence)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (startSequence == null) throw new ArgumentNullException(nameof(startSequence));
+            if (endSequence == null) throw new ArgumentNullException(nameof(endSequence));
+
+            return SurroundIfAnyYielder(source, startSequence, endSequence);
+        }
+
+        private static IEnumerable<TSource> SurroundIfAnyYielder<TSource>(IEnumerable<TSource> source, IEnumerable<TSource> startSequence, IEnumerable<TSource> endSequence)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    foreach (var element in startSequence)
+                    {
+                        yield return element;
+                    }
+
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
+
+                    foreach (var element in endSequence)
+                    {
+                        yield return element;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Performs an action on each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">
