@@ -2,7 +2,7 @@
 /*********************************************************************************
  * SpecializedEnumerableTests.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -100,44 +100,52 @@ namespace Eutherion.Tests
             Assert.Throws<InvalidOperationException>(() => EnumerationMethod7(enumerable));
         }
 
-        public static object?[][] IntEnumerables() => new object?[][]
+        private static IEnumerable<(IEnumerable<int> ints, string resultString)> IntEnumerables() => new (IEnumerable<int>, string)[]
         {
-            new object?[] { EmptyEnumerable<int>.Instance, "" },
-            new object?[] { new SingleElementEnumerable<int>(0), "0" },
+            (EmptyEnumerable<int>.Instance, "" ),
+            (new SingleElementEnumerable<int>(0), "0" ),
         };
 
-        public static object?[][] NullIntEnumerables() => new object?[][]
+        private static IEnumerable<(IEnumerable<int?> ints, string resultString)> NullIntEnumerables() => new (IEnumerable<int?>, string)[]
         {
-            new object?[] { EmptyEnumerable<int?>.Instance, "" },
-            new object?[] { new SingleElementEnumerable<int?>(null), "" },
+            (EmptyEnumerable<int?>.Instance, ""),
+            (new SingleElementEnumerable<int?>(null), ""),
         };
 
-        public static object?[][] StringEnumerables() => new object?[][]
+        private static IEnumerable<(IEnumerable<string> strings, string resultString)> StringEnumerables() => new (IEnumerable<string>, string)[]
         {
-            new object?[] { EmptyEnumerable<string>.Instance, "" },
-            new object?[] { new SingleElementEnumerable<string>("x"), "x" },
+            (EmptyEnumerable<string>.Instance, ""),
+            (new SingleElementEnumerable<string>("x"), "x"),
         };
 
-        public static object?[][] NullStringEnumerables() => new object?[][]
+        private static IEnumerable<(IEnumerable<string?> strings, string resultString)> NullStringEnumerables() => new (IEnumerable<string?>, string)[]
         {
-            new object?[] { EmptyEnumerable<string?>.Instance, "" },
-            new object?[] { new SingleElementEnumerable<string?>(null), "" },
+            (EmptyEnumerable<string?>.Instance, ""),
+            (new SingleElementEnumerable<string?>(null), ""),
         };
+
+        public static IEnumerable<object?[]> WrappedIntEnumerables() => TestUtilities.Wrap(IntEnumerables());
 
         [Theory]
-        [MemberData(nameof(IntEnumerables))]
+        [MemberData(nameof(WrappedIntEnumerables))]
         public void IntEnumerableBehavior(IEnumerable<int> ints, string resultString) => TestEnumerableBehavior(ints, resultString);
 
+        public static IEnumerable<object?[]> WrappedNullIntEnumerables() => TestUtilities.Wrap(NullIntEnumerables());
+
         [Theory]
-        [MemberData(nameof(NullIntEnumerables))]
+        [MemberData(nameof(WrappedNullIntEnumerables))]
         public void NullIntEnumerableBehavior(IEnumerable<int?> ints, string resultString) => TestEnumerableBehavior(ints, resultString);
 
-        [Theory]
-        [MemberData(nameof(StringEnumerables))]
-        public void StringEnumerableBehavior(IEnumerable<string> strings, string resultString) => TestEnumerableBehavior(strings, resultString);
+        public static IEnumerable<object?[]> WrappedStringEnumerables() => TestUtilities.Wrap(StringEnumerables());
 
         [Theory]
-        [MemberData(nameof(NullStringEnumerables))]
+        [MemberData(nameof(WrappedStringEnumerables))]
+        public void StringEnumerableBehavior(IEnumerable<string> strings, string resultString) => TestEnumerableBehavior(strings, resultString);
+
+        public static IEnumerable<object?[]> WrappedNullStringEnumerables() => TestUtilities.Wrap(NullStringEnumerables());
+
+        [Theory]
+        [MemberData(nameof(WrappedNullStringEnumerables))]
         public void NullStringEnumerableBehavior(IEnumerable<string?> strings, string resultString) => TestEnumerableBehavior(strings, resultString);
     }
 }
