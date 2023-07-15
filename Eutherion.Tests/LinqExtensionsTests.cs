@@ -37,6 +37,12 @@ namespace Eutherion.Tests
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.Enumerate((null as IEnumerable<int>)!));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.Sequence((null as Func<int>)!));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.Iterate((null as Func<int, int>)!, 0));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.PrependIfAny((null as IEnumerable<int>)!, 0));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.PrependIfAny((null as IEnumerable<int>)!, Array.Empty<int>()));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.PrependIfAny(Array.Empty<int>(), null!));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.AppendIfAny((null as IEnumerable<int>)!, 0));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.AppendIfAny((null as IEnumerable<int>)!, Array.Empty<int>()));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.AppendIfAny(Array.Empty<int>(), null!));
         }
 
         // Implicit predicate is x => x == 0.
@@ -99,6 +105,8 @@ namespace Eutherion.Tests
             string.Empty,
             " ",
         };
+
+        private static char[] JoinCharacters() => new char[] { '\0', '-' };
 
         public static IEnumerable<object?[]> WrappedCharCollections() => TestUtilities.Wrap(CharCollections());
 
@@ -182,6 +190,45 @@ namespace Eutherion.Tests
             Assert.True(enumerator2.MoveNext());
             Assert.Equal(5, enumerator2.Current);
             Assert.Equal(6, index);
+        }
+
+        public static IEnumerable<object?[]> PrependAppendParameters()
+            => TestUtilities.Wrap(TestUtilities.CrossJoin(CharCollections(), JoinCharacters()));
+
+        [Theory]
+        [MemberData(nameof(PrependAppendParameters))]
+        public void TestPrependIfAny(IEnumerable<char> charCollection, char prependChar)
+        {
+            char[] charArray = charCollection.ToArray();
+            string expectedString = charArray.Length == 0
+                ? string.Empty
+                : prependChar + new string(charCollection.ToArray());
+
+            Assert.Equal(expectedString, new string(charCollection.PrependIfAny(prependChar).ToArray()));
+
+            string expectedString2 = charArray.Length == 0
+                ? string.Empty
+                : prependChar + (prependChar + new string(charCollection.ToArray()));
+
+            Assert.Equal(expectedString2, new string(charCollection.PrependIfAny(new string(prependChar, 2)).ToArray()));
+        }
+
+        [Theory]
+        [MemberData(nameof(PrependAppendParameters))]
+        public void TestAppendIfAny(IEnumerable<char> charCollection, char appendChar)
+        {
+            char[] charArray = charCollection.ToArray();
+            string expectedString = charArray.Length == 0
+                ? string.Empty
+                : new string(charCollection.ToArray()) + appendChar;
+
+            Assert.Equal(expectedString, new string(charCollection.AppendIfAny(appendChar).ToArray()));
+
+            string expectedString2 = charArray.Length == 0
+                ? string.Empty
+                : new string(charCollection.ToArray()) + appendChar + appendChar;
+
+            Assert.Equal(expectedString2, new string(charCollection.AppendIfAny(new string(appendChar, 2)).ToArray()));
         }
     }
 }

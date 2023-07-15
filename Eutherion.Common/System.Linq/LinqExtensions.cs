@@ -222,6 +222,189 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Adds an element to the start of a sequence if and only if the sequence is non-empty.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="startElement">
+        /// The element to prepend to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with <paramref name="startElement"/> followed by all elements of <paramref name="source"/>
+        /// if <paramref name="source"/> is non-empty, otherwise an empty sequence.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> PrependIfAny<TSource>(this IEnumerable<TSource> source, TSource startElement)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            return PrependIfAnyYielder(source, startElement);
+        }
+
+        private static IEnumerable<TSource> PrependIfAnyYielder<TSource>(IEnumerable<TSource> source, TSource startElement)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    yield return startElement;
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds a sequence of elements to the start of a sequence if and only if the sequence is non-empty.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="startSequence">
+        /// The sequence of elements to prepend to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with all elements of <paramref name="startSequence"/> followed by all elements of <paramref name="source"/>
+        /// if <paramref name="source"/> is non-empty, otherwise an empty sequence.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> or <paramref name="startSequence"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> PrependIfAny<TSource>(this IEnumerable<TSource> source, IEnumerable<TSource> startSequence)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (startSequence == null) throw new ArgumentNullException(nameof(startSequence));
+
+            return PrependIfAnyYielder(source, startSequence);
+        }
+
+        private static IEnumerable<TSource> PrependIfAnyYielder<TSource>(IEnumerable<TSource> source, IEnumerable<TSource> startSequence)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    foreach (var element in startSequence)
+                    {
+                        yield return element;
+                    }
+
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds an element to the end of a sequence if and only if the sequence is non-empty.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="endElement">
+        /// The element to append to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with all elements of <paramref name="source"/>
+        /// and ends with <paramref name="endElement"/> if <paramref name="source"/> is non-empty, otherwise an empty sequence.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> AppendIfAny<TSource>(this IEnumerable<TSource> source, TSource endElement)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            return AppendIfAnyYielder(source, endElement);
+        }
+
+        private static IEnumerable<TSource> AppendIfAnyYielder<TSource>(IEnumerable<TSource> source, TSource endElement)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
+
+                    yield return endElement;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds a sequence of elements to the end of a sequence if and only if the sequence is non-empty.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="endSequence">
+        /// The sequence of elements to append to <paramref name="source"/> if <paramref name="source"/> is non-empty.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with all elements of <paramref name="source"/>
+        /// and ends with all elements of <paramref name="endSequence"/> if <paramref name="source"/> is non-empty, otherwise an empty sequence.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> or <paramref name="endSequence"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> AppendIfAny<TSource>(this IEnumerable<TSource> source, IEnumerable<TSource> endSequence)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (endSequence == null) throw new ArgumentNullException(nameof(endSequence));
+
+            return AppendIfAnyYielder(source, endSequence);
+        }
+
+        private static IEnumerable<TSource> AppendIfAnyYielder<TSource>(IEnumerable<TSource> source, IEnumerable<TSource> endSequence)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return enumerator.Current;
+                    }
+
+                    foreach (var element in endSequence)
+                    {
+                        yield return element;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Performs an action on each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">
