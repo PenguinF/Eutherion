@@ -125,7 +125,7 @@ namespace System.Linq
         /// The type of the elements of <paramref name="source"/>.
         /// </typeparam>
         /// <param name="source">
-        /// A sequence of values.
+        /// A sequence of elements.
         /// </param>
         /// <returns>
         /// A <see cref="IEnumerable{T}"/> whose elements are the same as the elements in <paramref name="source"/>.
