@@ -286,6 +286,12 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> or <paramref name="startSequence"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// To prepend a sequence regardless of whether or not <paramref name="source"/> is empty, use e.g:
+        /// <code>
+        /// <paramref name="startSequence"/>.Concat(<paramref name="source"/>);
+        /// </code>
+        /// </remarks>
         public static IEnumerable<TSource> PrependIfAny<TSource>(this IEnumerable<TSource> source, IEnumerable<TSource> startSequence)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -378,6 +384,12 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> or <paramref name="endSequence"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// To append a sequence regardless of whether or not <paramref name="source"/> is empty, use e.g:
+        /// <code>
+        /// <paramref name="source"/>.Concat(<paramref name="endSequence"/>);
+        /// </code>
+        /// </remarks>
         public static IEnumerable<TSource> AppendIfAny<TSource>(this IEnumerable<TSource> source, IEnumerable<TSource> endSequence)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -429,6 +441,12 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// To surround <paramref name="source"/> with elements regardless of whether or not it is empty, use e.g:
+        /// <code>
+        /// <paramref name="source"/>.Prepend(<paramref name="startElement"/>).Append(<paramref name="endElement"/>);
+        /// </code>
+        /// </remarks>
         public static IEnumerable<TSource> SurroundIfAny<TSource>(this IEnumerable<TSource> source, TSource startElement, TSource endElement)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -477,6 +495,12 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> or <paramref name="startSequence"/> or <paramref name="endSequence"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// To surround <paramref name="source"/> with sequences regardless of whether or not it is empty, use e.g:
+        /// <code>
+        /// <paramref name="startSequence"/>.Concat(<paramref name="source"/>).Concat(<paramref name="endSequence"/>);
+        /// </code>
+        /// </remarks>
         public static IEnumerable<TSource> SurroundIfAny<TSource>(this IEnumerable<TSource> source, IEnumerable<TSource> startSequence, IEnumerable<TSource> endSequence)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
