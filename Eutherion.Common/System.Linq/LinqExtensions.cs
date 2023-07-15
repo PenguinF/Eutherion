@@ -24,6 +24,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System.Linq
 {
+#if !NET472
+#pragma warning disable IDE0063 // Use simple 'using' statement - not supported in .NET 4.7.2.
+#endif
     /// <summary>
     /// Contains extension methods for <see cref="IEnumerable{T}"/>.
     /// </summary>
@@ -501,4 +504,7 @@ namespace System.Linq
             return Array.Empty<TSource>();
         }
     }
+#if !NET472
+#pragma warning restore IDE0063 // Use simple 'using' statement
+#endif
 }
