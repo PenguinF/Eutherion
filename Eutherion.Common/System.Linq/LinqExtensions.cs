@@ -2,7 +2,7 @@
 /*********************************************************************************
  * LinqExtensions.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -63,10 +63,18 @@ namespace System.Linq
 
         public static bool Any<TSource>(this IEnumerable<TSource> source, [MaybeNullWhen(false)] out TSource value)
         {
+            // Argument check on 'source' to trigger the ArgumentNullException before the state machine is entered.
+            // This is done for each method with 'yield return's.
+
             // TODO: Use null validation operator '!!' when migrating to C# 11.
             // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-parameter-check
             if (source == null) throw new ArgumentNullException(nameof(source));
 
+            return AnyYielder(source, out value);
+        }
+
+        private static bool AnyYielder<TSource>(IEnumerable<TSource> source, [MaybeNullWhen(false)] out TSource value)
+        {
             foreach (var element in source)
             {
                 value = element;
@@ -103,6 +111,11 @@ namespace System.Linq
             if (source == null) throw new ArgumentNullException(nameof(source));
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
+            return AnyYielder(source, predicate, out value);
+        }
+
+        private static bool AnyYielder<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate, [MaybeNullWhen(false)] out TSource value)
+        {
             foreach (var element in source)
             {
                 if (predicate(element))
@@ -137,6 +150,11 @@ namespace System.Linq
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
+            return EnumerateYielder(source);
+        }
+
+        private static IEnumerable<TSource> EnumerateYielder<TSource>(IEnumerable<TSource> source)
+        {
             foreach (var element in source)
             {
                 yield return element;
@@ -160,6 +178,12 @@ namespace System.Linq
         public static IEnumerable<TResult> Sequence<TResult>(this Func<TResult> generator)
         {
             if (generator == null) throw new ArgumentNullException(nameof(generator));
+
+            return SequenceYielder(generator);
+        }
+
+        private static IEnumerable<TResult> SequenceYielder<TResult>(Func<TResult> generator)
+        {
             for (; ; ) yield return generator();
         }
 
@@ -184,6 +208,12 @@ namespace System.Linq
         public static IEnumerable<TResult> Iterate<TResult>(this Func<TResult, TResult> generator, TResult seed)
         {
             if (generator == null) throw new ArgumentNullException(nameof(generator));
+
+            return IterateYielder(generator, seed);
+        }
+
+        private static IEnumerable<TResult> IterateYielder<TResult>(Func<TResult, TResult> generator, TResult seed)
+        {
             for (; ; )
             {
                 yield return seed;
