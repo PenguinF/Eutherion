@@ -591,6 +591,51 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Enumerates all subsequences of a sequence.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <returns>
+        /// A new sequence that enumerates all subsequences.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        /// A subsequence of a sequence can be seen as the same sequence, except that for each element
+        /// one can choose whether or not to enumerate it. This means that the order of enumeration is preserved.
+        /// For example, the subsequences of "abcd" would be:
+        /// "", "a", "b", "ab", "c", "ac", "bc", "abc", "d", "ad", "bd", "abd", "cd", "acd", "bcd", "abcd".
+        /// </remarks>
+        public static IEnumerable<IEnumerable<TSource>> Subsequences<TSource>(this IEnumerable<TSource> source)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            return SubsequencesYielder(source);
+        }
+
+        private static IEnumerable<IEnumerable<TSource>> SubsequencesYielder<TSource>(IEnumerable<TSource> source)
+        {
+            yield return Enumerable.Empty<TSource>();
+
+            int count = 0;
+
+            foreach (var element in source)
+            {
+                foreach (var subsequence in SubsequencesYielder(source.Take(count)))
+                {
+                    yield return subsequence.Append(element);
+                }
+
+                count++;
+            }
+        }
+
+        /// <summary>
         /// Performs an action on each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">

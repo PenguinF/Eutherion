@@ -48,6 +48,7 @@ namespace Eutherion.Tests
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny(Array.Empty<int>(), (null as IEnumerable<int>)!, Array.Empty<int>()));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny(Array.Empty<int>(), Array.Empty<int>(), (null as IEnumerable<int>)!));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.Intercalate((null as IEnumerable<int>)!, 0));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.Subsequences((null as IEnumerable<int>)!));
         }
 
         // Implicit predicate is x => x == 0.
@@ -235,7 +236,7 @@ namespace Eutherion.Tests
 
             Assert.Equal(expectedString2, new string(charCollection.AppendIfAny(new string(appendChar, 2)).ToArray()));
         }
-        
+
         public static IEnumerable<object?[]> SurroundIfAnyParameters()
             => TestUtilities.Wrap(TestUtilities.CrossJoin(CharCollections(), JoinCharacters(), JoinCharacters()));
 
@@ -265,6 +266,28 @@ namespace Eutherion.Tests
             string expectedString = string.Join(separator, strArray);
 
             Assert.Equal(expectedString, new string(charCollection.Intercalate(separator).ToArray()));
+        }
+
+        private static IEnumerable<(string value, string[] expectedSubsequences)> SubsequencesTestCases() => new (string, string[])[]
+        {
+            ("", new[] { "" }),
+            ("a", new[] { "", "a" }),
+            ("ab", new[] { "", "a", "b", "ab" }),
+            ("abc", new[] { "", "a", "b", "ab", "c", "ac", "bc", "abc" }),
+            ("abcd", new[] { "", "a", "b", "ab", "c", "ac", "bc", "abc", "d", "ad", "bd", "abd", "cd", "acd", "bcd", "abcd" }),
+        };
+
+        public static IEnumerable<object?[]> WrappedSubsequencesTestCases() => TestUtilities.Wrap(SubsequencesTestCases());
+
+        [Theory]
+        [MemberData(nameof(WrappedSubsequencesTestCases))]
+        public void TestSubsequences(string value, string[] expectedSubsequences)
+        {
+            // Check that subsequences are generated correctly, and in the expected order.
+            Assert.Collection(value.Subsequences(),
+                expectedSubsequences.Select(
+                    expectedSubsequence => new Action<IEnumerable<char>>(
+                        actualSubsequence => Assert.Equal(expectedSubsequence, new string(actualSubsequence.ToArray())))).ToArray());
         }
     }
 }
