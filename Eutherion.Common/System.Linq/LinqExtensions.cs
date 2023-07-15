@@ -537,6 +537,60 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Enumerates all elements of a sequence, using the specified separator between each element.
+        /// See also <seealso cref="string.Join(string, IEnumerable{string})"/> for a similar feature.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="separator">
+        /// The element to use as a separator.
+        /// <paramref name="separator"/> is included in the returned string if and only if <paramref name="source"/> has more than one element.
+        /// </param>
+        /// <returns>
+        /// A new sequence that enumerates all elements of <paramref name="source"/>, and enumerating <paramref name="separator"/>
+        /// between each successive element of <paramref name="source"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        /// For example, these two expressions have the same effect:
+        /// <code>string.Join(separator, values);</code>
+        /// <code>new string(values.Intercalate(separator).SelectMany(x => x).ToArray());</code>
+        /// Note that the Intercalate() version needs a SelectMany() to flatten the result into a single IEnumerable&lt;char&gt;.
+        /// </remarks>
+
+        // Terminology-wise reusing 'Join' matching string.Join() would be nice, except that Enumerable.Join() exists already
+        // which is an entirely different concept. Instead, go with the Haskell name and add see-also + example to the docs.
+        public static IEnumerable<TSource> Intercalate<TSource>(this IEnumerable<TSource> source, TSource separator)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            return IntercalateYielder(source, separator);
+        }
+
+        private static IEnumerable<TSource> IntercalateYielder<TSource>(IEnumerable<TSource> source, TSource separator)
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    yield return enumerator.Current;
+
+                    while (enumerator.MoveNext())
+                    {
+                        yield return separator;
+                        yield return enumerator.Current;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Performs an action on each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">

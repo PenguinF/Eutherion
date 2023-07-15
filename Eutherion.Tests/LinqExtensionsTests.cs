@@ -47,6 +47,7 @@ namespace Eutherion.Tests
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny((null as IEnumerable<int>)!, Array.Empty<int>(), Array.Empty<int>()));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny(Array.Empty<int>(), (null as IEnumerable<int>)!, Array.Empty<int>()));
             Assert.Throws<ArgumentNullException>(() => LinqExtensions.SurroundIfAny(Array.Empty<int>(), Array.Empty<int>(), (null as IEnumerable<int>)!));
+            Assert.Throws<ArgumentNullException>(() => LinqExtensions.Intercalate((null as IEnumerable<int>)!, 0));
         }
 
         // Implicit predicate is x => x == 0.
@@ -196,11 +197,11 @@ namespace Eutherion.Tests
             Assert.Equal(6, index);
         }
 
-        public static IEnumerable<object?[]> PrependAppendParameters()
+        public static IEnumerable<object?[]> PrependAppendIntercalateParameters()
             => TestUtilities.Wrap(TestUtilities.CrossJoin(CharCollections(), JoinCharacters()));
 
         [Theory]
-        [MemberData(nameof(PrependAppendParameters))]
+        [MemberData(nameof(PrependAppendIntercalateParameters))]
         public void TestPrependIfAny(IEnumerable<char> charCollection, char prependChar)
         {
             char[] charArray = charCollection.ToArray();
@@ -218,7 +219,7 @@ namespace Eutherion.Tests
         }
 
         [Theory]
-        [MemberData(nameof(PrependAppendParameters))]
+        [MemberData(nameof(PrependAppendIntercalateParameters))]
         public void TestAppendIfAny(IEnumerable<char> charCollection, char appendChar)
         {
             char[] charArray = charCollection.ToArray();
@@ -254,6 +255,16 @@ namespace Eutherion.Tests
                 : prependChar + (prependChar + new string(charCollection.ToArray()) + appendChar + appendChar);
 
             Assert.Equal(expectedString2, new string(charCollection.SurroundIfAny(new string(prependChar, 2), new string(appendChar, 2)).ToArray()));
+        }
+
+        [Theory]
+        [MemberData(nameof(PrependAppendIntercalateParameters))]
+        public void TestIntercalate(IEnumerable<char> charCollection, char separator)
+        {
+            string[] strArray = charCollection.Select(c => new string(c, 1)).ToArray();
+            string expectedString = string.Join(separator, strArray);
+
+            Assert.Equal(expectedString, new string(charCollection.Intercalate(separator).ToArray()));
         }
     }
 }
