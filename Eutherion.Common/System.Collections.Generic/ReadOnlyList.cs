@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ReadOnlyList.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ namespace System.Collections.Generic
         /// The initialized <see cref="ReadOnlyList{T}"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> is null.
+        /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
         public static ReadOnlyList<T> Create(IEnumerable<T> source)
         {

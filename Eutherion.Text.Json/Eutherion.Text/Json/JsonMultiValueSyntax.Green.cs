@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonMultiValueSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ namespace Eutherion.Text.Json
         /// The background symbols which directly trail the value nodes.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="valueNodes"/> and/or <paramref name="backgroundAfter"/> are null.
+        /// <paramref name="valueNodes"/> and/or <paramref name="backgroundAfter"/> are <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="valueNodes"/> is an empty enumeration.

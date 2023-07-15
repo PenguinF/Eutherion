@@ -2,7 +2,7 @@
 /*********************************************************************************
  * DictionaryExtensions.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace System.Collections.Generic
         /// or the new value for the key as returned by <paramref name="constructor" /> if the key was not in the dictionary.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="dictionary"/> and/or <paramref name="key"/> and/or <paramref name="constructor"/> are null.
+        /// <paramref name="dictionary"/> and/or <paramref name="key"/> and/or <paramref name="constructor"/> are <see langword="null"/>.
         /// </exception>
         /// <remarks>
         /// The key of the value returned from <paramref name="constructor" /> is assumed to be equal to the passed in <paramref name="key" /> parameter.
@@ -86,7 +86,7 @@ namespace System.Collections.Generic
         /// The key and value of the element to add.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="dictionary"/> is null -or- <paramref name="keyValuePair"/>.Key is null.
+        /// <paramref name="dictionary"/> is <see langword="null"/> -or- <paramref name="keyValuePair"/>.Key is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// An element with the same key already exists in the dictionary.

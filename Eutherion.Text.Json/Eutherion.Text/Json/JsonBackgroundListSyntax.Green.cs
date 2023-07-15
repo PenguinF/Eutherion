@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonBackgroundListSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Eutherion.Text.Json
         /// The new <see cref="GreenJsonBackgroundListSyntax"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> is null.
+        /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
         public static GreenJsonBackgroundListSyntax Create(IEnumerable<GreenJsonBackgroundSyntax> source)
         {

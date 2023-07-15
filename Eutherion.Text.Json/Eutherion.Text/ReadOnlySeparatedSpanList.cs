@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ReadOnlySeparatedSpanList.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -169,10 +169,10 @@ namespace Eutherion.Text
         /// The initialized <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> and/or <paramref name="separator"/> are null.
+        /// <paramref name="source"/> and/or <paramref name="separator"/> are <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// One or more elements in <paramref name="source"/> are null.
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
         /// </exception>
         public static ReadOnlySeparatedSpanList<TSpan, TSeparator> Create(IEnumerable<TSpan> source, TSeparator separator)
         {

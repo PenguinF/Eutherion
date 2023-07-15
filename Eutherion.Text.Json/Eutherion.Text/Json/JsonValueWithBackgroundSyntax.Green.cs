@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonValueWithBackgroundSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Eutherion.Text.Json
         /// The content node containing the actual value.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="backgroundBefore"/> and/or <paramref name="contentNode"/> are null.
+        /// <paramref name="backgroundBefore"/> and/or <paramref name="contentNode"/> are <see langword="null"/>.
         /// </exception>
         public GreenJsonValueWithBackgroundSyntax(GreenJsonBackgroundListSyntax backgroundBefore, GreenJsonValueSyntax contentNode)
         {

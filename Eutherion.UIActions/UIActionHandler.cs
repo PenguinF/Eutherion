@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UIActionHandler.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ namespace Eutherion.UIActions
         /// The <see cref="UIActionBinding"/> containing the <see cref="UIAction"/> to bind, its interfaces, and its handler.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="binding"/> is null.
+        /// <paramref name="binding"/> is <see langword="null"/>.
         /// </exception>
         public void BindAction(UIActionBinding binding)
         {
@@ -102,7 +102,7 @@ namespace Eutherion.UIActions
         /// or a <see cref="UIActionState"/> indicating whether or not the action was performed successfully, if <paramref name="perform"/> is true.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="actionKey"/> is null.
+        /// <paramref name="actionKey"/> is <see langword="null"/>.
         /// </exception>
         public UIActionState TryPerformAction(StringKey<UIAction> actionKey, bool perform)
         {

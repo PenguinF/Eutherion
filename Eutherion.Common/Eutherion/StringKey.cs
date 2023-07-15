@@ -2,7 +2,7 @@
 /*********************************************************************************
  * StringKey.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ namespace Eutherion
         /// in which the provided string key is used for equality comparison and hash code generation.
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="key"/> is null.
+        /// <paramref name="key"/> is <see langword="null"/>.
         /// </exception>
         public StringKey(string key)
             => Key = key ?? throw new ArgumentNullException(nameof(key));

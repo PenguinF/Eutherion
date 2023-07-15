@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonParser.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ namespace Eutherion.Text.Json
         /// A <see cref="RootJsonSyntax"/> instance which contains a parse tree and list of parse errors.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="json"/> is null.
+        /// <paramref name="json"/> is <see langword="null"/>.
         /// </exception>
         public static RootJsonSyntax Parse(string json) => Parse(json, DefaultMaximumDepth);
 
@@ -91,7 +91,7 @@ namespace Eutherion.Text.Json
         /// A <see cref="RootJsonSyntax"/> instance which contains a parse tree and list of parse errors.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="json"/> is null.
+        /// <paramref name="json"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maximumDepth"/> is 0 or lower.
@@ -108,7 +108,7 @@ namespace Eutherion.Text.Json
         /// A list of <see cref="IGreenJsonSymbol"/> instances together with a list of generated tokenization errors.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="json"/> is null.
+        /// <paramref name="json"/> is <see langword="null"/>.
         /// </exception>
         internal static (List<IGreenJsonSymbol>, List<JsonErrorInfo>) TokenizeAll(string json)
         {

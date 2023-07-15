@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonKeyValueSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ namespace Eutherion.Text.Json
         /// The enumeration of syntax nodes containing the key and values.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="validKey"/> and/or <paramref name="valueSectionNodes"/> are null.
+        /// <paramref name="validKey"/> and/or <paramref name="valueSectionNodes"/> are <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="validKey"/> is not the expected syntax node -or- <paramref name="valueSectionNodes"/> is an empty enumeration.

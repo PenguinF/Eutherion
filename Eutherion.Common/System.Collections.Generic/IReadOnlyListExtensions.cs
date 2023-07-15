@@ -2,7 +2,7 @@
 /*********************************************************************************
  * IReadOnlyListExtensions.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ namespace System.Collections.Generic
         /// otherwise <see cref="Maybe{T}.Nothing"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="list"/> and/or <paramref name="match"/> are null (Nothing in Visual Basic).
+        /// <paramref name="list"/> and/or <paramref name="match"/> are <see langword="null"/>.
         /// </exception>
         public static Maybe<int> FindIndex<TSource>(this IReadOnlyList<TSource> list, Predicate<TSource> match)
         {

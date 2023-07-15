@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UIAction.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Eutherion.UIActions
         /// The suggested default <see cref="ImplementationSet{TInterface}"/> which defines how the action is exposed to the user interface.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="action"/> and/or <paramref name="defaultInterfaces"/> are null.
+        /// <paramref name="action"/> and/or <paramref name="defaultInterfaces"/> are <see langword="null"/>.
         /// </exception>
         public UIAction(StringKey<UIAction> action, ImplementationSet<IUIActionInterface> defaultInterfaces)
         {

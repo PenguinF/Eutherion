@@ -45,7 +45,7 @@ namespace System.Linq
         /// true if the source sequence contains an element, otherwise false.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> is null (Nothing in Visual Basic).
+        /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
 
         // The static code analyzer for nullable code sometimes misses that 'value' is not-null if TSource is a non-nullable type and Any() returns true.
@@ -104,7 +104,7 @@ namespace System.Linq
         /// true if any elements in the source sequence pass the test in the specified predicate, otherwise false.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> or <paramref name="predicate"/> is null (Nothing in Visual Basic).
+        /// <paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.
         /// </exception>
         public static bool Any<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, [MaybeNullWhen(false)] out TSource value)
         {
@@ -144,7 +144,7 @@ namespace System.Linq
         /// A <see cref="IEnumerable{T}"/> whose elements are the same as the elements in <paramref name="source"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> is null (Nothing in Visual Basic).
+        /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
         public static IEnumerable<TSource> Enumerate<TSource>(this IEnumerable<TSource> source)
         {
@@ -173,7 +173,7 @@ namespace System.Linq
         /// <returns>
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is null (Nothing in Visual Basic).
+        /// <paramref name="generator"/> is <see langword="null"/>.
         /// </exception>
         public static IEnumerable<TResult> Sequence<TResult>(this Func<TResult> generator)
         {
@@ -203,7 +203,7 @@ namespace System.Linq
         /// A <see cref="IEnumerable{T}"/> with the generated values.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is null (Nothing in Visual Basic).
+        /// <paramref name="generator"/> is <see langword="null"/>.
         /// </exception>
         public static IEnumerable<TResult> Iterate<TResult>(this Func<TResult, TResult> generator, TResult seed)
         {
@@ -417,7 +417,7 @@ namespace System.Linq
         /// The action to perform on each element of the sequence.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> or <paramref name="action"/> is null (Nothing in Visual Basic).
+        /// <paramref name="source"/> or <paramref name="action"/> is <see langword="null"/>.
         /// </exception>
         public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action)
         {
@@ -443,7 +443,7 @@ namespace System.Linq
         /// An array that contains the elements from the input sequence.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="source"/> is null (Nothing in Visual Basic).
+        /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="IndexOutOfRangeException">
         /// <paramref name="source"/> is a <see cref="IReadOnlyCollection{T}"/>, but enumerates more elements

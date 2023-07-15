@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonValueSyntaxVisitor.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ namespace Eutherion.Text.Json
     {
         /// <summary>Provides a default implementation for a pattern.</summary><param name="node">The pattern to match.</param><param name="arg">A parameter containing extra information.</param><returns>The result for the matched pattern.</returns>
         public virtual TResult DefaultVisit(GreenJsonValueSyntax node, T arg) => throw new InvalidPatternMatchException();
-        /// <summary>Matches a pattern and calls the matching implementation for it.</summary><param name="node">The pattern to match.</param><param name="arg">A parameter containing extra information.</param><returns>The result for the matched pattern.</returns><exception cref="ArgumentNullException"><paramref name="node"/> is null.</exception>
+        /// <summary>Matches a pattern and calls the matching implementation for it.</summary><param name="node">The pattern to match.</param><param name="arg">A parameter containing extra information.</param><returns>The result for the matched pattern.</returns><exception cref="ArgumentNullException"><paramref name="node"/> is <see langword="null"/>.</exception>
         public virtual TResult Visit(GreenJsonValueSyntax node, T arg) => node == null ? throw new ArgumentNullException(nameof(node)) : node.Accept(this, arg);
 
         /// <summary>Provides an implementation for <see cref="GreenJsonBooleanLiteralSyntax"/>.</summary><param name="node">The pattern to match.</param><param name="arg">A parameter containing extra information.</param><returns>The result for the matched pattern.</returns>
@@ -63,7 +63,7 @@ namespace Eutherion.Text.Json
     /// <typeparam name="TResult">The type of value to return from each implementation.</typeparam>
     public abstract class GreenJsonValueSyntaxVisitor<TResult> : GreenJsonValueSyntaxVisitor<_void, TResult>
     {
-        /// <summary>Matches a pattern and calls the matching implementation for it.</summary><param name="node">The pattern to match.</param><returns>The result for the matched pattern.</returns><exception cref="ArgumentNullException"><paramref name="node"/> is null.</exception>
+        /// <summary>Matches a pattern and calls the matching implementation for it.</summary><param name="node">The pattern to match.</param><returns>The result for the matched pattern.</returns><exception cref="ArgumentNullException"><paramref name="node"/> is <see langword="null"/>.</exception>
         public virtual TResult Visit(GreenJsonValueSyntax node) => Visit(node, _void._);
     }
 
@@ -73,7 +73,7 @@ namespace Eutherion.Text.Json
     /// </summary>
     public abstract class GreenJsonValueSyntaxVisitor : GreenJsonValueSyntaxVisitor<_void, _void>
     {
-        /// <summary>Matches a pattern and calls the matching implementation for it.</summary><param name="node">The pattern to match.</param><exception cref="ArgumentNullException"><paramref name="node"/> is null.</exception>
+        /// <summary>Matches a pattern and calls the matching implementation for it.</summary><param name="node">The pattern to match.</param><exception cref="ArgumentNullException"><paramref name="node"/> is <see langword="null"/>.</exception>
         public virtual void Visit(GreenJsonValueSyntax node) => Visit(node, _void._);
     }
 }

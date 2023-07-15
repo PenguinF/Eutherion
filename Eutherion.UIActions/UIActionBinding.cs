@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UIActionBinding.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ namespace Eutherion.UIActions
         /// The handler function used to invoke the action and determine its <see cref="UIActionState"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="action"/> and/or <paramref name="handler"/> are null.
+        /// <paramref name="action"/> and/or <paramref name="handler"/> are <see langword="null"/>.
         /// </exception>
         public UIActionBinding(UIAction action, UIActionHandlerFunc handler)
         {
@@ -78,7 +78,7 @@ namespace Eutherion.UIActions
         /// The handler function used to invoke the action and determine its <see cref="UIActionState"/>.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="actionKey"/> and/or <paramref name="interfaces"/> and/or <paramref name="handler"/> are null.
+        /// <paramref name="actionKey"/> and/or <paramref name="interfaces"/> and/or <paramref name="handler"/> are <see langword="null"/>.
         /// </exception>
         public UIActionBinding(StringKey<UIAction> actionKey, ImplementationSet<IUIActionInterface> interfaces, UIActionHandlerFunc handler)
         {
