@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ReadOnlyListTests.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -160,19 +160,21 @@ namespace Eutherion.Tests
             Assert.Equal(array[0].Value, list[0].Value);
         }
 
-        public static object?[][] HaystacksAndNeedles() => new object?[][]
+        private static IEnumerable<(IEnumerable<int> haystack, int needle, int expectedIndex)> HaystacksAndNeedles() => new (IEnumerable<int>, int, int)[]
         {
-            new object?[] { Array.Empty<int>(), 0, -1 },
-            new object?[] { new int[] { 1 }, 0, -1 },
-            new object?[] { new int[] { 2 }, 0, -1 },
-            new object?[] { new int[] { 1, 2, 3 }, 1, 0 },
-            new object?[] { new int[] { 1, 2, 3 }, 2, 1 },
-            new object?[] { new int[] { 1, 2, 3 }, 3, 2 },
-            new object?[] { new int[] { 1, 1, 1 }, 1, 0 },
+            (Array.Empty<int>(), 0, -1),
+            (new int[] { 1 }, 0, -1),
+            (new int[] { 2 }, 0, -1),
+            (new int[] { 1, 2, 3 }, 1, 0),
+            (new int[] { 1, 2, 3 }, 2, 1),
+            (new int[] { 1, 2, 3 }, 3, 2),
+            (new int[] { 1, 1, 1 }, 1, 0),
         };
 
+        public static IEnumerable<object?[]> WrappedHaystacksAndNeedles() => TestUtilities.Wrap(HaystacksAndNeedles());
+
         [Theory]
-        [MemberData(nameof(HaystacksAndNeedles))]
+        [MemberData(nameof(WrappedHaystacksAndNeedles))]
         public void TestFindIndex(IEnumerable<int> haystack, int needle, int expectedIndex)
         {
             ReadOnlyList<int> list = ReadOnlyList<int>.Create(haystack);

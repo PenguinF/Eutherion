@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonSyntaxTests.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Tests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Xunit;
 
@@ -174,23 +174,25 @@ namespace Eutherion.Text.Json.Tests
             Assert.Equal(value.Length, boolNode.Length);
         }
 
-        public static IEnumerable<object[]> GetIntegerJsonValues()
+        private static IEnumerable<(string value, int expectedIntegerValue)> GetIntegerJsonValues()
         {
-            yield return new object[] { "0", 0 };
-            yield return new object[] { "+1", 1 };
-            yield return new object[] { "-0", 0 };
-            yield return new object[] { "-1", -1 };
-            yield return new object[] { "-9", -9 };
-            yield return new object[] { "20", 20 };
-            yield return new object[] { "2147483647", 2147483647 };
-            yield return new object[] { "+2147483647", 2147483647 };
-            yield return new object[] { "000002147483647", 2147483647 };
-            yield return new object[] { "-2147483648", -2147483648 };
-            yield return new object[] { "-000002147483648", -2147483648 };
+            yield return ("0", 0);
+            yield return ("+1", 1);
+            yield return ("-0", 0);
+            yield return ("-1", -1);
+            yield return ("-9", -9);
+            yield return ("20", 20);
+            yield return ("2147483647", 2147483647);
+            yield return ("+2147483647", 2147483647);
+            yield return ("000002147483647", 2147483647);
+            yield return ("-2147483648", -2147483648);
+            yield return ("-000002147483648", -2147483648);
         }
 
+        public static IEnumerable<object?[]> WrappedIntegerJsonValues() => TestUtilities.Wrap(GetIntegerJsonValues());
+
         [Theory]
-        [MemberData(nameof(GetIntegerJsonValues))]
+        [MemberData(nameof(WrappedIntegerJsonValues))]
         public void IntegerJsonValues(string value, int expectedIntegerValue)
         {
             var node = JsonValue.TryCreate(value);
@@ -199,7 +201,7 @@ namespace Eutherion.Text.Json.Tests
             Assert.Equal(value.Length, intNode.Length);
         }
 
-        private static IEnumerable<(string, ulong)> UnsignedLongValues
+        private static IEnumerable<(string value, ulong expectedIntegerValue)> UnsignedLongValues
         {
             get
             {
@@ -212,11 +214,10 @@ namespace Eutherion.Text.Json.Tests
             }
         }
 
-        public static IEnumerable<object[]> GetUnsignedLongJsonValues()
-            => from x in UnsignedLongValues select new object[] { x.Item1, x.Item2 };
+        public static IEnumerable<object?[]> WrappedUnsignedLongJsonValues() => TestUtilities.Wrap(UnsignedLongValues);
 
         [Theory]
-        [MemberData(nameof(GetUnsignedLongJsonValues))]
+        [MemberData(nameof(WrappedUnsignedLongJsonValues))]
         public void UnsignedLongJsonValues(string value, ulong expectedIntegerValue)
         {
             var node = JsonValue.TryCreate(value);

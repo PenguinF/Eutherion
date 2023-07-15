@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonParserTests.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,28 +113,16 @@ namespace Eutherion.Text.Json.Tests
             .ForEach(x => AssertJsonSymbolType(x, JsonSymbolTypeClass.ValueDelimiter));
         }
 
-        /// <summary>
-        /// <seealso cref="JsonTokenizerTests.TwoSymbolsOfEachType"/>.
-        /// </summary>
-        public static IEnumerable<object[]> TwoSymbolsWithoutType()
-        {
-            var symbolTypes = JsonTokenizerTests.JsonTestSymbols();
+        private static IEnumerable<(string json1, string json2)> TwoSymbolsWithoutType()
+            => JsonTokenizerTests.TwoSymbolsOfEachType().Select(x => (x.json1, x.json2));
 
-            // Unterminated strings/comments mess up the tokenization, skip those if they're the first key.
-            foreach (var (key1, _) in symbolTypes)
-            {
-                foreach (var (key2, _) in symbolTypes.Union(JsonTokenizerTests.UnterminatedJsonTestSymbols()))
-                {
-                    yield return new object[] { key1, key2 };
-                }
-            }
-        }
+        public static IEnumerable<object?[]> WrappedTwoSymbolsWithoutType() => TestUtilities.Wrap(TwoSymbolsWithoutType());
 
         /// <summary>
         /// Tests if terminal symbols returned by a parsed <see cref="JsonSyntax"/> match those returned by its tokenizer.
         /// </summary>
         [Theory]
-        [MemberData(nameof(TwoSymbolsWithoutType))]
+        [MemberData(nameof(WrappedTwoSymbolsWithoutType))]
         public void ParseTreeTokensMatch(string json1, string json2)
         {
             // Sane structure as JsonTokenizerTests.Transition: first check two symbols, then all combinations of three.
@@ -222,12 +211,14 @@ namespace Eutherion.Text.Json.Tests
             return length;
         }
 
-        public static IEnumerable<object[]> GetTestParseTrees()
-            => ExpectedJsonTrees.TestParseTrees.Select(x => new object[] { x.Item1, x.Item2, Array.Empty<JsonErrorCode>() })
-            .Union(ExpectedJsonTrees.TestParseTreesWithErrors.Select(x => new object[] { x.Item1, x.Item2, x.Item3 }));
+        private static IEnumerable<(string json, ExpectedJsonTree parseTree, JsonErrorCode[] expectedErrors)> GetTestParseTrees()
+            => ExpectedJsonTrees.TestParseTrees.Select(x => (x.Item1, x.Item2, Array.Empty<JsonErrorCode>()))
+            .Concat(ExpectedJsonTrees.TestParseTreesWithErrors.Select(x => (x.Item1, x.Item2, x.Item3)));
+
+        public static IEnumerable<object?[]> WrappedTestParseTrees() => TestUtilities.Wrap(GetTestParseTrees());
 
         [Theory]
-        [MemberData(nameof(GetTestParseTrees))]
+        [MemberData(nameof(WrappedTestParseTrees))]
         public void ParseTreeTests(string json, ExpectedJsonTree parseTree, JsonErrorCode[] expectedErrors)
         {
             RootJsonSyntax rootSyntax = JsonParser.Parse(json);
