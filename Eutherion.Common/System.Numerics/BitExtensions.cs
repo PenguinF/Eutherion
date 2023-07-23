@@ -82,13 +82,63 @@ namespace System.Numerics
         /// Tests if a vector is equal to zero or a power of two, i.e. has a maximum of one set bit.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsMaxOneBit(this uint vector) => !vector.Test(vector - 1);
+        public static bool IsMaxOneBit(this byte vector)
+        {
+            byte vectorMinusOne = unchecked((byte)(vector - 1));
+            vectorMinusOne &= vector;
+            return vectorMinusOne == 0;
+        }
 
         /// <summary>
         /// Tests if a vector is equal to zero or a power of two, i.e. has a maximum of one set bit.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsMaxOneBit(this ulong vector) => !vector.Test(vector - 1);
+        public static bool IsMaxOneBit(this ushort vector)
+        {
+            ushort vectorMinusOne = unchecked((ushort)(vector - 1));
+            vectorMinusOne &= vector;
+            return vectorMinusOne == 0;
+        }
+
+        /// <summary>
+        /// Tests if a vector is equal to zero or a power of two, i.e. has a maximum of one set bit.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsMaxOneBit(this uint vector) => (vector & (vector - 1)) == 0;
+
+        /// <summary>
+        /// Tests if a vector is equal to zero or a power of two, i.e. has a maximum of one set bit.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsMaxOneBit(this ulong vector) => (vector & (vector - 1)) == 0;
+
+        /// <summary>
+        /// Enumerates all bits in a given vector, i.e. for each set bit a vector with the same set bit and all other bits zeroed out.
+        /// </summary>
+        public static IEnumerable<byte> SetBits(this byte vector)
+        {
+            while (vector != 0)
+            {
+                byte oneBit = unchecked((byte)-vector);
+                oneBit &= vector;
+                yield return oneBit;
+                vector ^= oneBit;
+            }
+        }
+
+        /// <summary>
+        /// Enumerates all bits in a given vector, i.e. for each set bit a vector with the same set bit and all other bits zeroed out.
+        /// </summary>
+        public static IEnumerable<ushort> SetBits(this ushort vector)
+        {
+            while (vector != 0)
+            {
+                ushort oneBit = unchecked((ushort)-vector);
+                oneBit &= vector;
+                yield return oneBit;
+                vector ^= oneBit;
+            }
+        }
 
         /// <summary>
         /// Enumerates all bits in a given vector, i.e. for each set bit a vector with the same set bit and all other bits zeroed out.

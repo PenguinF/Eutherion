@@ -95,6 +95,32 @@ namespace Eutherion.Tests
 #pragma warning restore IDE0004
         }
 
+        private static IEnumerable<byte> AllOneBitValues8Bits()
+        {
+            byte x = 1;
+            int index = 0;
+
+            while (index < 8)
+            {
+                yield return x;
+                x <<= 1;
+                index++;
+            }
+        }
+
+        private static IEnumerable<ushort> AllOneBitValues16Bits()
+        {
+            ushort x = 1;
+            int index = 0;
+
+            while (index < 16)
+            {
+                yield return x;
+                x <<= 1;
+                index++;
+            }
+        }
+
         private static IEnumerable<uint> AllOneBitValues32Bits()
         {
             uint x = 1;
@@ -119,6 +145,48 @@ namespace Eutherion.Tests
                 x <<= 1;
                 index++;
             }
+        }
+
+        private static IEnumerable<(byte value, bool expectedResult)> OneBitTestCases8Bits()
+        {
+            yield return (0, true);
+
+            foreach (var oneBitValue in AllOneBitValues8Bits()) yield return (oneBitValue, true);
+
+            byte x = 3;
+            int index = 0;
+
+            while (index < 7)
+            {
+                yield return (x, false);
+                x <<= 1;
+                index++;
+            }
+
+            foreach (var oneBitValue in AllOneBitValues8Bits()) yield return (unchecked((byte)(byte.MaxValue ^ oneBitValue)), false);
+
+            yield return (byte.MaxValue, false);
+        }
+
+        private static IEnumerable<(ushort value, bool expectedResult)> OneBitTestCases16Bits()
+        {
+            yield return (0, true);
+
+            foreach (var oneBitValue in AllOneBitValues16Bits()) yield return (oneBitValue, true);
+
+            ushort x = 3;
+            int index = 0;
+
+            while (index < 15)
+            {
+                yield return (x, false);
+                x <<= 1;
+                index++;
+            }
+
+            foreach (var oneBitValue in AllOneBitValues16Bits()) yield return (unchecked((ushort)(ushort.MaxValue ^ oneBitValue)), false);
+
+            yield return (ushort.MaxValue, false);
         }
 
         private static IEnumerable<(uint value, bool expectedResult)> OneBitTestCases32Bits()
@@ -163,8 +231,18 @@ namespace Eutherion.Tests
             yield return (ulong.MaxValue, false);
         }
 
+        public static IEnumerable<object?[]> WrappedOneBitTestCases8Bits() => TestUtilities.Wrap(OneBitTestCases8Bits());
+        public static IEnumerable<object?[]> WrappedOneBitTestCases16Bits() => TestUtilities.Wrap(OneBitTestCases16Bits());
         public static IEnumerable<object?[]> WrappedOneBitTestCases32Bits() => TestUtilities.Wrap(OneBitTestCases32Bits());
         public static IEnumerable<object?[]> WrappedOneBitTestCases64Bits() => TestUtilities.Wrap(OneBitTestCases64Bits());
+
+        [Theory]
+        [MemberData(nameof(WrappedOneBitTestCases8Bits))]
+        public void TestIsMaxOneBit8(byte value, bool expectedResult) => Assert.Equal(expectedResult, value.IsMaxOneBit());
+
+        [Theory]
+        [MemberData(nameof(WrappedOneBitTestCases16Bits))]
+        public void TestIsMaxOneBit16(ushort value, bool expectedResult) => Assert.Equal(expectedResult, value.IsMaxOneBit());
 
         [Theory]
         [MemberData(nameof(WrappedOneBitTestCases32Bits))]
@@ -173,6 +251,32 @@ namespace Eutherion.Tests
         [Theory]
         [MemberData(nameof(WrappedOneBitTestCases64Bits))]
         public void TestIsMaxOneBit64(ulong value, bool expectedResult) => Assert.Equal(expectedResult, value.IsMaxOneBit());
+
+        private static IEnumerable<(byte value, byte[] expectedValues)> SetBitsTestCases8Bits()
+        {
+            yield return (0b0, Array.Empty<byte>());
+
+            foreach (var oneBitValue in AllOneBitValues8Bits()) yield return (oneBitValue, new[] { oneBitValue });
+
+            yield return (0b10001, new byte[] { 0b00001, 0b10000 });
+            yield return (0b00110000, new byte[] { 0b00010000, 0b00100000, });
+            yield return (0b11100101, new byte[] { 0b00000001, 0b00000100, 0b00100000, 0b01000000, 0b10000000, });
+
+            yield return (byte.MaxValue, AllOneBitValues8Bits().ToArray());
+        }
+
+        private static IEnumerable<(ushort value, ushort[] expectedValues)> SetBitsTestCases16Bits()
+        {
+            yield return (0b0, Array.Empty<ushort>());
+
+            foreach (var oneBitValue in AllOneBitValues16Bits()) yield return (oneBitValue, new[] { oneBitValue });
+
+            yield return (0b10001, new ushort[] { 0b00001, 0b10000 });
+            yield return (0b1100000000000000, new ushort[] { 0b0100000000000000, 0b1000000000000000, });
+            yield return (0b11100101, new ushort[] { 0b00000001, 0b00000100, 0b00100000, 0b01000000, 0b10000000, });
+
+            yield return (ushort.MaxValue, AllOneBitValues16Bits().ToArray());
+        }
 
         private static IEnumerable<(uint value, uint[] expectedValues)> SetBitsTestCases32Bits()
         {
@@ -199,6 +303,26 @@ namespace Eutherion.Tests
 
             yield return (ulong.MaxValue, AllOneBitValues64Bits().ToArray());
         }
+
+        public static IEnumerable<object?[]> WrappedSetBitsTestCases8Bits() => TestUtilities.Wrap(SetBitsTestCases8Bits());
+
+        [Theory]
+        [MemberData(nameof(WrappedSetBitsTestCases8Bits))]
+        public void TestSetBits8(byte value, byte[] expectedValues)
+            => Assert.Collection(
+                value.SetBits(),
+                expectedValues.Select(
+                    expectedValue => new Action<byte>(actualValue => Assert.Equal(expectedValue, actualValue))).ToArray());
+
+        public static IEnumerable<object?[]> WrappedSetBitsTestCases16Bits() => TestUtilities.Wrap(SetBitsTestCases16Bits());
+
+        [Theory]
+        [MemberData(nameof(WrappedSetBitsTestCases16Bits))]
+        public void TestSetBits16(ushort value, ushort[] expectedValues)
+            => Assert.Collection(
+                value.SetBits(),
+                expectedValues.Select(
+                    expectedValue => new Action<ushort>(actualValue => Assert.Equal(expectedValue, actualValue))).ToArray());
 
         public static IEnumerable<object?[]> WrappedSetBitsTestCases32Bits() => TestUtilities.Wrap(SetBitsTestCases32Bits());
 
