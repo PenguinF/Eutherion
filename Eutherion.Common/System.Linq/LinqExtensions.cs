@@ -537,7 +537,7 @@ namespace System.Linq
         }
 
         /// <summary>
-        /// Enumerates all elements of a sequence, using the specified separator between each element.
+        /// Enumerates all elements of a sequence, using the specified separator between each pair of successive elements.
         /// See also <seealso cref="string.Join(string, IEnumerable{string})"/> for a similar feature.
         /// </summary>
         /// <typeparam name="TSource">
@@ -552,7 +552,7 @@ namespace System.Linq
         /// </param>
         /// <returns>
         /// A new sequence that enumerates all elements of <paramref name="source"/>, and enumerating <paramref name="separator"/>
-        /// between each successive element of <paramref name="source"/>.
+        /// between each pair of successive elements of <paramref name="source"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
