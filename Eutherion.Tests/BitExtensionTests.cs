@@ -33,39 +33,63 @@ namespace Eutherion.Tests
         public void TestTestExtension()
         {
 #pragma warning disable IDE0004
+            Assert.False(BitExtensions.Test((byte)0));
+            Assert.False(BitExtensions.Test((ushort)0));
             Assert.False(BitExtensions.Test((uint)0));
             Assert.False(BitExtensions.Test((ulong)0));
 
+            Assert.False(BitExtensions.Test((byte)0, (byte)0));
+            Assert.False(BitExtensions.Test((ushort)0, (ushort)0));
             Assert.False(BitExtensions.Test((uint)0, (uint)0));
             Assert.False(BitExtensions.Test((ulong)0, (ulong)0));
 
+            Assert.False(BitExtensions.Test((byte)0, byte.MaxValue));
+            Assert.False(BitExtensions.Test((ushort)0, ushort.MaxValue));
             Assert.False(BitExtensions.Test((uint)0, uint.MaxValue));
             Assert.False(BitExtensions.Test((ulong)0, ulong.MaxValue));
 
+            Assert.True(BitExtensions.Test((byte)1));
+            Assert.True(BitExtensions.Test((ushort)1));
             Assert.True(BitExtensions.Test((uint)1));
             Assert.True(BitExtensions.Test((ulong)1));
 
+            Assert.False(BitExtensions.Test((byte)1, (byte)0));
+            Assert.False(BitExtensions.Test((ushort)1, (ushort)0));
             Assert.False(BitExtensions.Test((uint)1, (uint)0));
             Assert.False(BitExtensions.Test((ulong)1, (ulong)0));
 
+            Assert.True(BitExtensions.Test((byte)1, byte.MaxValue));
+            Assert.True(BitExtensions.Test((ushort)1, ushort.MaxValue));
             Assert.True(BitExtensions.Test((uint)1, uint.MaxValue));
             Assert.True(BitExtensions.Test((ulong)1, ulong.MaxValue));
 
+            Assert.True(BitExtensions.Test(unchecked((byte)sbyte.MinValue)));
+            Assert.True(BitExtensions.Test(unchecked((ushort)short.MinValue)));
             Assert.True(BitExtensions.Test(unchecked((uint)int.MinValue)));
             Assert.True(BitExtensions.Test(unchecked((ulong)long.MinValue)));
 
+            Assert.False(BitExtensions.Test(unchecked((byte)sbyte.MinValue), (byte)0));
+            Assert.False(BitExtensions.Test(unchecked((ushort)short.MinValue), (ushort)0));
             Assert.False(BitExtensions.Test(unchecked((uint)int.MinValue), (uint)0));
             Assert.False(BitExtensions.Test(unchecked((ulong)long.MinValue), (ulong)0));
 
+            Assert.True(BitExtensions.Test(unchecked((byte)sbyte.MinValue), byte.MaxValue));
+            Assert.True(BitExtensions.Test(unchecked((ushort)short.MinValue), ushort.MaxValue));
             Assert.True(BitExtensions.Test(unchecked((uint)int.MinValue), uint.MaxValue));
             Assert.True(BitExtensions.Test(unchecked((ulong)long.MinValue), ulong.MaxValue));
 
+            Assert.True(BitExtensions.Test(byte.MaxValue));
+            Assert.True(BitExtensions.Test(ushort.MaxValue));
             Assert.True(BitExtensions.Test(uint.MaxValue));
             Assert.True(BitExtensions.Test(ulong.MaxValue));
 
+            Assert.False(BitExtensions.Test(byte.MaxValue, (byte)0));
+            Assert.False(BitExtensions.Test(ushort.MaxValue, (ushort)0));
             Assert.False(BitExtensions.Test(uint.MaxValue, (uint)0));
             Assert.False(BitExtensions.Test(ulong.MaxValue, (ulong)0));
 
+            Assert.True(BitExtensions.Test(byte.MaxValue, byte.MaxValue));
+            Assert.True(BitExtensions.Test(ushort.MaxValue, ushort.MaxValue));
             Assert.True(BitExtensions.Test(uint.MaxValue, uint.MaxValue));
             Assert.True(BitExtensions.Test(ulong.MaxValue, ulong.MaxValue));
 #pragma warning restore IDE0004

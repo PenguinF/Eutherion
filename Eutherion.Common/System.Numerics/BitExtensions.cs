@@ -34,6 +34,18 @@ namespace System.Numerics
         /// Tests if a vector has any set bits.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Test(this byte vector) => vector != 0;
+
+        /// <summary>
+        /// Tests if a vector has any set bits.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Test(this ushort vector) => vector != 0;
+
+        /// <summary>
+        /// Tests if a vector has any set bits.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Test(this uint vector) => vector != 0;
 
         /// <summary>
@@ -41,6 +53,18 @@ namespace System.Numerics
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Test(this ulong vector) => vector != 0;
+
+        /// <summary>
+        /// Tests if another vector has any bits in common with this one.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Test(this byte vector, byte otherVector) => (vector & otherVector) != 0;
+
+        /// <summary>
+        /// Tests if another vector has any bits in common with this one.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Test(this ushort vector, ushort otherVector) => (vector & otherVector) != 0;
 
         /// <summary>
         /// Tests if another vector has any bits in common with this one.
