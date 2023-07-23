@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Program.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -183,6 +183,26 @@ namespace Eutherion.Example472
                 {
                     Console.WriteLine(string.Format(formatString, formatted.Item1, formatted.Item2 == null ? "" : $" '{formatted.Item2}'"));
                 }
+                Console.WriteLine();
+                Console.WriteLine();
+
+                // Subsequences & Intercalate & SurroundIfAny.
+                string baseSequence = "abcd";
+                Console.WriteLine($"Subsequences of \"{baseSequence}\":");
+                baseSequence
+                    // Generates all 16 subsequences.
+                    .Subsequences()
+                    // Surrounds every non-empty subsequence with "".
+                    // This means that the empty string remains empty rather than shown as "",
+                    // which is done purposefully to show the effects of SurroundIfAny().
+                    .Select(x => x.SurroundIfAny("\"", "\""))
+                    // Put ", " between each successive subsequence, but not at the start or end.
+                    .Intercalate(", ")
+                    // Flatten the entire set yielding a stream of characters.
+                    .SelectMany(x => x)
+                    // And output.
+                    .ForEach(Console.Write);
+                Console.WriteLine();
                 Console.WriteLine();
             }
             catch (Exception e)
