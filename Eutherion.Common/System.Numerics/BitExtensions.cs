@@ -1,8 +1,8 @@
 ﻿#region License
 /*********************************************************************************
- * UIntExtensions.cs
+ * BitExtensions.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace System.Numerics
     /// Contains extension methods to manipulate vectors of bits.
     /// See also <seealso cref="BitOperations"/>.
     /// </summary>
-    public static class UIntExtensions
+    public static class BitExtensions
     {
         /// <summary>
         /// Tests if a vector has any set bits.
