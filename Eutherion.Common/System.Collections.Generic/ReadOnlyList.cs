@@ -35,9 +35,9 @@ namespace System.Collections.Generic
         /// Gets the empty <see cref="ReadOnlyList{T}"/>.
         /// </summary>
 #if NET5_0_OR_GREATER
-        public static readonly ReadOnlyList<T> Empty = new(Array.Empty<T>());
+        public static readonly ReadOnlyList<T> Empty = new(Array.Empty<T>(), 0);
 #else
-        public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>(Array.Empty<T>());
+        public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>(Array.Empty<T>(), 0);
 #endif
 
         /// <summary>
@@ -56,12 +56,17 @@ namespace System.Collections.Generic
         {
             if (source is ReadOnlyList<T> readOnlyList) return readOnlyList;
             var array = source.ToArrayEx();
-            return array.Length == 0 ? Empty : new ReadOnlyList<T>(array);
+            int length = array.Length;
+            return length == 0 ? Empty : new ReadOnlyList<T>(array, length);
         }
 
-        internal readonly T[] ReadOnlyArray;
+        private readonly T[] ReadOnlyArray;
 
-        private ReadOnlyList(T[] array) => ReadOnlyArray = array;
+        private ReadOnlyList(T[] array, int count)
+        {
+            ReadOnlyArray = array;
+            Count = count;
+        }
 
         /// <summary>
         /// Gets the element at the specified index in the read-only list.
@@ -80,7 +85,7 @@ namespace System.Collections.Generic
         /// <summary>
         /// Gets the number of elements in the list.
         /// </summary>
-        public int Count => ReadOnlyArray.Length;
+        public int Count { get; }
 
         /// <summary>
         /// Returns an enumerator that iterates through the list.
