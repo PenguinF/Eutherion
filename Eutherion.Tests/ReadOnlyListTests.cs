@@ -70,6 +70,17 @@ namespace Eutherion.Tests
         }
 
         [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(-1)]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(int.MaxValue)]
+        public void OutOfBoundsThrowsArgumentOutOfRange(int index)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => { int x = ReadOnlyList<int>.Empty[index]; });
+        }
+
+        [Theory]
         [InlineData(0)]
         [InlineData(1)]
         [InlineData(10)]

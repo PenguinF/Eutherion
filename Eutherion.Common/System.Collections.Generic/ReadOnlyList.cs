@@ -156,7 +156,19 @@ namespace System.Collections.Generic
         /// <exception cref="IndexOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
-        public T this[int index] => ReadOnlyArray[index];
+        public T this[int index]
+        {
+            get
+            {
+                // Cast tp uint so negative values get flagged by this check.
+                if ((uint)index < (uint)Count)
+                {
+                    return ReadOnlyArray[index];
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
+        }
 
         /// <summary>
         /// Gets the number of elements in the list.
