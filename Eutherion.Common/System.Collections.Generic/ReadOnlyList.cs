@@ -108,6 +108,100 @@ namespace System.Collections.Generic
 #endif
 
         /// <summary>
+        /// Collects a list of elements to be put into a <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        // Implement IEnumerable<T> to enable collection initializer syntax.
+        public sealed class Builder : IReadOnlyCollection<T>
+        {
+            private const int DefaultCapacity = 4;
+
+            // Benchmarked using Array.Empty<T> rather than this, and it turns out having a static local performs much better.
+#if NET5_0_OR_GREATER
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+#endif
+            private static readonly T[] EmptyArray = new T[0];
+#if NET5_0_OR_GREATER
+#pragma warning restore CA1825 // Avoid zero-length array allocations
+#endif
+
+            private T[] array;
+            private int count;
+
+            /// <summary>
+            /// Gets the current number of elements added to the builder.
+            /// </summary>
+            public int Count => count;
+
+            /// <summary>
+            /// Initializes a new instance of <see cref="Builder"/>.
+            /// </summary>
+            public Builder() => array = EmptyArray;
+
+            /// <summary>
+            /// Adds an element to the builder.
+            /// </summary>
+            /// <param name="element">
+            /// The element to be added to the builder.
+            /// </param>
+            public void Add(T element)
+            {
+                int currentCapacity = array.Length;
+
+                if (count == currentCapacity)
+                {
+                    if (currentCapacity == 0)
+                    {
+                        array = new T[DefaultCapacity];
+                    }
+                    else
+                    {
+                        int newCapacity = currentCapacity * 2;
+                        T[] array = new T[newCapacity];
+                        Array.Copy(this.array, 0, array, 0, currentCapacity);
+                        this.array = array;
+                    }
+                }
+
+                int size = count;
+                count = size + 1;
+                array[size] = element;
+            }
+
+            /// <summary>
+            /// Converts the builder to a <see cref="ReadOnlyList{T}"/> which contains the elements added to this builder
+            /// in the order in which they were added. The builder is then cleared.
+            /// </summary>
+            /// <returns>
+            /// The <see cref="ReadOnlyList{T}"/> contains the elements added to this builder.
+            /// </returns>
+            public ReadOnlyList<T> Commit()
+            {
+                if (this.count == 0) return ReadOnlyList<T>.Empty;
+                T[] array = this.array;
+                int count = this.count;
+                this.array = EmptyArray;
+                this.count = 0;
+                return new ReadOnlyList<T>(array, count);
+            }
+
+            /// <summary>
+            /// Returns an enumerator that iterates through the elements added to the builder.
+            /// </summary>
+            /// <returns>
+            /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the elements added to the builder.
+            /// </returns>
+#if NET5_0_OR_GREATER
+            public Enumerator GetEnumerator() => new(array, Count);
+#else
+            public Enumerator GetEnumerator() => new Enumerator(array, count);
+#endif
+
+            IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(array, count);
+
+            IEnumerator IEnumerable.GetEnumerator() => new Enumerator(array, count);
+        }
+
+        /// <summary>
         /// Gets the empty <see cref="ReadOnlyList{T}"/>.
         /// </summary>
 #if NET5_0_OR_GREATER
@@ -160,7 +254,7 @@ namespace System.Collections.Generic
         {
             get
             {
-                // Cast tp uint so negative values get flagged by this check.
+                // Cast tp uint so negative values get flagged by this check too.
                 if ((uint)index < (uint)Count)
                 {
                     return ReadOnlyArray[index];
