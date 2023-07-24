@@ -80,6 +80,14 @@ namespace Eutherion.Tests
             for (int i = 0; i < length; i++) Assert.Equal(expectedList[i], list[i]);
         }
 
+        [Fact]
+        public void EmptyEnumerationThrowsException()
+        {
+            IEnumerator enumerator = ReadOnlyList<int>.Empty.GetEnumerator();
+            Assert.False(enumerator.MoveNext());
+            Assert.Throws<InvalidOperationException>(() => { object x = enumerator.Current; });
+        }
+
         [Theory]
         [InlineData(0)]
         [InlineData(1)]

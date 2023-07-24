@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion;
 using System.Linq;
 
 namespace System.Collections.Generic
@@ -31,6 +32,81 @@ namespace System.Collections.Generic
     /// </typeparam>
     public class ReadOnlyList<T> : IReadOnlyList<T>
     {
+        // Disable null analysis here, since setting current to 'default' triggers it.
+        // Normal 'foreach' use will never return the default value for a type though.
+#if !NET472
+#nullable disable
+#endif
+        /// <summary>
+        /// Enumerates the elements of a <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        public struct Enumerator : IEnumerator<T>
+        {
+            private readonly T[] array;
+            private readonly int count;
+
+            private int index;
+            private T current;
+
+            /// <summary>
+            /// Gets the element at the current position of the enumerator.
+            /// </summary>
+            public T Current => current;
+
+            internal Enumerator(T[] array, int count)
+            {
+                this.array = array;
+                this.count = count;
+                index = 0;
+                current = default;
+            }
+
+            /// <summary>
+            /// Advances the enumerator to the next element of the <see cref="ReadOnlyList{T}"/>.
+            /// </summary>
+            /// <returns>
+            /// <see langword="true"/> if the enumerator was successfully advanced to the next element;
+            /// <see langword="false"/> if the enumerator has passed the end of the list.
+            /// </returns>
+            public bool MoveNext()
+            {
+                if (index < count)
+                {
+                    current = array[index];
+                    index++;
+                    return true;
+                }
+                index = count + 1;
+                current = default;
+                return false;
+            }
+
+            void IEnumerator.Reset()
+            {
+                index = 0;
+                current = default;
+            }
+
+            object IEnumerator.Current
+            {
+                get
+                {
+                    if (index > 0 && index <= count) return Current;
+
+                    // Throw the appropriate exception.
+                    throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
+                }
+            }
+
+            /// <summary>
+            /// Has no effect. Method is required by the <see cref="IDisposable"/> interface.
+            /// </summary>
+            public void Dispose() { }
+        }
+#if !NET472
+#nullable enable
+#endif
+
         /// <summary>
         /// Gets the empty <see cref="ReadOnlyList{T}"/>.
         /// </summary>
@@ -93,8 +169,14 @@ namespace System.Collections.Generic
         /// <returns>
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the list.
         /// </returns>
-        public IEnumerator<T> GetEnumerator() => ((ICollection<T>)ReadOnlyArray).GetEnumerator();
+#if NET5_0_OR_GREATER
+        public Enumerator GetEnumerator() => new(ReadOnlyArray, Count);
+#else
+        public Enumerator GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+#endif
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+
+        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
     }
 }
