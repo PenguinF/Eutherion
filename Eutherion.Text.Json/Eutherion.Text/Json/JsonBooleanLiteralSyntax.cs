@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonBooleanLiteralSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ namespace Eutherion.Text.Json
             /// The result of the invoked <see cref="Func{TResult}"/>, or a default value if the passed in function is null.
             /// </returns>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="whenFalse"/> and/or <paramref name="whenTrue"/> is null.
+            /// <paramref name="whenFalse"/> and/or <paramref name="whenTrue"/> are <see langword="null"/>.
             /// </exception>
             public override TResult Match<TResult>(Func<TResult> whenFalse, Func<TResult> whenTrue)
                 => whenFalse != null ? whenFalse() : throw new ArgumentNullException(nameof(whenFalse));
@@ -120,7 +120,7 @@ namespace Eutherion.Text.Json
             /// The result of the invoked <see cref="Func{TResult}"/>, or a default value if the passed in function is null.
             /// </returns>
             /// <exception cref="ArgumentNullException">
-            /// <paramref name="whenFalse"/> and/or <paramref name="whenTrue"/> is null.
+            /// <paramref name="whenFalse"/> and/or <paramref name="whenTrue"/> are <see langword="null"/>.
             /// </exception>
             public override TResult Match<TResult>(Func<TResult> whenFalse, Func<TResult> whenTrue)
                 => whenTrue != null ? whenTrue() : throw new ArgumentNullException(nameof(whenTrue));
@@ -174,7 +174,7 @@ namespace Eutherion.Text.Json
         /// The result of the invoked <see cref="Func{TResult}"/>, or a default value if the passed in function is null.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="whenFalse"/> and/or <paramref name="whenTrue"/> is null.
+        /// <paramref name="whenFalse"/> and/or <paramref name="whenTrue"/> are <see langword="null"/>.
         /// </exception>
         public abstract TResult Match<TResult>(Func<TResult> whenFalse, Func<TResult> whenTrue);
 

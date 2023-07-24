@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ImplementationSet.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ namespace Eutherion.Collections
         /// The implementations to add.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="implementations"/> is null, -or- at least one of the elements of the enumeration is null.
+        /// <paramref name="implementations"/> is <see langword="null"/>, -or- at least one of the elements of the enumeration is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Two or more of the elements of <paramref name="implementations"/> have the same type.
@@ -104,7 +104,7 @@ namespace Eutherion.Collections
         /// The implementations to add.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="implementations"/> is null, -or- at least one of the elements of the enumeration is null.
+        /// <paramref name="implementations"/> is <see langword="null"/>, -or- at least one of the elements of the enumeration is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Two or more of the elements of <paramref name="implementations"/> have the same type.
@@ -173,7 +173,7 @@ namespace Eutherion.Collections
         /// The implementation to add.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="implementation"/> is null.
+        /// <paramref name="implementation"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// An instance of the same type as <paramref name="implementation"/> already exists in the set
@@ -214,7 +214,7 @@ namespace Eutherion.Collections
         /// The implementations to add.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="implementations"/> is null, -or- at least one of the elements of the enumeration is null.
+        /// <paramref name="implementations"/> is <see langword="null"/>, -or- at least one of the elements of the enumeration is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// For at least one of the elements of <paramref name="implementations"/>, an instance of the same type already exists in the set.

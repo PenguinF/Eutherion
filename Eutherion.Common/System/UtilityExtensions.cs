@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UtilityExtensions.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ namespace System
         /// The function which given an index returns the value to set at that index of the array.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="valueFunc"/> is null.
+        /// <paramref name="valueFunc"/> is <see langword="null"/>.
         /// </exception>
         public static void Fill<T>(this T[] array, Func<int, T> valueFunc)
         {
@@ -143,7 +143,7 @@ namespace System
         /// The function which given indices i and j returns the value to set at array[i, j].
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="valueFunc"/> is null.
+        /// <paramref name="valueFunc"/> is <see langword="null"/>.
         /// </exception>
         public static void Fill<T>(this T[,] array, Func<int, int, T> valueFunc)
         {
@@ -209,7 +209,7 @@ namespace System
         /// If the number of iterations is zero or lower, nothing happens.
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="action"/> is null.
+        /// <paramref name="action"/> is <see langword="null"/>.
         /// </exception>
         public static void Times(this int numberOfIterations, Action action)
         {

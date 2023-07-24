@@ -2,7 +2,7 @@
 /*********************************************************************************
  * RootJsonSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Eutherion.Text.Json
         /// The enumeration containing all errors generated during a parse.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="syntax"/> and/or <paramref name="errors"/> are null.
+        /// <paramref name="syntax"/> and/or <paramref name="errors"/> are <see langword="null"/>.
         /// </exception>
         public RootJsonSyntax(GreenJsonMultiValueSyntax syntax, IEnumerable<JsonErrorInfo> errors)
         {

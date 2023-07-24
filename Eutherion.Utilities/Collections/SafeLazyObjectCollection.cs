@@ -2,7 +2,7 @@
 /*********************************************************************************
  * SafeLazyObjectCollection.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ namespace Eutherion.Collections
         /// Only one of the created objects is stored in the collection, and henceforth returned.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="elementConstructor"/> is null.
+        /// <paramref name="elementConstructor"/> is <see langword="null"/>.
         /// </exception>
         public SafeLazyObjectCollection(int count, Func<int, TObject> elementConstructor)
         {

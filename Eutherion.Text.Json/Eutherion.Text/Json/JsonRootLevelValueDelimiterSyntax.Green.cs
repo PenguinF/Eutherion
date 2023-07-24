@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonRootLevelValueDelimiterSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Eutherion.Text.Json
         /// The value delimiter symbol.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="valueDelimiter"/> is null.
+        /// <paramref name="valueDelimiter"/> is <see langword="null"/>.
         /// </exception>
         public GreenJsonRootLevelValueDelimiterSyntax(GreenJsonCurlyCloseSyntax valueDelimiter)
             => ValueDelimiter = valueDelimiter ?? throw new ArgumentNullException(nameof(valueDelimiter));
@@ -65,7 +65,7 @@ namespace Eutherion.Text.Json
         /// The value delimiter symbol.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="valueDelimiter"/> is null.
+        /// <paramref name="valueDelimiter"/> is <see langword="null"/>.
         /// </exception>
         public GreenJsonRootLevelValueDelimiterSyntax(GreenJsonSquareBracketCloseSyntax valueDelimiter)
             => ValueDelimiter = valueDelimiter ?? throw new ArgumentNullException(nameof(valueDelimiter));

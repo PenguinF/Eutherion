@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ObservableValue.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace Eutherion
         /// The new <see cref="ObservableValue{TValue}"/> instance.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="equalityComparer"/> is null.
+        /// <paramref name="equalityComparer"/> is <see langword="null"/>.
         /// </exception>
         public static ObservableValue<TValue> Create(TValue initialValue, IEqualityComparer<TValue> equalityComparer)
         {
@@ -79,7 +79,7 @@ namespace Eutherion
         /// The equality comparer to determine if two values are equal.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="equalityComparer"/> is null.
+        /// <paramref name="equalityComparer"/> is <see langword="null"/>.
         /// </exception>
         public ObservableValue(TValue initialValue, Func<TValue, TValue, bool> equalityComparer)
         {

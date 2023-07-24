@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonMapSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ namespace Eutherion.Text.Json
         /// False if the list is terminated by a closing curly brace, otherwise true.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="keyValueNodes"/> is null.
+        /// <paramref name="keyValueNodes"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="keyValueNodes"/> is an empty enumeration.

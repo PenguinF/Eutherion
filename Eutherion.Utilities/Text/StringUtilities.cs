@@ -2,7 +2,7 @@
 /*********************************************************************************
  * StringUtilities.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace Eutherion.Text
         /// The parameters to format.
         /// </param>
         /// <returns>
-        /// If <paramref name="parameters"/> is null or empty, returns an empty string.
+        /// If <paramref name="parameters"/> is <see langword="null"/> or empty, returns an empty string.
         /// If <paramref name="parameters"/> has exactly one element, returns "({0})" where {0} is replaced by the single element.
         /// If <paramref name="parameters"/> has more than one element, returns "({0}, {1}, ...)" where {0}, {1}... are replaced by these elements in order.
         /// </returns>
@@ -53,7 +53,7 @@ namespace Eutherion.Text
         /// The parameters to format.
         /// </param>
         /// <returns>
-        /// If <paramref name="parameters"/> is null or empty, returns an empty string.
+        /// If <paramref name="parameters"/> is <see langword="null"/> or empty, returns an empty string.
         /// If <paramref name="parameters"/> has exactly one element, returns "({0})" where {0} is replaced by the single element.
         /// If <paramref name="parameters"/> has more than one element, returns "({0}, {1}, ...)" where {0}, {1}... are replaced by these elements in order.
         /// </returns>
@@ -77,7 +77,7 @@ namespace Eutherion.Text
         /// The required minimum number of arguments.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="format"/> is null.
+        /// <paramref name="format"/> is <see langword="null"/>.
         /// </exception>
 
         // Control flow exactly the same as in StringBuilder.AppendFormatHelper().

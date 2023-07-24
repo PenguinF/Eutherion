@@ -2,7 +2,7 @@
 /*********************************************************************************
  * SafeLazyObject.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ namespace Eutherion.Threading
         /// The object constructor. It must not return null.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="constructor"/> is null.
+        /// <paramref name="constructor"/> is <see langword="null"/>.
         /// </exception>
         public SafeLazyObject(Func<TObject> constructor)
         {

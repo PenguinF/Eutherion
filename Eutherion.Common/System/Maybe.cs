@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Maybe.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -149,7 +149,7 @@ namespace System
         /// The result of the invoked function.
         /// </returns>
         /// <exception cref="NullReferenceException">
-        /// <paramref name="whenNothing"/> and/or <paramref name="whenJust"/> are null.
+        /// <paramref name="whenNothing"/> and/or <paramref name="whenJust"/> are <see langword="null"/>.
         /// </exception>
         public abstract TResult Match<TResult>(
             Func<TResult> whenNothing,
@@ -186,7 +186,7 @@ namespace System
         /// The <see cref="Maybe{T}"/> of the result type.
         /// </returns>
         /// <exception cref="NullReferenceException">
-        /// <paramref name="whenJust"/> is null.
+        /// <paramref name="whenJust"/> is <see langword="null"/>.
         /// </exception>
         public abstract Maybe<TResult> Bind<TResult>(Func<T, Maybe<TResult>> whenJust)
 #if !NET472
@@ -208,7 +208,7 @@ namespace System
         /// The <see cref="Maybe{T}"/> of the result type.
         /// </returns>
         /// <exception cref="NullReferenceException">
-        /// <paramref name="whenJust"/> is null.
+        /// <paramref name="whenJust"/> is <see langword="null"/>.
         /// </exception>
         public Maybe<TResult> Select<TResult>(Func<T, TResult> whenJust)
 #if !NET472
@@ -237,7 +237,7 @@ namespace System
         /// The flattened <see cref="Maybe{T}"/> of the result type.
         /// </returns>
         /// <exception cref="NullReferenceException">
-        /// <paramref name="whenJust"/> and/or <paramref name="resultSelector"/> are null.
+        /// <paramref name="whenJust"/> and/or <paramref name="resultSelector"/> are <see langword="null"/>.
         /// </exception>
         public Maybe<TResult> SelectMany<TIntermediate, TResult>(
             Func<T, Maybe<TIntermediate>> whenJust,

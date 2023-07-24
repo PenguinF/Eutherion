@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonStringLiteralSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Eutherion.Text.Json
         /// The length of the text span corresponding with this syntax node.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="value"/> is null.
+        /// <paramref name="value"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="length"/> is 0 or lower.
