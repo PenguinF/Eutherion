@@ -110,11 +110,11 @@ namespace Eutherion.Text.Json
         /// <exception cref="ArgumentNullException">
         /// <paramref name="json"/> is <see langword="null"/>.
         /// </exception>
-        internal static (List<IGreenJsonSymbol>, List<JsonErrorInfo>) TokenizeAll(string json)
+        internal static (List<IGreenJsonSymbol>, ReadOnlyList<JsonErrorInfo>) TokenizeAll(string json)
         {
             var parser = new JsonParser(json, DefaultMaximumDepth);
             var tokens = parser._TokenizeAll().ToList();
-            return (tokens, parser.Errors);
+            return (tokens, parser.Errors.Commit());
         }
 
         private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(int startPosition, int length)
@@ -125,7 +125,7 @@ namespace Eutherion.Text.Json
                         GreenJsonMissingValueSyntax.Value) },
                     GreenJsonBackgroundListSyntax.Create(
                         new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(length) })),
-                new List<JsonErrorInfo> { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) });
+                new ReadOnlyList<JsonErrorInfo>.Builder { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }.Commit());
 
         internal const JsonSymbolType ForegroundThreshold = JsonSymbolType.BooleanLiteral;
         internal const JsonSymbolType ValueDelimiterThreshold = JsonSymbolType.Colon;
@@ -133,7 +133,7 @@ namespace Eutherion.Text.Json
         private IEnumerator<IGreenJsonSymbol> Tokens;
         private readonly string Json;
         private readonly int MaximumDepth;
-        private readonly List<JsonErrorInfo> Errors = new List<JsonErrorInfo>();
+        private readonly ReadOnlyList<JsonErrorInfo>.Builder Errors = new ReadOnlyList<JsonErrorInfo>.Builder();
         private readonly List<GreenJsonBackgroundSyntax> BackgroundBuilder = new List<GreenJsonBackgroundSyntax>();
 
         // Invariant is that this index is always at the start of the yielded symbol.
@@ -445,7 +445,10 @@ namespace Eutherion.Text.Json
                     return CreateParseTreeTooDeepRootSyntax(CurrentLength - 1, Json.Length);
                 }
 
-                if (CurrentToken.SymbolType == JsonSymbolType.Eof) return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), Errors);
+                if (CurrentToken.SymbolType == JsonSymbolType.Eof)
+                {
+                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), Errors.Commit());
+                }
 
                 // ] } , : -- treat all of these at the top level as an undefined symbol without any semantic meaning.
                 BackgroundBuilder.Add(new GreenJsonRootLevelValueDelimiterSyntax(CurrentToken));

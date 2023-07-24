@@ -88,7 +88,7 @@ namespace Eutherion.Text.Json.Tests
 
             Assert.Throws<ArgumentNullException>("syntax", () => new RootJsonSyntax(
                 null!,
-                EmptyEnumerable<JsonErrorInfo>.Instance));
+                ReadOnlyList<JsonErrorInfo>.Empty));
             Assert.Throws<ArgumentNullException>("errors", () => new RootJsonSyntax(
                 CreateMultiValue(new GreenJsonIntegerLiteralSyntax(0, 1)),
                 null!));
