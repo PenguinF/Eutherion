@@ -254,7 +254,7 @@ namespace System.Collections.Generic
         {
             get
             {
-                // Cast tp uint so negative values get flagged by this check too.
+                // Cast to uint so negative values get flagged by this check too.
                 if ((uint)index < (uint)Count)
                 {
                     return ReadOnlyArray[index];
