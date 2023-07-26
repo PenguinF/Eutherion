@@ -56,6 +56,13 @@ namespace Eutherion.Tests
                 x.ForEach(builder.Add);
                 return builder.Commit();
             });
+
+            yield return new ListCreationMethod(x =>
+            {
+                var builder = new ReadOnlyList<int>.Builder();
+                builder.AddRange(x);
+                return builder.Commit();
+            });
         }
 
         private static readonly int[] LengthTestCases = new int[] { 0, 1, 4, 15, 16, 100 };
@@ -236,6 +243,23 @@ namespace Eutherion.Tests
             IEnumerator enumerator = builder.GetEnumerator();
             Assert.False(enumerator.MoveNext());
             Assert.Throws<InvalidOperationException>(() => { object x = enumerator.Current; });
+        }
+
+        [Theory]
+        [MemberData(nameof(WrappedLengths))]
+        public void ConcatenateListToItself(int length)
+        {
+            int[] expectedList = CreateRandomIntSequence(length).ToArray();
+
+            var builder = new ReadOnlyList<int>.Builder();
+            builder.AddRange(expectedList);
+            builder.AddRange(builder);
+            ReadOnlyList<int> list = builder.Commit();
+
+            Assert.Equal(expectedList.Length * 2, list.Count);
+            Assert.Collection(
+                list,
+                expectedList.Concat(expectedList).Select(expected => new Action<int>(actual => Assert.Equal(expected, actual))).ToArray());
         }
 
         private static IEnumerable<(IEnumerable<int> haystack, int needle, int expectedIndex)> HaystacksAndNeedles() => new (IEnumerable<int>, int, int)[]

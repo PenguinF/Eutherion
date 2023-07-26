@@ -168,6 +168,63 @@ namespace System.Collections.Generic
             }
 
             /// <summary>
+            /// Adds a sequence of elements to the builder.
+            /// </summary>
+            /// <param name="elements">
+            /// The sequence of elements to be added to the builder.
+            /// </param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="elements"/> is <see langword="null"/>.
+            /// </exception>
+            public void AddRange(IEnumerable<T> elements)
+            {
+                if (elements == null) throw new ArgumentNullException(nameof(elements));
+
+                int minimumCapacity;
+                switch (elements)
+                {
+                    case ICollection<T> collection:
+                        minimumCapacity = count + collection.Count;
+                        goto growAndFillArray;
+                    case IReadOnlyCollection<T> readOnlyCollection:
+                        minimumCapacity = count + readOnlyCollection.Count;
+                    growAndFillArray:
+                        // Grow the array just once.
+                        if (minimumCapacity > 0)
+                        {
+                            int currentCapacity = array.Length;
+                            if (currentCapacity < minimumCapacity)
+                            {
+                                int newCapacity = currentCapacity == 0 ? DefaultCapacity : currentCapacity * 2;
+                                while (newCapacity < minimumCapacity) newCapacity *= 2;
+                                T[] array = new T[newCapacity];
+                                Array.Copy(this.array, 0, array, 0, count);
+                                this.array = array;
+                            }
+                        }
+
+                        // Can safely use foreach even if 'elements' is this very builder.
+                        // This because Enumerator saves its own copy of 'count' when it is created.
+                        int index = count;
+
+                        foreach (var element in elements)
+                        {
+                            array[index] = element;
+                            index++;
+                        }
+
+                        count = index;
+                        break;
+                    default:
+                        foreach (var element in elements)
+                        {
+                            Add(element);
+                        }
+                        break;
+                }
+            }
+
+            /// <summary>
             /// Converts the builder to a <see cref="ReadOnlyList{T}"/> which contains the elements added to this builder
             /// in the order in which they were added. The builder is then cleared.
             /// </summary>
