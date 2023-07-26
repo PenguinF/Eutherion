@@ -29,11 +29,56 @@ namespace Eutherion.Tests
 {
     public class ReadOnlyListTests
     {
+        public struct ListCreationMethod
+        {
+            public Func<IEnumerable<int>, ReadOnlyList<int>> Create;
+
+            public ListCreationMethod(Func<IEnumerable<int>, ReadOnlyList<int>> create)
+            {
+                Create = create;
+            }
+        }
+
         private static readonly Random random = new();
 
         private static Func<int> GenerateRandomInt(int maxValue) => () => random.Next(maxValue);
 
         private static IEnumerable<int> CreateRandomIntSequence(int length) => GenerateRandomInt(10).Sequence().Take(length);
+
+        // For all unit tests, it shouldn't matter in what way a ReadOnlyList is created, so cross join all unit tests with creation methods.
+        private static IEnumerable<ListCreationMethod> CreationMethods()
+        {
+            yield return new ListCreationMethod(ReadOnlyList<int>.Create);
+
+            yield return new ListCreationMethod(x =>
+            {
+                var builder = new ReadOnlyList<int>.Builder();
+                x.ForEach(builder.Add);
+                return builder.Commit();
+            });
+
+            yield return new ListCreationMethod(x =>
+            {
+                var builder = new ReadOnlyList<int>.Builder();
+                builder.AddRange(x);
+                return builder.Commit();
+            });
+
+            yield return new ListCreationMethod(x =>
+            {
+                var list = new ReadOnlyList<int>.Builder(x).Commit();
+                list.Truncate();
+                return list;
+            });
+        }
+
+        private static readonly int[] LengthTestCases = new int[] { 0, 1, 4, 15, 16, 100 };
+
+        public static IEnumerable<object?[]> WrappedLengths()
+            => TestUtilities.Wrap(LengthTestCases);
+
+        public static IEnumerable<object?[]> WrappedCreationMethodsAndLengths()
+            => TestUtilities.Wrap(TestUtilities.CrossJoin(CreationMethods(), LengthTestCases));
 
         [Fact]
         public void NullArgumentChecks()
@@ -60,34 +105,47 @@ namespace Eutherion.Tests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(10)]
-        public void CorrectCount(int length)
+        [MemberData(nameof(WrappedCreationMethodsAndLengths))]
+        public void CorrectCount(ListCreationMethod creationMethod, int length)
         {
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(CreateRandomIntSequence(length));
+            ReadOnlyList<int> list = creationMethod.Create(CreateRandomIntSequence(length));
             Assert.Equal(length, list.Count);
         }
 
         [Theory]
+        [InlineData(int.MinValue)]
+        [InlineData(-1)]
         [InlineData(0)]
         [InlineData(1)]
-        [InlineData(10)]
-        public void ExpectedElements(int length)
+        [InlineData(int.MaxValue)]
+        public void OutOfBoundsThrowsArgumentOutOfRange(int index)
         {
-            int[] expectedList = CreateRandomIntSequence(length).ToArray();
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(expectedList);
-            for (int i = 0; i < length; i++) Assert.Equal(expectedList[i], list[i]);
+            Assert.Throws<ArgumentOutOfRangeException>(() => { int x = ReadOnlyList<int>.Empty[index]; });
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(10)]
-        public void Enumeration(int length)
+        [MemberData(nameof(WrappedCreationMethodsAndLengths))]
+        public void ExpectedElements(ListCreationMethod creationMethod, int length)
         {
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(expectedList);
+            ReadOnlyList<int> list = creationMethod.Create(expectedList);
+            for (int i = 0; i < length; i++) Assert.Equal(expectedList[i], list[i]);
+        }
+
+        [Fact]
+        public void EmptyEnumerationThrowsException()
+        {
+            IEnumerator enumerator = ReadOnlyList<int>.Empty.GetEnumerator();
+            Assert.False(enumerator.MoveNext());
+            Assert.Throws<InvalidOperationException>(() => { object x = enumerator.Current; });
+        }
+
+        [Theory]
+        [MemberData(nameof(WrappedCreationMethodsAndLengths))]
+        public void Enumeration(ListCreationMethod creationMethod, int length)
+        {
+            int[] expectedList = CreateRandomIntSequence(length).ToArray();
+            ReadOnlyList<int> list = creationMethod.Create(expectedList);
 
             int i = 0;
             foreach (int value in list)
@@ -100,13 +158,11 @@ namespace Eutherion.Tests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(10)]
-        public void GenericEnumeration(int length)
+        [MemberData(nameof(WrappedCreationMethodsAndLengths))]
+        public void GenericEnumeration(ListCreationMethod creationMethod, int length)
         {
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(expectedList);
+            ReadOnlyList<int> list = creationMethod.Create(expectedList);
 
             int i = 0;
             using IEnumerator<int> enumerator = list.GetEnumerator();
@@ -120,13 +176,11 @@ namespace Eutherion.Tests
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(10)]
-        public void NonGenericEnumeration(int length)
+        [MemberData(nameof(WrappedCreationMethodsAndLengths))]
+        public void NonGenericEnumeration(ListCreationMethod creationMethod, int length)
         {
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(expectedList);
+            ReadOnlyList<int> list = creationMethod.Create(expectedList);
 
             int i = 0;
             IEnumerator enumerator = ((IEnumerable)list).GetEnumerator();
@@ -158,6 +212,61 @@ namespace Eutherion.Tests
 
             value1.Value = 2;
             Assert.Equal(array[0].Value, list[0].Value);
+        }
+
+        [Fact]
+        public void EmptyBuilderReturnsEmptyList()
+        {
+            Assert.Same(ReadOnlyList<int>.Empty, new ReadOnlyList<int>.Builder().Commit());
+        }
+
+        [Fact]
+        public void BuilderWithOneElement()
+        {
+            // Basically to ensure collection initializer syntax works.
+            var list = new ReadOnlyList<int>.Builder { 0 }.Commit();
+            Assert.Collection(list, x => Assert.Equal(0, x));
+        }
+
+        [Theory]
+        [MemberData(nameof(WrappedLengths))]
+        public void BuilderWithElements(int length)
+        {
+            int[] expectedList = CreateRandomIntSequence(length).ToArray();
+
+            // Create the builder.
+            var builder = new ReadOnlyList<int>.Builder();
+            expectedList.ForEach(builder.Add);
+
+            // Assert the elements are all there.
+            Assert.Collection(builder, expectedList.Select(expected => new Action<int>(actual => Assert.Equal(expected, actual))).ToArray());
+            Assert.Equal(expectedList.Length, builder.Count);
+
+            // Commit, then assert that the builder is empty again.
+            builder.Commit();
+            Assert.Empty(builder);
+
+            // Also assert that the non-generic enumerator throws appropriately.
+            IEnumerator enumerator = builder.GetEnumerator();
+            Assert.False(enumerator.MoveNext());
+            Assert.Throws<InvalidOperationException>(() => { object x = enumerator.Current; });
+        }
+
+        [Theory]
+        [MemberData(nameof(WrappedLengths))]
+        public void ConcatenateListToItself(int length)
+        {
+            int[] expectedList = CreateRandomIntSequence(length).ToArray();
+
+            var builder = new ReadOnlyList<int>.Builder();
+            builder.AddRange(expectedList);
+            builder.AddRange(builder);
+            ReadOnlyList<int> list = builder.Commit();
+
+            Assert.Equal(expectedList.Length * 2, list.Count);
+            Assert.Collection(
+                list,
+                expectedList.Concat(expectedList).Select(expected => new Action<int>(actual => Assert.Equal(expected, actual))).ToArray());
         }
 
         private static IEnumerable<(IEnumerable<int> haystack, int needle, int expectedIndex)> HaystacksAndNeedles() => new (IEnumerable<int>, int, int)[]

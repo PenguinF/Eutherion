@@ -37,7 +37,7 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// The list containing all errors generated during a parse.
         /// </summary>
-        public List<JsonErrorInfo> Errors { get; }
+        public ReadOnlyList<JsonErrorInfo> Errors { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="RootJsonSyntax"/>.
@@ -46,17 +46,16 @@ namespace Eutherion.Text.Json
         /// The root <see cref="GreenJsonMultiValueSyntax"/> node from which to construct a <see cref="JsonMultiValueSyntax"/> abstract syntax tree.
         /// </param>
         /// <param name="errors">
-        /// The enumeration containing all errors generated during a parse.
+        /// The list containing all errors generated during a parse.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="syntax"/> and/or <paramref name="errors"/> are <see langword="null"/>.
         /// </exception>
-        public RootJsonSyntax(GreenJsonMultiValueSyntax syntax, IEnumerable<JsonErrorInfo> errors)
+        public RootJsonSyntax(GreenJsonMultiValueSyntax syntax, ReadOnlyList<JsonErrorInfo> errors)
         {
             if (syntax == null) throw new ArgumentNullException(nameof(syntax));
-            if (errors == null) throw new ArgumentNullException(nameof(errors));
             Syntax = new JsonMultiValueSyntax(syntax);
-            Errors = errors is List<JsonErrorInfo> errorList ? errorList : new List<JsonErrorInfo>(errors);
+            Errors = errors ?? throw new ArgumentNullException(nameof(errors));
         }
     }
 }

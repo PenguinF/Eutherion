@@ -48,5 +48,13 @@ namespace Eutherion
             //throw new InvalidOperationException("Enumeration has either not started or has already finished.");
             throw new UnreachableException();
         }
+
+        [DoesNotReturn]
+        internal static ArgumentOutOfRangeException ThrowListIndexOutOfRangeException()
+        {
+            var x = new List<int>()[0];
+            GC.KeepAlive(x);
+            throw new UnreachableException();
+        }
     }
 }
