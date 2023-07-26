@@ -233,7 +233,7 @@ namespace System.Collections.Generic
             /// </returns>
             public ReadOnlyList<T> Commit()
             {
-                if (this.count == 0) return ReadOnlyList<T>.Empty;
+                if (this.count == 0) return Empty;
                 T[] array = this.array;
                 int count = this.count;
                 this.array = EmptyArray;
