@@ -138,6 +138,21 @@ namespace System.Collections.Generic
             public Builder() => array = EmptyArray;
 
             /// <summary>
+            /// Initializes a new instance of <see cref="Builder"/> with a sequence of elements.
+            /// </summary>
+            /// <param name="elements">
+            /// The sequence of elements to be added to the builder.
+            /// </param>
+            /// <exception cref="ArgumentNullException">
+            /// <paramref name="elements"/> is <see langword="null"/>.
+            /// </exception>
+            public Builder(IEnumerable<T> elements)
+            {
+                array = EmptyArray;
+                AddRange(elements);
+            }
+
+            /// <summary>
             /// Adds an element to the builder.
             /// </summary>
             /// <param name="element">
