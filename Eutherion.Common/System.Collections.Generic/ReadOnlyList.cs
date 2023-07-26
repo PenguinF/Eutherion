@@ -302,7 +302,7 @@ namespace System.Collections.Generic
             return length == 0 ? Empty : new ReadOnlyList<T>(array, length);
         }
 
-        private readonly T[] ReadOnlyArray;
+        private T[] ReadOnlyArray;
 
         private ReadOnlyList(T[] array, int count)
         {
@@ -340,6 +340,19 @@ namespace System.Collections.Generic
         /// Gets the number of elements in the list.
         /// </summary>
         public int Count { get; }
+
+        /// <summary>
+        /// Reduces the size of the internal array to its minimum, saving memory but involving an extra copy step.
+        /// </summary>
+        public void Truncate()
+        {
+            if (Count < ReadOnlyArray.Length)
+            {
+                T[] largeArray = ReadOnlyArray;
+                ReadOnlyArray = new T[Count];
+                Array.Copy(largeArray, 0, ReadOnlyArray, 0, Count);
+            }
+        }
 
         /// <summary>
         /// Returns an enumerator that iterates through the list.

@@ -63,6 +63,13 @@ namespace Eutherion.Tests
                 builder.AddRange(x);
                 return builder.Commit();
             });
+
+            yield return new ListCreationMethod(x =>
+            {
+                var list = new ReadOnlyList<int>.Builder(x).Commit();
+                list.Truncate();
+                return list;
+            });
         }
 
         private static readonly int[] LengthTestCases = new int[] { 0, 1, 4, 15, 16, 100 };
