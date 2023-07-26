@@ -19,7 +19,6 @@
 **********************************************************************************/
 #endregion
 
-using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -216,20 +215,6 @@ namespace System
             if (action == null) throw new ArgumentNullException(nameof(action));
 
             for (int i = numberOfIterations; i > 0; --i) action();
-        }
-
-        /// <summary>
-        /// Suppresses an <see cref="Exception"/>, and in debug mode writes it to <see cref="Debug"/>.  
-        /// </summary>
-        /// <param name="exception">
-        /// The <see cref="Exception"/> to suppress.
-        /// </param>
-        public static void Trace(this Exception exception)
-        {
-            if (exception != null)
-            {
-                Debug.WriteLine($"{exception.GetType().FullName}: {exception.Message}");
-            }
         }
     }
 }
