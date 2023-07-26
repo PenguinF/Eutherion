@@ -31,10 +31,94 @@ namespace System
     public static class UtilityExtensions
     {
         /// <summary>
-        /// Returns a locale invariant representation of an integer.
+        /// Returns a locale invariant representation of a <see langword="bool"/>.
         /// </summary>
         /// <param name="value">
-        /// The integer to convert.
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this bool value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="byte"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this byte value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of an <see langword="sbyte"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this sbyte value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="char"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this char value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="decimal"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this decimal value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="double"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this double value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="float"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this float value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of an <see langword="int"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
         /// </param>
         /// <returns>
         /// The locale invariant representation.
@@ -43,10 +127,96 @@ namespace System
             => value.ToString(CultureInfo.InvariantCulture);
 
         /// <summary>
-        /// Returns a locale invariant representation of an integer.
+        /// Returns a locale invariant representation of a <see langword="uint"/>.
         /// </summary>
         /// <param name="value">
-        /// The integer to convert.
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this uint value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+#if NET5_0_OR_GREATER
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="nint"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this nint value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="nuint"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this nuint value)
+            => value.ToString(CultureInfo.InvariantCulture);
+#endif
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="long"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this long value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="ulong"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this ulong value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="short"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this short value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see langword="ushort"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
+        /// </param>
+        /// <returns>
+        /// The locale invariant representation.
+        /// </returns>
+        public static string ToStringInvariant(this ushort value)
+            => value.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Returns a locale invariant representation of a <see cref="BigInteger"/>.
+        /// </summary>
+        /// <param name="value">
+        /// The value to convert.
         /// </param>
         /// <returns>
         /// The locale invariant representation.
