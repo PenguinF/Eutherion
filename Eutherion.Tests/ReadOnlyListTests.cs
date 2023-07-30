@@ -55,19 +55,19 @@ namespace Eutherion.Tests
             {
                 var builder = new ReadOnlyList<int>.Builder();
                 x.ForEach(builder.Add);
-                return builder.Commit();
+                return ReadOnlyList<int>.FromBuilder(builder);
             });
 
             yield return new ListCreationMethod(x =>
             {
                 var builder = new ReadOnlyList<int>.Builder();
                 builder.AddRange(x);
-                return builder.Commit();
+                return ReadOnlyList<int>.FromBuilder(builder);
             });
 
             yield return new ListCreationMethod(x =>
             {
-                var list = new ReadOnlyList<int>.Builder(x).Commit();
+                var list = ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder(x));
                 list.Truncate();
                 return list;
             });
@@ -97,8 +97,8 @@ namespace Eutherion.Tests
             yield return ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty);
             yield return ReadOnlyList<int>.Create(new ReadOnlyList<int>.Builder());
             yield return ReadOnlyList<int>.Create(new ReadOnlyList<int>.Builder(Array.Empty<int>()));
-            yield return new ReadOnlyList<int>.Builder().Commit();
-            yield return new ReadOnlyList<int>.Builder(Array.Empty<int>()).Commit();
+            yield return ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder());
+            yield return ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder(Array.Empty<int>()));
         }
 
         public static IEnumerable<object?[]> WrappedEmptyLists() => TestUtilities.Wrap(EmptyLists());
@@ -231,7 +231,7 @@ namespace Eutherion.Tests
         public void BuilderWithOneElement()
         {
             // Basically to ensure collection initializer syntax works.
-            var list = new ReadOnlyList<int>.Builder { 0 }.Commit();
+            var list = ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder { 0 });
             Assert.Collection(list, x => Assert.Equal(0, x));
         }
 
@@ -268,7 +268,7 @@ namespace Eutherion.Tests
             var builder = new ReadOnlyList<int>.Builder();
             builder.AddRange(expectedList);
             builder.AddRange(builder);
-            ReadOnlyList<int> list = builder.Commit();
+            ReadOnlyList<int> list = ReadOnlyList<int>.FromBuilder(builder);
 
             Assert.Equal(expectedList.Length * 2, list.Count);
             Assert.Collection(

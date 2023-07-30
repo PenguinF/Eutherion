@@ -165,20 +165,20 @@ namespace System.Collections.Generic
             }
 
             /// <summary>
-            /// Converts the builder to a <see cref="ReadOnlyList{T}"/> which contains the elements added to this builder
+            /// Returns the partially filled array which contains the elements added to this builder
             /// in the order in which they were added. The builder is then cleared.
             /// </summary>
             /// <returns>
-            /// The <see cref="ReadOnlyList{T}"/> contains the elements added to this builder.
+            /// The partially filled array containing the elements added to this builder together
+            /// with the total number of elements in the array.
             /// </returns>
-            public ReadOnlyList<T> Commit()
+            public (T[] array, int count) Commit()
             {
-                if (this.count == 0) return Empty;
                 T[] array = this.array;
                 int count = this.count;
                 this.array = EmptyArray;
                 this.count = 0;
-                return new ReadOnlyList<T>(array, count);
+                return (array, count);
             }
 
             /// <summary>
@@ -206,6 +206,27 @@ namespace System.Collections.Generic
 #else
         public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>(Array.Empty<T>(), 0);
 #endif
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="ReadOnlyList{T}"/> from a <see cref="Builder"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder containing the elements of the list.
+        /// </param>
+        /// <returns>
+        /// The initialized <see cref="ReadOnlyList{T}"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        public static ReadOnlyList<T> FromBuilder(Builder builder)
+        {
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            var (array, count) = builder.Commit();
+            if (count == 0) return Empty;
+            return new ReadOnlyList<T>(array, count);
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ReadOnlyList{T}"/>.

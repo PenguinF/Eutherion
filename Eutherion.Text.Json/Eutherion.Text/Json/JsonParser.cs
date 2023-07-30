@@ -113,7 +113,7 @@ namespace Eutherion.Text.Json
         {
             var parser = new JsonParser(json, DefaultMaximumDepth);
             var tokens = parser.TokenizeAllHelper().ToList();
-            return (tokens, parser.Errors.Commit());
+            return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
         }
 
         private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(int startPosition, int length)
@@ -124,7 +124,7 @@ namespace Eutherion.Text.Json
                         GreenJsonMissingValueSyntax.Value) },
                     GreenJsonBackgroundListSyntax.Create(
                         new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(length) })),
-                new ReadOnlyList<JsonErrorInfo>.Builder { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }.Commit());
+                ReadOnlyList<JsonErrorInfo>.FromBuilder(new ReadOnlyList<JsonErrorInfo>.Builder { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }));
 
         internal const JsonSymbolType ForegroundThreshold = JsonSymbolType.BooleanLiteral;
         internal const JsonSymbolType ValueDelimiterThreshold = JsonSymbolType.Colon;
@@ -446,7 +446,7 @@ namespace Eutherion.Text.Json
 
                 if (CurrentToken.SymbolType == JsonSymbolType.Eof)
                 {
-                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), Errors.Commit());
+                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), ReadOnlyList<JsonErrorInfo>.FromBuilder(Errors));
                 }
 
                 // ] } , : -- treat all of these at the top level as an undefined symbol without any semantic meaning.
