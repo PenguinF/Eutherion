@@ -84,11 +84,10 @@ namespace System.Collections.Generic
 
         private T[] ReadOnlyArray;
 
-        private ReadOnlyList(T[] array, int count)
-        {
-            ReadOnlyArray = array;
-            Count = count;
-        }
+        /// <summary>
+        /// Gets the number of elements in the list.
+        /// </summary>
+        public int Count { get; }
 
         /// <summary>
         /// Gets the element at the specified index in the read-only list.
@@ -116,10 +115,11 @@ namespace System.Collections.Generic
             }
         }
 
-        /// <summary>
-        /// Gets the number of elements in the list.
-        /// </summary>
-        public int Count { get; }
+        private ReadOnlyList(T[] array, int count)
+        {
+            ReadOnlyArray = array;
+            Count = count;
+        }
 
         /// <summary>
         /// Reduces the size of the internal array to its minimum, saving memory but involving an extra copy step.
