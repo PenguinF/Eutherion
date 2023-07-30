@@ -47,33 +47,12 @@ namespace Eutherion.Text
             public override int GetElementOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
-        private class OneElement : ReadOnlySpanList<TSpan>
-        {
-            private readonly TSpan element;
-
-            public OneElement(TSpan source)
-            {
-                if (source == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
-                element = source;
-            }
-
-            public override int Length => element.Length;
-
-            public override TSpan this[int index] => index == 0 ? element : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
-
-            public override int Count => 1;
-
-            public override IEnumerator<TSpan> GetEnumerator() => new SingleElementEnumerator<TSpan>(element);
-
-            public override int GetElementOffset(int index) => index == 0 ? 0 : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
-        }
-
-        private class TwoOrMoreElements : ReadOnlySpanList<TSpan>
+        private class OneOrMoreElements : ReadOnlySpanList<TSpan>
         {
             private readonly TSpan[] array;
             private readonly int[] arrayElementOffsets;
 
-            public TwoOrMoreElements(TSpan[] source)
+            public OneOrMoreElements(TSpan[] source)
             {
                 if (source[0] == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                 int length = source[0].Length;
@@ -127,8 +106,7 @@ namespace Eutherion.Text
             if (source is ReadOnlySpanList<TSpan> readOnlySpanList) return readOnlySpanList;
             var array = source.ToArrayEx();
             if (array.Length == 0) return Empty;
-            if (array.Length == 1) return new OneElement(array[0]);
-            return new TwoOrMoreElements(array);
+            return new OneOrMoreElements(array);
         }
 
         private ReadOnlySpanList() { }

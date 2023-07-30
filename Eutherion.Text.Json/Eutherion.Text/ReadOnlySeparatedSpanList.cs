@@ -58,42 +58,13 @@ namespace Eutherion.Text
             public override int GetElementOrSeparatorOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
-        private class OneElement : ReadOnlySeparatedSpanList<TSpan, TSeparator>
-        {
-            private readonly TSpan element;
-
-            public OneElement(TSpan source)
-            {
-                if (source == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
-                element = source;
-            }
-
-            public override int Length => element.Length;
-
-            public override TSpan this[int index] => index == 0 ? element : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
-
-            public override int Count => 1;
-
-            public override IEnumerator<TSpan> GetEnumerator() => new SingleElementEnumerator<TSpan>(element);
-
-            public override int AllElementCount => 1;
-
-            public override IEnumerable<Union<TSpan, TSeparator>> AllElements => new SingleElementEnumerable<Union<TSpan, TSeparator>>(element);
-
-            public override int GetElementOffset(int index) => index == 0 ? 0 : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
-
-            public override int GetSeparatorOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
-
-            public override int GetElementOrSeparatorOffset(int index) => index == 0 ? 0 : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
-        }
-
-        private class TwoOrMoreElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
+        private class OneOrMoreElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
         {
             private readonly TSpan[] array;
             private readonly TSeparator separator;
             private readonly int[] arrayElementOffsets;
 
-            public TwoOrMoreElements(TSpan[] source, TSeparator separator)
+            public OneOrMoreElements(TSpan[] source, TSeparator separator)
             {
                 if (source[0] == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                 int length = source[0].Length;
@@ -179,8 +150,7 @@ namespace Eutherion.Text
             var array = source.ToArrayEx();
             if (separator == null) throw new ArgumentNullException(nameof(separator));
             if (array.Length == 0) return Empty;
-            if (array.Length == 1) return new OneElement(array[0]);
-            return new TwoOrMoreElements(array, separator);
+            return new OneOrMoreElements(array, separator);
         }
 
         private ReadOnlySeparatedSpanList() { }
