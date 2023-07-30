@@ -32,81 +32,6 @@ namespace System.Collections.Generic
     /// </typeparam>
     public class ReadOnlyList<T> : IReadOnlyList<T>
     {
-        // Disable null analysis here, since setting current to 'default' triggers it.
-        // Normal 'foreach' use will never return the default value for a type though.
-#if !NET472
-#nullable disable
-#endif
-        /// <summary>
-        /// Enumerates the elements of a <see cref="ReadOnlyList{T}"/>.
-        /// </summary>
-        public struct Enumerator : IEnumerator<T>
-        {
-            private readonly T[] array;
-            private readonly int count;
-
-            private int index;
-            private T current;
-
-            /// <summary>
-            /// Gets the element at the current position of the enumerator.
-            /// </summary>
-            public T Current => current;
-
-            internal Enumerator(T[] array, int count)
-            {
-                this.array = array;
-                this.count = count;
-                index = 0;
-                current = default;
-            }
-
-            /// <summary>
-            /// Advances the enumerator to the next element of the <see cref="ReadOnlyList{T}"/>.
-            /// </summary>
-            /// <returns>
-            /// <see langword="true"/> if the enumerator was successfully advanced to the next element;
-            /// <see langword="false"/> if the enumerator has passed the end of the list.
-            /// </returns>
-            public bool MoveNext()
-            {
-                if (index < count)
-                {
-                    current = array[index];
-                    index++;
-                    return true;
-                }
-                index = count + 1;
-                current = default;
-                return false;
-            }
-
-            void IEnumerator.Reset()
-            {
-                index = 0;
-                current = default;
-            }
-
-            object IEnumerator.Current
-            {
-                get
-                {
-                    if (index > 0 && index <= count) return Current;
-
-                    // Throw the appropriate exception.
-                    throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
-                }
-            }
-
-            /// <summary>
-            /// Has no effect. Method is required by the <see cref="IDisposable"/> interface.
-            /// </summary>
-            public void Dispose() { }
-        }
-#if !NET472
-#nullable enable
-#endif
-
         /// <summary>
         /// Collects a list of elements to be put into a <see cref="ReadOnlyList{T}"/>.
         /// </summary>
@@ -263,14 +188,14 @@ namespace System.Collections.Generic
             /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the elements added to the builder.
             /// </returns>
 #if NET5_0_OR_GREATER
-            public Enumerator GetEnumerator() => new(array, Count);
+            public ArrayEnumerator<T> GetEnumerator() => new(array, Count);
 #else
-            public Enumerator GetEnumerator() => new Enumerator(array, count);
+            public ArrayEnumerator<T> GetEnumerator() => new ArrayEnumerator<T>(array, count);
 #endif
 
-            IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(array, count);
+            IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ArrayEnumerator<T>(array, count);
 
-            IEnumerator IEnumerable.GetEnumerator() => new Enumerator(array, count);
+            IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<T>(array, count);
         }
 
         /// <summary>
@@ -361,13 +286,13 @@ namespace System.Collections.Generic
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the list.
         /// </returns>
 #if NET5_0_OR_GREATER
-        public Enumerator GetEnumerator() => new(ReadOnlyArray, Count);
+        public ArrayEnumerator<T> GetEnumerator() => new(ReadOnlyArray, Count);
 #else
-        public Enumerator GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+        public ArrayEnumerator<T> GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
 #endif
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
 
-        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+        IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
     }
 }
