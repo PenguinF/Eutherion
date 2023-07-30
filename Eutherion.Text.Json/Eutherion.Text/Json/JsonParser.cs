@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -113,7 +112,7 @@ namespace Eutherion.Text.Json
         internal static (List<IGreenJsonSymbol>, ReadOnlyList<JsonErrorInfo>) TokenizeAll(string json)
         {
             var parser = new JsonParser(json, DefaultMaximumDepth);
-            var tokens = parser._TokenizeAll().ToList();
+            var tokens = parser.TokenizeAllHelper().ToList();
             return (tokens, parser.Errors.Commit());
         }
 
@@ -429,7 +428,7 @@ namespace Eutherion.Text.Json
         // as it cannot go to a higher level in the stack to process value delimiter symbols.
         private RootJsonSyntax Parse()
         {
-            Tokens = _TokenizeAll().GetEnumerator();
+            Tokens = TokenizeAllHelper().GetEnumerator();
 
             var valueNodesBuilder = new List<GreenJsonValueWithBackgroundSyntax>();
 
@@ -539,8 +538,7 @@ namespace Eutherion.Text.Json
             }
         }
 
-        [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Private counterpart of publicly accessible static method.")]
-        private IEnumerable<IGreenJsonSymbol> _TokenizeAll()
+        private IEnumerable<IGreenJsonSymbol> TokenizeAllHelper()
         {
             // This tokenizer uses labels with goto to switch between modes of tokenization.
 
