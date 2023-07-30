@@ -53,21 +53,21 @@ namespace Eutherion.Tests
 
             yield return new ListCreationMethod(x =>
             {
-                var builder = new ReadOnlyList<int>.Builder();
+                var builder = new ArrayBuilder<int>();
                 x.ForEach(builder.Add);
                 return ReadOnlyList<int>.FromBuilder(builder);
             });
 
             yield return new ListCreationMethod(x =>
             {
-                var builder = new ReadOnlyList<int>.Builder();
+                var builder = new ArrayBuilder<int>();
                 builder.AddRange(x);
                 return ReadOnlyList<int>.FromBuilder(builder);
             });
 
             yield return new ListCreationMethod(x =>
             {
-                var list = ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder(x));
+                var list = ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int>(x));
                 list.Truncate();
                 return list;
             });
@@ -85,7 +85,7 @@ namespace Eutherion.Tests
         public void NullArgumentChecks()
         {
             Assert.Throws<ArgumentNullException>(() => ReadOnlyList<int>.Create(null!));
-            Assert.Throws<ArgumentNullException>(() => new ReadOnlyList<int>.Builder(null!));
+            Assert.Throws<ArgumentNullException>(() => new ArrayBuilder<int>(null!));
         }
 
         private static IEnumerable<ReadOnlyList<int>> EmptyLists()
@@ -95,10 +95,10 @@ namespace Eutherion.Tests
             yield return ReadOnlyList<int>.Create(Array.Empty<int>());
             yield return ReadOnlyList<int>.Create(CreateRandomIntSequence(0));
             yield return ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty);
-            yield return ReadOnlyList<int>.Create(new ReadOnlyList<int>.Builder());
-            yield return ReadOnlyList<int>.Create(new ReadOnlyList<int>.Builder(Array.Empty<int>()));
-            yield return ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder());
-            yield return ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder(Array.Empty<int>()));
+            yield return ReadOnlyList<int>.Create(new ArrayBuilder<int>());
+            yield return ReadOnlyList<int>.Create(new ArrayBuilder<int>(Array.Empty<int>()));
+            yield return ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int>());
+            yield return ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int>(Array.Empty<int>()));
         }
 
         public static IEnumerable<object?[]> WrappedEmptyLists() => TestUtilities.Wrap(EmptyLists());
@@ -231,7 +231,7 @@ namespace Eutherion.Tests
         public void BuilderWithOneElement()
         {
             // Basically to ensure collection initializer syntax works.
-            var list = ReadOnlyList<int>.FromBuilder(new ReadOnlyList<int>.Builder { 0 });
+            var list = ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int> { 0 });
             Assert.Collection(list, x => Assert.Equal(0, x));
         }
 
@@ -242,7 +242,7 @@ namespace Eutherion.Tests
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
 
             // Create the builder.
-            var builder = new ReadOnlyList<int>.Builder();
+            var builder = new ArrayBuilder<int>();
             expectedList.ForEach(builder.Add);
 
             // Assert the elements are all there.
@@ -265,7 +265,7 @@ namespace Eutherion.Tests
         {
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
 
-            var builder = new ReadOnlyList<int>.Builder();
+            var builder = new ArrayBuilder<int>();
             builder.AddRange(expectedList);
             builder.AddRange(builder);
             ReadOnlyList<int> list = ReadOnlyList<int>.FromBuilder(builder);

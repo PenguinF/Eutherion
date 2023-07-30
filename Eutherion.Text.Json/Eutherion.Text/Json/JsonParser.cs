@@ -124,7 +124,7 @@ namespace Eutherion.Text.Json
                         GreenJsonMissingValueSyntax.Value) },
                     GreenJsonBackgroundListSyntax.Create(
                         new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(length) })),
-                ReadOnlyList<JsonErrorInfo>.FromBuilder(new ReadOnlyList<JsonErrorInfo>.Builder { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }));
+                ReadOnlyList<JsonErrorInfo>.FromBuilder(new ArrayBuilder<JsonErrorInfo> { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }));
 
         internal const JsonSymbolType ForegroundThreshold = JsonSymbolType.BooleanLiteral;
         internal const JsonSymbolType ValueDelimiterThreshold = JsonSymbolType.Colon;
@@ -132,7 +132,7 @@ namespace Eutherion.Text.Json
         private IEnumerator<IGreenJsonSymbol> Tokens;
         private readonly string Json;
         private readonly int MaximumDepth;
-        private readonly ReadOnlyList<JsonErrorInfo>.Builder Errors = new ReadOnlyList<JsonErrorInfo>.Builder();
+        private readonly ArrayBuilder<JsonErrorInfo> Errors = new ArrayBuilder<JsonErrorInfo>();
         private readonly List<GreenJsonBackgroundSyntax> BackgroundBuilder = new List<GreenJsonBackgroundSyntax>();
 
         // Invariant is that this index is always at the start of the yielded symbol.
