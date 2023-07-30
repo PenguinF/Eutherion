@@ -153,6 +153,34 @@ namespace Eutherion.Text
         public static readonly ReadOnlySeparatedSpanList<TSpan, TSeparator> Empty = new ZeroElements();
 
         /// <summary>
+        /// Initializes a new instance of <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/> from an <see cref="ArrayBuilder{TSpan}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="source">
+        /// The builder containing the elements of the list.
+        /// </param>
+        /// <param name="separator">
+        /// The separator between successive elements of the list.
+        /// </param>
+        /// <returns>
+        /// The initialized <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> and/or <paramref name="separator"/> are <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
+        /// </exception>
+        public static ReadOnlySeparatedSpanList<TSpan, TSeparator> FromBuilder(ArrayBuilder<TSpan> source, TSeparator separator)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (separator == null) throw new ArgumentNullException(nameof(separator));
+            var (array, count) = source.Commit();
+            if (count == 0) return Empty;
+            return OneOrMoreElements.Create(array, count, separator);
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
         /// </summary>
         /// <param name="source">

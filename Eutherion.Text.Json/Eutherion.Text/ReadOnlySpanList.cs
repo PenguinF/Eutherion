@@ -102,6 +102,30 @@ namespace Eutherion.Text
         public static readonly ReadOnlySpanList<TSpan> Empty = new ZeroElements();
 
         /// <summary>
+        /// Initializes a new instance of <see cref="ReadOnlySpanList{TSpan}"/> from an <see cref="ArrayBuilder{TSpan}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="source">
+        /// The builder containing the elements of the list.
+        /// </param>
+        /// <returns>
+        /// The initialized <see cref="ReadOnlySpanList{TSpan}"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
+        /// </exception>
+        public static ReadOnlySpanList<TSpan> FromBuilder(ArrayBuilder<TSpan> source)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            var (array, count) = source.Commit();
+            if (count == 0) return Empty;
+            return OneOrMoreElements.Create(array, count);
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ReadOnlySpanList{TSpan}"/>.
         /// </summary>
         /// <param name="source">
