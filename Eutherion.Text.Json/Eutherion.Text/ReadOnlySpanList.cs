@@ -40,8 +40,6 @@ namespace Eutherion.Text
 
             public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0) { }
 
-            public override IEnumerator<TSpan> GetEnumerator() => EmptyEnumerator<TSpan>.Instance;
-
             public override int GetElementOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
@@ -74,8 +72,6 @@ namespace Eutherion.Text
             {
                 this.arrayElementOffsets = arrayElementOffsets;
             }
-
-            public override IEnumerator<TSpan> GetEnumerator() => ((ICollection<TSpan>)array).GetEnumerator();
 
             public override int GetElementOffset(int index) => index == 0 ? 0 : arrayElementOffsets[index - 1];
         }
@@ -148,9 +144,15 @@ namespace Eutherion.Text
         /// <returns>
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the list.
         /// </returns>
-        public abstract IEnumerator<TSpan> GetEnumerator();
+#if NET5_0_OR_GREATER
+        public ArrayEnumerator<TSpan> GetEnumerator() => new(array, Count);
+#else
+        public ArrayEnumerator<TSpan> GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
+#endif
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator<TSpan> IEnumerable<TSpan>.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
+
+        IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
 
         /// <summary>
         /// Gets the start position of the spanned element at the specified index

@@ -43,8 +43,6 @@ namespace Eutherion.Text
 
             public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0) { }
 
-            public override IEnumerator<TSpan> GetEnumerator() => EmptyEnumerator<TSpan>.Instance;
-
             public override int AllElementCount => 0;
 
             public override IEnumerable<Union<TSpan, TSeparator>> AllElements => EmptyEnumerable<Union<TSpan, TSeparator>>.Instance;
@@ -89,8 +87,6 @@ namespace Eutherion.Text
                 this.separator = separator;
                 this.arrayElementOffsets = arrayElementOffsets;
             }
-
-            public override IEnumerator<TSpan> GetEnumerator() => ((ICollection<TSpan>)array).GetEnumerator();
 
             public override int AllElementCount => array.Length * 2 - 1;
 
@@ -193,9 +189,15 @@ namespace Eutherion.Text
         /// <returns>
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the list.
         /// </returns>
-        public abstract IEnumerator<TSpan> GetEnumerator();
+#if NET5_0_OR_GREATER
+        public ArrayEnumerator<TSpan> GetEnumerator() => new(array, Count);
+#else
+        public ArrayEnumerator<TSpan> GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
+#endif
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator<TSpan> IEnumerable<TSpan>.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
+
+        IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
 
         /// <summary>
         /// Gets the number of spanned elements in the list, including the separators.
