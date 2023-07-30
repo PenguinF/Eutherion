@@ -41,9 +41,7 @@ namespace Eutherion.Text
         {
             public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
-            public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0) { }
-
-            public override int AllElementCount => 0;
+            public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0, 0) { }
 
             public override IEnumerable<Union<TSpan, TSeparator>> AllElements => EmptyEnumerable<Union<TSpan, TSeparator>>.Instance;
 
@@ -82,13 +80,11 @@ namespace Eutherion.Text
             public override TSpan this[int index] => array[index];
 
             private OneOrMoreElements(TSpan[] source, int count, TSeparator separator, int[] arrayElementOffsets, int length)
-                : base(source, count, length)
+                : base(source, count, length, count * 2 - 1)
             {
                 this.separator = separator;
                 this.arrayElementOffsets = arrayElementOffsets;
             }
-
-            public override int AllElementCount => array.Length * 2 - 1;
 
             public override IEnumerable<Union<TSpan, TSeparator>> AllElements
             {
@@ -163,6 +159,12 @@ namespace Eutherion.Text
         public int Length { get; }
 
         /// <summary>
+        /// Gets the number of spanned elements in the list, including the separators.
+        /// See also: <seealso cref="Count"/>.
+        /// </summary>
+        public int AllElementCount { get; }
+
+        /// <summary>
         /// Gets the spanned element at the specified index in the read-only list.
         /// </summary>
         /// <param name="index">
@@ -176,11 +178,12 @@ namespace Eutherion.Text
         /// </exception>
         public abstract TSpan this[int index] { get; }
 
-        private ReadOnlySeparatedSpanList(TSpan[] source, int count, int length)
+        private ReadOnlySeparatedSpanList(TSpan[] source, int count, int length, int allElementCount)
         {
             array = source;
             Count = count;
             Length = length;
+            AllElementCount = allElementCount;
         }
 
         /// <summary>
@@ -198,12 +201,6 @@ namespace Eutherion.Text
         IEnumerator<TSpan> IEnumerable<TSpan>.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
 
         IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
-
-        /// <summary>
-        /// Gets the number of spanned elements in the list, including the separators.
-        /// See also: <seealso cref="Count"/>.
-        /// </summary>
-        public abstract int AllElementCount { get; }
 
         /// <summary>
         /// Enumerates all elements of the list, including separators.
