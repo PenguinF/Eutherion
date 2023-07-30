@@ -78,7 +78,7 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Enumerates all semantically valid key-value pairs together with their starting positions relative to the start position of this <see cref="GreenJsonMapSyntax"/>.
         /// </summary>
-        public IEnumerable<(int, GreenJsonStringLiteralSyntax, int, GreenJsonValueSyntax)> ValidKeyValuePairs()
+        public IEnumerable<(int keyNodeStartPosition, GreenJsonStringLiteralSyntax keyNode, int valueNodeStartPosition, GreenJsonValueSyntax valueNode)> ValidKeyValuePairs()
         {
             for (int i = 0; i < KeyValueNodes.Count; i++)
             {
