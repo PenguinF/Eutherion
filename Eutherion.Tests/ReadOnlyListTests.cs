@@ -85,6 +85,7 @@ namespace Eutherion.Tests
         public void NullArgumentChecks()
         {
             Assert.Throws<ArgumentNullException>(() => ReadOnlyList<int>.Create(null!));
+            Assert.Throws<ArgumentNullException>(() => new ReadOnlyList<int>.Builder(null!));
         }
 
         [Fact]
