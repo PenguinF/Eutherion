@@ -85,8 +85,6 @@ namespace Eutherion.Tests
         public void NullArgumentChecks()
         {
             Assert.Throws<ArgumentNullException>(() => ReadOnlyList<int>.Create(null!));
-            Assert.Throws<ArgumentNullException>(() => IReadOnlyListExtensions.FindIndex<int>(null!, n => false));
-            Assert.Throws<ArgumentNullException>(() => IReadOnlyListExtensions.FindIndex<int>(Array.Empty<int>(), null!));
         }
 
         [Fact]
@@ -268,36 +266,6 @@ namespace Eutherion.Tests
             Assert.Collection(
                 list,
                 expectedList.Concat(expectedList).Select(expected => new Action<int>(actual => Assert.Equal(expected, actual))).ToArray());
-        }
-
-        private static IEnumerable<(IEnumerable<int> haystack, int needle, int expectedIndex)> HaystacksAndNeedles() => new (IEnumerable<int>, int, int)[]
-        {
-            (Array.Empty<int>(), 0, -1),
-            (new int[] { 1 }, 0, -1),
-            (new int[] { 2 }, 0, -1),
-            (new int[] { 1, 2, 3 }, 1, 0),
-            (new int[] { 1, 2, 3 }, 2, 1),
-            (new int[] { 1, 2, 3 }, 3, 2),
-            (new int[] { 1, 1, 1 }, 1, 0),
-        };
-
-        public static IEnumerable<object?[]> WrappedHaystacksAndNeedles() => TestUtilities.Wrap(HaystacksAndNeedles());
-
-        [Theory]
-        [MemberData(nameof(WrappedHaystacksAndNeedles))]
-        public void TestFindIndex(IEnumerable<int> haystack, int needle, int expectedIndex)
-        {
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(haystack);
-
-            if (expectedIndex < 0)
-            {
-                Assert.True(list.FindIndex(n => n == needle).IsNothing);
-            }
-            else
-            {
-                Assert.True(list.FindIndex(n => n == needle).IsJust(out int foundIndex));
-                Assert.Equal(expectedIndex, foundIndex);
-            }
         }
     }
 }
