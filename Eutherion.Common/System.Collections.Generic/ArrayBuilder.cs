@@ -19,6 +19,8 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion;
+
 namespace System.Collections.Generic
 {
     /// <summary>
@@ -27,8 +29,7 @@ namespace System.Collections.Generic
     /// <typeparam name="T">
     /// The type of elements in the array to build.
     /// </typeparam>
-    // Implement IEnumerable<T> to enable collection initializer syntax.
-    public sealed class ArrayBuilder<T> : IReadOnlyCollection<T>
+    public sealed class ArrayBuilder<T> : IReadOnlyList<T>
     {
         private const int DefaultCapacity = 4;
 
@@ -48,6 +49,32 @@ namespace System.Collections.Generic
         /// Gets the current number of elements added to the builder.
         /// </summary>
         public int Count => count;
+
+        /// <summary>
+        /// Gets or sets the element at the specified index.
+        /// </summary>
+        /// <param name="index">
+        /// The zero-based index of the element to get or set.
+        /// </param>
+        /// <returns>
+        /// The element at the specified index.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="Count"/>.
+        /// </exception>
+        public T this[int index]
+        {
+            get
+            {
+                // Cast to uint so negative values get flagged by this check too.
+                if ((uint)index < (uint)Count)
+                {
+                    return array[index];
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ArrayBuilder{T}"/>.
