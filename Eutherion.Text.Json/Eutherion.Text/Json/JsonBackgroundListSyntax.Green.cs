@@ -40,6 +40,22 @@ namespace Eutherion.Text.Json
 #endif
 
         /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonBackgroundListSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder containing <see cref="GreenJsonBackgroundSyntax"/> nodes.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="GreenJsonBackgroundListSyntax"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        public static GreenJsonBackgroundListSyntax Create(ArrayBuilder<GreenJsonBackgroundSyntax> builder)
+            => CreateHelper(ReadOnlySpanList<GreenJsonBackgroundSyntax>.FromBuilder(builder));
+
+        /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonBackgroundListSyntax"/>.
         /// </summary>
         /// <param name="source">
@@ -52,8 +68,10 @@ namespace Eutherion.Text.Json
         /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
         public static GreenJsonBackgroundListSyntax Create(IEnumerable<GreenJsonBackgroundSyntax> source)
+            => CreateHelper(ReadOnlySpanList<GreenJsonBackgroundSyntax>.Create(source));
+
+        internal static GreenJsonBackgroundListSyntax CreateHelper(ReadOnlySpanList<GreenJsonBackgroundSyntax> readOnlyBackground)
         {
-            var readOnlyBackground = ReadOnlySpanList<GreenJsonBackgroundSyntax>.Create(source);
             if (readOnlyBackground.Count == 0) return Empty;
             return new GreenJsonBackgroundListSyntax(readOnlyBackground);
         }

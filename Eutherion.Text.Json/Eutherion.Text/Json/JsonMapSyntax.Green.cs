@@ -45,6 +45,27 @@ namespace Eutherion.Text.Json
         public override int Length { get; }
 
         /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonMapSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="keyValueNodesBuilder">
+        /// The non-empty builder with key-value nodes.
+        /// </param>
+        /// <param name="missingCurlyClose">
+        /// False if the list is terminated by a closing curly brace, otherwise true.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="keyValueNodesBuilder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="keyValueNodesBuilder"/> is an empty enumeration.
+        /// </exception>
+        public GreenJsonMapSyntax(ArrayBuilder<GreenJsonKeyValueSyntax> keyValueNodesBuilder, bool missingCurlyClose)
+            : this(ReadOnlySeparatedSpanList<GreenJsonKeyValueSyntax, GreenJsonCommaSyntax>.FromBuilder(keyValueNodesBuilder, GreenJsonCommaSyntax.Value), missingCurlyClose)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonMapSyntax"/>.
         /// </summary>
         /// <param name="keyValueNodes">
@@ -60,8 +81,13 @@ namespace Eutherion.Text.Json
         /// <paramref name="keyValueNodes"/> is an empty enumeration.
         /// </exception>
         public GreenJsonMapSyntax(IEnumerable<GreenJsonKeyValueSyntax> keyValueNodes, bool missingCurlyClose)
+            : this(ReadOnlySeparatedSpanList<GreenJsonKeyValueSyntax, GreenJsonCommaSyntax>.Create(keyValueNodes, GreenJsonCommaSyntax.Value), missingCurlyClose)
         {
-            KeyValueNodes = ReadOnlySeparatedSpanList<GreenJsonKeyValueSyntax, GreenJsonCommaSyntax>.Create(keyValueNodes, GreenJsonCommaSyntax.Value);
+        }
+
+        internal GreenJsonMapSyntax(ReadOnlySeparatedSpanList<GreenJsonKeyValueSyntax, GreenJsonCommaSyntax> keyValueNodes, bool missingCurlyClose)
+        {
+            KeyValueNodes = keyValueNodes;
 
             if (KeyValueNodes.Count == 0)
             {

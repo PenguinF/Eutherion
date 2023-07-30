@@ -55,6 +55,28 @@ namespace Eutherion.Text.Json
         public int Length => ValueSectionNodes.Length;
 
         /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonKeyValueSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="validKey">
+        /// Nothing if no valid key was found, just the valid key otherwise.
+        /// The string literal is expected to be the same as the first value node's content node in <paramref name="valueSectionNodesBuilder"/>.
+        /// </param>
+        /// <param name="valueSectionNodesBuilder">
+        /// The builder with syntax nodes containing the key and values.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="validKey"/> and/or <paramref name="valueSectionNodesBuilder"/> are <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="validKey"/> is not the expected syntax node -or- <paramref name="valueSectionNodesBuilder"/> is an empty enumeration.
+        /// </exception>
+        public GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax> validKey, ArrayBuilder<GreenJsonMultiValueSyntax> valueSectionNodesBuilder)
+            : this(validKey, ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonColonSyntax>.FromBuilder(valueSectionNodesBuilder, GreenJsonColonSyntax.Value))
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonKeyValueSyntax"/>.
         /// </summary>
         /// <param name="validKey">
@@ -71,9 +93,14 @@ namespace Eutherion.Text.Json
         /// <paramref name="validKey"/> is not the expected syntax node -or- <paramref name="valueSectionNodes"/> is an empty enumeration.
         /// </exception>
         public GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax> validKey, IEnumerable<GreenJsonMultiValueSyntax> valueSectionNodes)
+            : this(validKey, ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonColonSyntax>.Create(valueSectionNodes, GreenJsonColonSyntax.Value))
+        {
+        }
+
+        internal GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax> validKey, ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonColonSyntax> valueSectionNodes)
         {
             ValidKey = validKey ?? throw new ArgumentNullException(nameof(validKey));
-            ValueSectionNodes = ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonColonSyntax>.Create(valueSectionNodes, GreenJsonColonSyntax.Value);
+            ValueSectionNodes = valueSectionNodes;
 
             if (ValueSectionNodes.Count == 0)
             {

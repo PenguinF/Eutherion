@@ -98,6 +98,27 @@ namespace Eutherion.Text.Json
         public int Length => ValueNodes.Length + BackgroundAfter.Length;
 
         /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonMultiValueSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="valueNodesBuilder">
+        /// The non-empty builder with value nodes.
+        /// </param>
+        /// <param name="backgroundAfter">
+        /// The background symbols which directly trail the value nodes.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="valueNodesBuilder"/> and/or <paramref name="backgroundAfter"/> are <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="valueNodesBuilder"/> is an empty enumeration.
+        /// </exception>
+        public GreenJsonMultiValueSyntax(ArrayBuilder<GreenJsonValueWithBackgroundSyntax> valueNodesBuilder, GreenJsonBackgroundListSyntax backgroundAfter)
+            : this(ReadOnlySpanList<GreenJsonValueWithBackgroundSyntax>.FromBuilder(valueNodesBuilder), backgroundAfter)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonMultiValueSyntax"/>.
         /// </summary>
         /// <param name="valueNodes">
@@ -113,8 +134,13 @@ namespace Eutherion.Text.Json
         /// <paramref name="valueNodes"/> is an empty enumeration.
         /// </exception>
         public GreenJsonMultiValueSyntax(IEnumerable<GreenJsonValueWithBackgroundSyntax> valueNodes, GreenJsonBackgroundListSyntax backgroundAfter)
+            : this(ReadOnlySpanList<GreenJsonValueWithBackgroundSyntax>.Create(valueNodes), backgroundAfter)
         {
-            ValueNodes = ReadOnlySpanList<GreenJsonValueWithBackgroundSyntax>.Create(valueNodes);
+        }
+
+        internal GreenJsonMultiValueSyntax(ReadOnlySpanList<GreenJsonValueWithBackgroundSyntax> valueNodes, GreenJsonBackgroundListSyntax backgroundAfter)
+        {
+            ValueNodes = valueNodes;
 
             if (ValueNodes.Count == 0)
             {

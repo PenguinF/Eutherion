@@ -64,6 +64,27 @@ namespace Eutherion.Text.Json
         public override int Length { get; }
 
         /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonListSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="listItemNodesBuilder">
+        /// The non-empty builder with list item nodes.
+        /// </param>
+        /// <param name="missingSquareBracketClose">
+        /// False if the list is terminated by a closing square bracket, otherwise true.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="listItemNodesBuilder"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="listItemNodesBuilder"/> is an empty enumeration.
+        /// </exception>
+        public GreenJsonListSyntax(ArrayBuilder<GreenJsonMultiValueSyntax> listItemNodesBuilder, bool missingSquareBracketClose)
+            : this(ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonCommaSyntax>.FromBuilder(listItemNodesBuilder, GreenJsonCommaSyntax.Value), missingSquareBracketClose)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonListSyntax"/>.
         /// </summary>
         /// <param name="listItemNodes">
@@ -79,8 +100,13 @@ namespace Eutherion.Text.Json
         /// <paramref name="listItemNodes"/> is an empty enumeration.
         /// </exception>
         public GreenJsonListSyntax(IEnumerable<GreenJsonMultiValueSyntax> listItemNodes, bool missingSquareBracketClose)
+            : this(ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonCommaSyntax>.Create(listItemNodes, GreenJsonCommaSyntax.Value), missingSquareBracketClose)
         {
-            ListItemNodes = ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonCommaSyntax>.Create(listItemNodes, GreenJsonCommaSyntax.Value);
+        }
+
+        internal GreenJsonListSyntax(ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonCommaSyntax> listItemNodes, bool missingSquareBracketClose)
+        {
+            ListItemNodes = listItemNodes;
 
             if (ListItemNodes.Count == 0)
             {
