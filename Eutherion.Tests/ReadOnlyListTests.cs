@@ -88,13 +88,26 @@ namespace Eutherion.Tests
             Assert.Throws<ArgumentNullException>(() => new ReadOnlyList<int>.Builder(null!));
         }
 
-        [Fact]
-        public void EmptyReadOnlyListIsAlwaysSameInstance()
+        private static IEnumerable<ReadOnlyList<int>> EmptyLists()
         {
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Empty);
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty));
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Create(Array.Empty<int>()));
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Create(CreateRandomIntSequence(0)));
+            yield return ReadOnlyList<int>.Empty;
+            yield return ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty);
+            yield return ReadOnlyList<int>.Create(Array.Empty<int>());
+            yield return ReadOnlyList<int>.Create(CreateRandomIntSequence(0));
+            yield return ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty);
+            yield return ReadOnlyList<int>.Create(new ReadOnlyList<int>.Builder());
+            yield return ReadOnlyList<int>.Create(new ReadOnlyList<int>.Builder(Array.Empty<int>()));
+            yield return new ReadOnlyList<int>.Builder().Commit();
+            yield return new ReadOnlyList<int>.Builder(Array.Empty<int>()).Commit();
+        }
+
+        public static IEnumerable<object?[]> WrappedEmptyLists() => TestUtilities.Wrap(EmptyLists());
+
+        [Theory]
+        [MemberData(nameof(WrappedEmptyLists))]
+        public void EmptyReadOnlyListIsAlwaysSameInstance(ReadOnlyList<int> emptyList)
+        {
+            Assert.Same(ReadOnlyList<int>.Empty, emptyList);
         }
 
         [Fact]
@@ -212,12 +225,6 @@ namespace Eutherion.Tests
 
             value1.Value = 2;
             Assert.Equal(array[0].Value, list[0].Value);
-        }
-
-        [Fact]
-        public void EmptyBuilderReturnsEmptyList()
-        {
-            Assert.Same(ReadOnlyList<int>.Empty, new ReadOnlyList<int>.Builder().Commit());
         }
 
         [Fact]
