@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonErrorCode.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -130,10 +130,5 @@ namespace Eutherion.Text.Json
         /// Occurs when a Json parse tree exceeds the maximum allowed depth.
         /// </summary>
         ParseTreeTooDeep,
-
-        /// <summary>
-        /// Minimum error code value for custom error messages.
-        /// </summary>
-        Custom,
     }
 }
