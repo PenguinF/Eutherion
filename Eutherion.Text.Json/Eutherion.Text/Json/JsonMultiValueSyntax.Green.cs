@@ -138,7 +138,7 @@ namespace Eutherion.Text.Json
         {
         }
 
-        internal GreenJsonMultiValueSyntax(ReadOnlySpanList<GreenJsonValueWithBackgroundSyntax> valueNodes, GreenJsonBackgroundListSyntax backgroundAfter)
+        private GreenJsonMultiValueSyntax(ReadOnlySpanList<GreenJsonValueWithBackgroundSyntax> valueNodes, GreenJsonBackgroundListSyntax backgroundAfter)
         {
             ValueNodes = valueNodes;
 
