@@ -2,7 +2,7 @@
 /*********************************************************************************
  * _void.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ namespace System
     /// Represents the empty/void type, which means that its values contain no information.
     /// This type is intended to be used as a generic type parameter.
     /// </summary>
-    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "'_' prefix chosen so type name as close as possible to the regular 'void' keyword")]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "'_' prefix chosen so type name is as close as possible to the regular 'void' keyword")]
     public struct _void
     {
         /// <summary>
