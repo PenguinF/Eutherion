@@ -38,13 +38,13 @@ namespace Eutherion.Text
         {
             public override int Length => 0;
 
-            public override TSpan this[int index] => throw new IndexOutOfRangeException();
+            public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
             public override int Count => 0;
 
             public override IEnumerator<TSpan> GetEnumerator() => EmptyEnumerator<TSpan>.Instance;
 
-            public override int GetElementOffset(int index) => throw new IndexOutOfRangeException();
+            public override int GetElementOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
         private class OneElement : ReadOnlySpanList<TSpan>
@@ -59,13 +59,13 @@ namespace Eutherion.Text
 
             public override int Length => element.Length;
 
-            public override TSpan this[int index] => index == 0 ? element : throw new IndexOutOfRangeException();
+            public override TSpan this[int index] => index == 0 ? element : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
             public override int Count => 1;
 
             public override IEnumerator<TSpan> GetEnumerator() => new SingleElementEnumerator<TSpan>(element);
 
-            public override int GetElementOffset(int index) => index == 0 ? 0 : throw new IndexOutOfRangeException();
+            public override int GetElementOffset(int index) => index == 0 ? 0 : throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
         private class TwoOrMoreElements : ReadOnlySpanList<TSpan>
@@ -147,7 +147,7 @@ namespace Eutherion.Text
         /// <returns>
         /// The spanned element at the specified index in the read-only list.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public abstract TSpan this[int index] { get; }
@@ -177,7 +177,7 @@ namespace Eutherion.Text
         /// <returns>
         /// The start position of the spanned element relative to the start position of the first element.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public abstract int GetElementOffset(int index);

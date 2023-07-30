@@ -105,21 +105,27 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
         public override JsonSyntax GetChild(int index)
         {
             if (index < ValueNodes.Count) return ValueNodes[index];
             if (index == ValueNodes.Count) return BackgroundAfter;
-            throw new IndexOutOfRangeException();
+            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
         public override int GetChildStartPosition(int index)
         {
             if (index < ValueNodes.Count) return Green.ValueNodes.GetElementOffset(index);
             if (index == ValueNodes.Count) return Length - Green.BackgroundAfter.Length;
-            throw new IndexOutOfRangeException();
+            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
         private JsonMultiValueSyntax(Union<_void, JsonListSyntax, JsonKeyValueSyntax> parent, GreenJsonMultiValueSyntax green)
