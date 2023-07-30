@@ -85,7 +85,7 @@ namespace Eutherion.Text.Json
         {
         }
 
-        internal GreenJsonMapSyntax(ReadOnlySeparatedSpanList<GreenJsonKeyValueSyntax, GreenJsonCommaSyntax> keyValueNodes, bool missingCurlyClose)
+        private GreenJsonMapSyntax(ReadOnlySeparatedSpanList<GreenJsonKeyValueSyntax, GreenJsonCommaSyntax> keyValueNodes, bool missingCurlyClose)
         {
             KeyValueNodes = keyValueNodes;
 

@@ -104,7 +104,7 @@ namespace Eutherion.Text.Json
         {
         }
 
-        internal GreenJsonListSyntax(ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonCommaSyntax> listItemNodes, bool missingSquareBracketClose)
+        private GreenJsonListSyntax(ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonCommaSyntax> listItemNodes, bool missingSquareBracketClose)
         {
             ListItemNodes = listItemNodes;
 

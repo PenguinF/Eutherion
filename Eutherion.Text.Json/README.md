@@ -8,7 +8,6 @@ It accomplishes this by:
   * Lazily creating full syntax nodes when they are actually needed.
   * Not storing references to the source string, and only taking substrings from it to create meaningful values.
   * Incorporating syntactical errors into special types of syntax nodes.
-  * Using frugal collection types for syntax nodes when these collections are small.
 
 Note that this implementation is stack-based, with the disadvantage that it imposes a maximum depth to the syntax tree. This makes it useful for parsing e.g. settings files, but not for deeply nested data structures.
 

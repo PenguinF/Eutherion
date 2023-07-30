@@ -70,7 +70,7 @@ namespace Eutherion.Text.Json
         public static GreenJsonBackgroundListSyntax Create(IEnumerable<GreenJsonBackgroundSyntax> source)
             => CreateHelper(ReadOnlySpanList<GreenJsonBackgroundSyntax>.Create(source));
 
-        internal static GreenJsonBackgroundListSyntax CreateHelper(ReadOnlySpanList<GreenJsonBackgroundSyntax> readOnlyBackground)
+        private static GreenJsonBackgroundListSyntax CreateHelper(ReadOnlySpanList<GreenJsonBackgroundSyntax> readOnlyBackground)
         {
             if (readOnlyBackground.Count == 0) return Empty;
             return new GreenJsonBackgroundListSyntax(readOnlyBackground);

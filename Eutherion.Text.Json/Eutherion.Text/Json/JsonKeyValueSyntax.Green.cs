@@ -97,7 +97,7 @@ namespace Eutherion.Text.Json
         {
         }
 
-        internal GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax> validKey, ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonColonSyntax> valueSectionNodes)
+        private GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax> validKey, ReadOnlySeparatedSpanList<GreenJsonMultiValueSyntax, GreenJsonColonSyntax> valueSectionNodes)
         {
             ValidKey = validKey ?? throw new ArgumentNullException(nameof(validKey));
             ValueSectionNodes = valueSectionNodes;
