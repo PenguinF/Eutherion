@@ -244,7 +244,7 @@ namespace System.Collections.Generic
         /// <returns>
         /// The element at the specified index in the read-only list.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public T this[int index]
