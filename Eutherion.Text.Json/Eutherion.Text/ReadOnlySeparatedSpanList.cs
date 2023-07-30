@@ -77,7 +77,19 @@ namespace Eutherion.Text
             private readonly TSeparator separator;
             private readonly int[] arrayElementOffsets;
 
-            public override TSpan this[int index] => array[index];
+            public override TSpan this[int index]
+            {
+                get
+                {
+                    // Cast to uint so negative values get flagged by this check too.
+                    if ((uint)index < (uint)Count)
+                    {
+                        return array[index];
+                    }
+
+                    throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                }
+            }
 
             private OneOrMoreElements(TSpan[] source, int count, TSeparator separator, int[] arrayElementOffsets, int length)
                 : base(source, count, length, count * 2 - 1)
@@ -100,16 +112,37 @@ namespace Eutherion.Text
                 }
             }
 
-            public override int GetElementOffset(int index) => index == 0 ? 0 : arrayElementOffsets[index - 1];
+            public override int GetElementOffset(int index)
+            {
+                if ((uint)index < (uint)Count)
+                {
+                    return index == 0 ? 0 : arrayElementOffsets[index - 1];
+                }
 
-            public override int GetSeparatorOffset(int index) => arrayElementOffsets[index] - separator.Length;
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
+
+            public override int GetSeparatorOffset(int index)
+            {
+                if ((uint)index < (uint)(Count - 1))
+                {
+                    return arrayElementOffsets[index] - separator.Length;
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
 
             public override int GetElementOrSeparatorOffset(int index)
             {
-                if (index == 0) return 0;
-                int offset = arrayElementOffsets[(index - 1) >> 1];
-                if ((index & 1) != 0) offset -= separator.Length;
-                return offset;
+                if ((uint)index < (uint)AllElementCount)
+                {
+                    if (index == 0) return 0;
+                    int offset = arrayElementOffsets[(index - 1) >> 1];
+                    if ((index & 1) != 0) offset -= separator.Length;
+                    return offset;
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
             }
         }
 

@@ -65,7 +65,19 @@ namespace Eutherion.Text
 
             private readonly int[] arrayElementOffsets;
 
-            public override TSpan this[int index] => array[index];
+            public override TSpan this[int index]
+            {
+                get
+                {
+                    // Cast to uint so negative values get flagged by this check too.
+                    if ((uint)index < (uint)Count)
+                    {
+                        return array[index];
+                    }
+
+                    throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                }
+            }
 
             private OneOrMoreElements(TSpan[] source, int count, int[] arrayElementOffsets, int length)
                 : base(source, count, length)
@@ -73,7 +85,15 @@ namespace Eutherion.Text
                 this.arrayElementOffsets = arrayElementOffsets;
             }
 
-            public override int GetElementOffset(int index) => index == 0 ? 0 : arrayElementOffsets[index - 1];
+            public override int GetElementOffset(int index)
+            {
+                if ((uint)index < (uint)Count)
+                {
+                    return index == 0 ? 0 : arrayElementOffsets[index - 1];
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
         }
 
         /// <summary>
