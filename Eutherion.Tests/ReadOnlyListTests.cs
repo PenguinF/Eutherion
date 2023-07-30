@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Testing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,21 +53,21 @@ namespace Eutherion.Tests
 
             yield return new ListCreationMethod(x =>
             {
-                var builder = new ReadOnlyList<int>.Builder();
+                var builder = new ArrayBuilder<int>();
                 x.ForEach(builder.Add);
-                return builder.Commit();
+                return ReadOnlyList<int>.FromBuilder(builder);
             });
 
             yield return new ListCreationMethod(x =>
             {
-                var builder = new ReadOnlyList<int>.Builder();
+                var builder = new ArrayBuilder<int>();
                 builder.AddRange(x);
-                return builder.Commit();
+                return ReadOnlyList<int>.FromBuilder(builder);
             });
 
             yield return new ListCreationMethod(x =>
             {
-                var list = new ReadOnlyList<int>.Builder(x).Commit();
+                var list = ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int>(x));
                 list.Truncate();
                 return list;
             });
@@ -84,17 +85,29 @@ namespace Eutherion.Tests
         public void NullArgumentChecks()
         {
             Assert.Throws<ArgumentNullException>(() => ReadOnlyList<int>.Create(null!));
-            Assert.Throws<ArgumentNullException>(() => IReadOnlyListExtensions.FindIndex<int>(null!, n => false));
-            Assert.Throws<ArgumentNullException>(() => IReadOnlyListExtensions.FindIndex<int>(Array.Empty<int>(), null!));
+            Assert.Throws<ArgumentNullException>(() => new ArrayBuilder<int>(null!));
         }
 
-        [Fact]
-        public void EmptyReadOnlyListIsAlwaysSameInstance()
+        private static IEnumerable<ReadOnlyList<int>> EmptyLists()
         {
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Empty);
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty));
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Create(Array.Empty<int>()));
-            Assert.Same(ReadOnlyList<int>.Empty, ReadOnlyList<int>.Create(CreateRandomIntSequence(0)));
+            yield return ReadOnlyList<int>.Empty;
+            yield return ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty);
+            yield return ReadOnlyList<int>.Create(Array.Empty<int>());
+            yield return ReadOnlyList<int>.Create(CreateRandomIntSequence(0));
+            yield return ReadOnlyList<int>.Create(ReadOnlyList<int>.Empty);
+            yield return ReadOnlyList<int>.Create(new ArrayBuilder<int>());
+            yield return ReadOnlyList<int>.Create(new ArrayBuilder<int>(Array.Empty<int>()));
+            yield return ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int>());
+            yield return ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int>(Array.Empty<int>()));
+        }
+
+        public static IEnumerable<object?[]> WrappedEmptyLists() => TestUtilities.Wrap(EmptyLists());
+
+        [Theory]
+        [MemberData(nameof(WrappedEmptyLists))]
+        public void EmptyReadOnlyListIsAlwaysSameInstance(ReadOnlyList<int> emptyList)
+        {
+            Assert.Same(ReadOnlyList<int>.Empty, emptyList);
         }
 
         [Fact]
@@ -215,16 +228,10 @@ namespace Eutherion.Tests
         }
 
         [Fact]
-        public void EmptyBuilderReturnsEmptyList()
-        {
-            Assert.Same(ReadOnlyList<int>.Empty, new ReadOnlyList<int>.Builder().Commit());
-        }
-
-        [Fact]
         public void BuilderWithOneElement()
         {
             // Basically to ensure collection initializer syntax works.
-            var list = new ReadOnlyList<int>.Builder { 0 }.Commit();
+            var list = ReadOnlyList<int>.FromBuilder(new ArrayBuilder<int> { 0 });
             Assert.Collection(list, x => Assert.Equal(0, x));
         }
 
@@ -235,7 +242,7 @@ namespace Eutherion.Tests
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
 
             // Create the builder.
-            var builder = new ReadOnlyList<int>.Builder();
+            var builder = new ArrayBuilder<int>();
             expectedList.ForEach(builder.Add);
 
             // Assert the elements are all there.
@@ -258,45 +265,15 @@ namespace Eutherion.Tests
         {
             int[] expectedList = CreateRandomIntSequence(length).ToArray();
 
-            var builder = new ReadOnlyList<int>.Builder();
+            var builder = new ArrayBuilder<int>();
             builder.AddRange(expectedList);
             builder.AddRange(builder);
-            ReadOnlyList<int> list = builder.Commit();
+            ReadOnlyList<int> list = ReadOnlyList<int>.FromBuilder(builder);
 
             Assert.Equal(expectedList.Length * 2, list.Count);
             Assert.Collection(
                 list,
                 expectedList.Concat(expectedList).Select(expected => new Action<int>(actual => Assert.Equal(expected, actual))).ToArray());
-        }
-
-        private static IEnumerable<(IEnumerable<int> haystack, int needle, int expectedIndex)> HaystacksAndNeedles() => new (IEnumerable<int>, int, int)[]
-        {
-            (Array.Empty<int>(), 0, -1),
-            (new int[] { 1 }, 0, -1),
-            (new int[] { 2 }, 0, -1),
-            (new int[] { 1, 2, 3 }, 1, 0),
-            (new int[] { 1, 2, 3 }, 2, 1),
-            (new int[] { 1, 2, 3 }, 3, 2),
-            (new int[] { 1, 1, 1 }, 1, 0),
-        };
-
-        public static IEnumerable<object?[]> WrappedHaystacksAndNeedles() => TestUtilities.Wrap(HaystacksAndNeedles());
-
-        [Theory]
-        [MemberData(nameof(WrappedHaystacksAndNeedles))]
-        public void TestFindIndex(IEnumerable<int> haystack, int needle, int expectedIndex)
-        {
-            ReadOnlyList<int> list = ReadOnlyList<int>.Create(haystack);
-
-            if (expectedIndex < 0)
-            {
-                Assert.True(list.FindIndex(n => n == needle).IsNothing);
-            }
-            else
-            {
-                Assert.True(list.FindIndex(n => n == needle).IsJust(out int foundIndex));
-                Assert.Equal(expectedIndex, foundIndex);
-            }
         }
     }
 }

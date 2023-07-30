@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ExceptionUtil.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,11 +26,24 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Eutherion
 {
-    internal static class ExceptionUtil
+    /// <summary>
+    /// Contains helper methods to throw common .NET exceptions to access their built-in string resources.
+    /// </summary>
+    /// <remarks>
+    /// None of the methods actually return, but they do return an <see cref="Exception"/> or the expected type
+    /// to provide a way to e.g. make conditional statements syntactically valid.
+    /// </remarks>
+    public static class ExceptionUtil
     {
-        // Also 'return' the exception so caller has something to throw as well making e.g. conditional statements syntactically valid.
+        /// <summary>
+        /// Throws the exception which would be generated if <see cref="IEnumerator.Current"/> is called
+        /// on an enumerator with an index that is currently out of bounds.
+        /// </summary>
+        /// <returns>
+        /// This method does not return.
+        /// </returns>
         [DoesNotReturn]
-        internal static InvalidOperationException ThrowInvalidEnumerationOperationException()
+        public static InvalidOperationException ThrowInvalidEnumerationOperationException()
         {
             // Referencing IEnumerator.Current throws an InvalidOperationException
             // which we'd like to simulate so it uses the built-in mscorlib resources.
@@ -49,8 +62,15 @@ namespace Eutherion
             throw new UnreachableException();
         }
 
+        /// <summary>
+        /// Throws the exception which would be generated if an element of a collection is accessed
+        /// with an index that is currently out of bounds.
+        /// </summary>
+        /// <returns>
+        /// This method does not return.
+        /// </returns>
         [DoesNotReturn]
-        internal static ArgumentOutOfRangeException ThrowListIndexOutOfRangeException()
+        public static ArgumentOutOfRangeException ThrowListIndexOutOfRangeException()
         {
             var x = new List<int>()[0];
             GC.KeepAlive(x);

@@ -113,33 +113,39 @@ namespace Eutherion.Collections
         /// <returns>
         /// The initialized object at the specified index in the collection.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public TObject this[int index]
         {
             get
             {
-                if (Arr[index] == null)
+                // Cast to uint so negative values get flagged by this check too.
+                if ((uint)index < (uint)Count)
                 {
-                    // Validate that constructor() returned a non-null value.
-                    TObject constructedObject = ElementConstructor(index);
-                    if (constructedObject == null)
+                    if (Arr[index] == null)
                     {
-                        throw new InvalidOperationException(
-                            $"{nameof(ElementConstructor)} returned null for index {index} but should have returned an initialized object.");
+                        // Validate that constructor() returned a non-null value.
+                        TObject constructedObject = ElementConstructor(index);
+                        if (constructedObject == null)
+                        {
+                            throw new InvalidOperationException(
+                                $"{nameof(ElementConstructor)} returned null for index {index} but should have returned an initialized object.");
+                        }
+
+                        // Replace with an initialized value as an atomic operation.
+#if NET472
+                        Interlocked.CompareExchange(ref Arr[index], constructedObject, null);
+#else
+                        // Static null analysis ignores that arrays are initialized with null values and so flags 'null' as a false positive.
+                        Interlocked.CompareExchange(ref Arr[index], constructedObject, null!);
+#endif
                     }
 
-                    // Replace with an initialized value as an atomic operation.
-#if NET472
-                    Interlocked.CompareExchange(ref Arr[index], constructedObject, null);
-#else
-                    // Static null analysis ignores that arrays are initialized with null values and so flags 'null' as a false positive.
-                    Interlocked.CompareExchange(ref Arr[index], constructedObject, null!);
-#endif
+                    return Arr[index];
                 }
 
-                return Arr[index];
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
             }
         }
 

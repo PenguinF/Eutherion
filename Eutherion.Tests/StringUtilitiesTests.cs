@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Testing;
 using Eutherion.Text;
 using System;
 using System.Collections.Generic;

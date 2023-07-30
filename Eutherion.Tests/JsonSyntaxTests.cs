@@ -19,9 +19,10 @@
 **********************************************************************************/
 #endregion
 
-using Eutherion.Tests;
+using Eutherion.Testing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Xunit;
 
@@ -51,16 +52,20 @@ namespace Eutherion.Text.Json.Tests
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonIntegerLiteralSyntax(0, -1));
 
             Assert.Throws<ArgumentNullException>("validKey", () => new GreenJsonKeyValueSyntax(null!, EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance));
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, null!));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, (ArrayBuilder<GreenJsonMultiValueSyntax>)null!));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, (IEnumerable<GreenJsonMultiValueSyntax>)null!));
             Assert.Throws<ArgumentException>("valueSectionNodes", () => new GreenJsonKeyValueSyntax(Maybe<GreenJsonStringLiteralSyntax>.Nothing, EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance));
 
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonListSyntax(null!, false));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonListSyntax((ArrayBuilder<GreenJsonMultiValueSyntax>)null!, false));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonListSyntax((IEnumerable<GreenJsonMultiValueSyntax>)null!, false));
             Assert.Throws<ArgumentException>("listItemNodes", () => new GreenJsonListSyntax(EmptyEnumerable<GreenJsonMultiValueSyntax>.Instance, false));
 
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMapSyntax(null!, false));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMapSyntax((ArrayBuilder<GreenJsonKeyValueSyntax>)null!, false));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMapSyntax((IEnumerable<GreenJsonKeyValueSyntax>)null!, false));
             Assert.Throws<ArgumentException>("keyValueNodes", () => new GreenJsonMapSyntax(EmptyEnumerable<GreenJsonKeyValueSyntax>.Instance, false));
 
-            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMultiValueSyntax(null!, GreenJsonBackgroundListSyntax.Empty));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMultiValueSyntax((ArrayBuilder<GreenJsonValueWithBackgroundSyntax>)null!, GreenJsonBackgroundListSyntax.Empty));
+            Assert.Throws<ArgumentNullException>("source", () => new GreenJsonMultiValueSyntax((IEnumerable<GreenJsonValueWithBackgroundSyntax>)null!, GreenJsonBackgroundListSyntax.Empty));
             Assert.Throws<ArgumentException>("valueNodes", () => new GreenJsonMultiValueSyntax(EmptyEnumerable<GreenJsonValueWithBackgroundSyntax>.Instance, GreenJsonBackgroundListSyntax.Empty));
             Assert.Throws<ArgumentNullException>("backgroundAfter", () => new GreenJsonMultiValueSyntax(
                 new SingleElementEnumerable<GreenJsonValueWithBackgroundSyntax>(new GreenJsonValueWithBackgroundSyntax(
@@ -273,31 +278,25 @@ namespace Eutherion.Text.Json.Tests
             Assert.Same(integerLiteral, firstValueNode!.ValueNode.ContentNode);
         }
 
-        [Fact]
-        public void ListSyntaxPropertiesAreConsistent()
+        private static IEnumerable<(IEnumerable<GreenJsonValueSyntax> valueNodes, int expectedFilteredItemNodesCount)> ListValuesTestCases()
         {
-            GreenJsonIntegerLiteralSyntax integerLiteral = new(1, 1);
-            GreenJsonIntegerLiteralSyntax integerLiteral2 = new(1, 2);
+            yield return (new GreenJsonValueSyntax[] { GreenJsonMissingValueSyntax.Value }, 0);
+            yield return (new GreenJsonValueSyntax[] { new GreenJsonIntegerLiteralSyntax(1, 1) }, 1);
 
-            GreenJsonListSyntax list1 = new(
-                new GreenJsonMultiValueSyntax[]
-                {
-                    CreateMultiValue(integerLiteral),
-                    CreateMultiValue(integerLiteral2),
-                },
-                false);
+            yield return (new GreenJsonValueSyntax[] { GreenJsonMissingValueSyntax.Value, new GreenJsonIntegerLiteralSyntax(1, 1) }, 2);
+            yield return (new GreenJsonValueSyntax[] { new GreenJsonIntegerLiteralSyntax(1, 1), GreenJsonMissingValueSyntax.Value }, 1);
+            yield return (new GreenJsonValueSyntax[] { GreenJsonMissingValueSyntax.Value, new GreenJsonIntegerLiteralSyntax(1, 1), GreenJsonMissingValueSyntax.Value }, 2);
+            yield return (new GreenJsonValueSyntax[] { new GreenJsonIntegerLiteralSyntax(1, 1), GreenJsonMissingValueSyntax.Value, GreenJsonMissingValueSyntax.Value }, 2);
+        }
 
-            Assert.Equal(2, list1.FilteredListItemNodeCount);
+        public static IEnumerable<object?[]> WrappedListValuesTestCases() => TestUtilities.Wrap(ListValuesTestCases());
 
-            GreenJsonListSyntax list2 = new(
-                new GreenJsonMultiValueSyntax[]
-                {
-                    CreateMultiValue(integerLiteral),
-                    CreateMultiValue(GreenJsonMissingValueSyntax.Value),
-                },
-                false);
-
-            Assert.Equal(1, list2.FilteredListItemNodeCount);
+        [Theory]
+        [MemberData(nameof(WrappedListValuesTestCases))]
+        public void CorrectFilteredListItemNodesCount(IEnumerable<GreenJsonValueSyntax> valueNodes, int expectedFilteredItemNodesCount)
+        {
+            GreenJsonListSyntax list = new(valueNodes.Select(CreateMultiValue).ToArray(), false);
+            Assert.Equal(expectedFilteredItemNodesCount, list.FilteredListItemNodeCount);
         }
     }
 }

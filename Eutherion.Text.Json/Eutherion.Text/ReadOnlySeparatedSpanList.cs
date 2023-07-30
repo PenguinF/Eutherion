@@ -39,90 +39,64 @@ namespace Eutherion.Text
     {
         private class ZeroElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
         {
-            public override int Length => 0;
+            public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
-            public override TSpan this[int index] => throw new IndexOutOfRangeException();
-
-            public override int Count => 0;
-
-            public override IEnumerator<TSpan> GetEnumerator() => EmptyEnumerator<TSpan>.Instance;
-
-            public override int AllElementCount => 0;
+            public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0, 0) { }
 
             public override IEnumerable<Union<TSpan, TSeparator>> AllElements => EmptyEnumerable<Union<TSpan, TSeparator>>.Instance;
 
-            public override int GetElementOffset(int index) => throw new IndexOutOfRangeException();
+            public override int GetElementOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
-            public override int GetSeparatorOffset(int index) => throw new IndexOutOfRangeException();
+            public override int GetSeparatorOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
-            public override int GetElementOrSeparatorOffset(int index) => throw new IndexOutOfRangeException();
+            public override int GetElementOrSeparatorOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
-        private class OneElement : ReadOnlySeparatedSpanList<TSpan, TSeparator>
+        private class OneOrMoreElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
         {
-            private readonly TSpan element;
-
-            public OneElement(TSpan source)
-            {
-                if (source == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
-                element = source;
-            }
-
-            public override int Length => element.Length;
-
-            public override TSpan this[int index] => index == 0 ? element : throw new IndexOutOfRangeException();
-
-            public override int Count => 1;
-
-            public override IEnumerator<TSpan> GetEnumerator() => new SingleElementEnumerator<TSpan>(element);
-
-            public override int AllElementCount => 1;
-
-            public override IEnumerable<Union<TSpan, TSeparator>> AllElements => new SingleElementEnumerable<Union<TSpan, TSeparator>>(element);
-
-            public override int GetElementOffset(int index) => index == 0 ? 0 : throw new IndexOutOfRangeException();
-
-            public override int GetSeparatorOffset(int index) => throw new IndexOutOfRangeException();
-
-            public override int GetElementOrSeparatorOffset(int index) => index == 0 ? 0 : throw new IndexOutOfRangeException();
-        }
-
-        private class TwoOrMoreElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
-        {
-            private readonly TSpan[] array;
-            private readonly TSeparator separator;
-            private readonly int[] arrayElementOffsets;
-
-            public TwoOrMoreElements(TSpan[] source, TSeparator separator)
+            // Static because of necessary preprocessing.
+            public static OneOrMoreElements Create(TSpan[] source, int count, TSeparator separator)
             {
                 if (source[0] == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                 int length = source[0].Length;
                 int separatorLength = separator.Length;
-                arrayElementOffsets = new int[source.Length - 1];
+                int[] arrayElementOffsets = new int[count];  // First element == 0, no need to initialize it explicitly.
 
-                for (int i = 1; i < source.Length; i++)
+                for (int i = 1; i < count; i++)
                 {
                     TSpan arrayElement = source[i];
                     if (arrayElement == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                     length += separatorLength;
-                    arrayElementOffsets[i - 1] = length;
+                    arrayElementOffsets[i] = length;
                     length += arrayElement.Length;
                 }
 
-                array = source;
-                this.separator = separator;
-                Length = length;
+                return new OneOrMoreElements(source, count, separator, arrayElementOffsets, length);
             }
 
-            public override int Length { get; }
+            private readonly TSeparator separator;
+            private readonly int[] arrayElementOffsets;
 
-            public override TSpan this[int index] => array[index];
+            public override TSpan this[int index]
+            {
+                get
+                {
+                    // Cast to uint so negative values get flagged by this check too.
+                    if ((uint)index < (uint)Count)
+                    {
+                        return array[index];
+                    }
 
-            public override int Count => array.Length;
+                    throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                }
+            }
 
-            public override IEnumerator<TSpan> GetEnumerator() => ((ICollection<TSpan>)array).GetEnumerator();
-
-            public override int AllElementCount => array.Length * 2 - 1;
+            private OneOrMoreElements(TSpan[] source, int count, TSeparator separator, int[] arrayElementOffsets, int length)
+                : base(source, count, length, count * 2 - 1)
+            {
+                this.separator = separator;
+                this.arrayElementOffsets = arrayElementOffsets;
+            }
 
             public override IEnumerable<Union<TSpan, TSeparator>> AllElements
             {
@@ -138,16 +112,38 @@ namespace Eutherion.Text
                 }
             }
 
-            public override int GetElementOffset(int index) => index == 0 ? 0 : arrayElementOffsets[index - 1];
+            public override int GetElementOffset(int index)
+            {
+                if ((uint)index < (uint)Count)
+                {
+                    return arrayElementOffsets[index];
+                }
 
-            public override int GetSeparatorOffset(int index) => arrayElementOffsets[index] - separator.Length;
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
+
+            public override int GetSeparatorOffset(int index)
+            {
+                index++;
+
+                if ((uint)index < (uint)Count)
+                {
+                    return arrayElementOffsets[index] - separator.Length;
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            }
 
             public override int GetElementOrSeparatorOffset(int index)
             {
-                if (index == 0) return 0;
-                int offset = arrayElementOffsets[(index - 1) >> 1];
-                if ((index & 1) != 0) offset -= separator.Length;
-                return offset;
+                if ((uint)index < (uint)AllElementCount)
+                {
+                    int offset = arrayElementOffsets[(index + 1) >> 1];
+                    if ((index & 1) != 0) offset -= separator.Length;
+                    return offset;
+                }
+
+                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
             }
         }
 
@@ -155,6 +151,34 @@ namespace Eutherion.Text
         /// Gets the empty <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
         /// </summary>
         public static readonly ReadOnlySeparatedSpanList<TSpan, TSeparator> Empty = new ZeroElements();
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/> from an <see cref="ArrayBuilder{TSpan}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="source">
+        /// The builder containing the elements of the list.
+        /// </param>
+        /// <param name="separator">
+        /// The separator between successive elements of the list.
+        /// </param>
+        /// <returns>
+        /// The initialized <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> and/or <paramref name="separator"/> are <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
+        /// </exception>
+        public static ReadOnlySeparatedSpanList<TSpan, TSeparator> FromBuilder(ArrayBuilder<TSpan> source, TSeparator separator)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (separator == null) throw new ArgumentNullException(nameof(separator));
+            var (array, count) = source.Commit();
+            if (count == 0) return Empty;
+            return OneOrMoreElements.Create(array, count, separator);
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
@@ -178,17 +202,29 @@ namespace Eutherion.Text
         {
             var array = source.ToArrayEx();
             if (separator == null) throw new ArgumentNullException(nameof(separator));
-            if (array.Length == 0) return Empty;
-            if (array.Length == 1) return new OneElement(array[0]);
-            return new TwoOrMoreElements(array, separator);
+            int count = array.Length;
+            if (count == 0) return Empty;
+            return OneOrMoreElements.Create(array, count, separator);
         }
 
-        private ReadOnlySeparatedSpanList() { }
+        private readonly TSpan[] array;
+
+        /// <summary>
+        /// Gets the number of spanned elements in the list, excluding the separators.
+        /// See also: <seealso cref="AllElementCount"/>.
+        /// </summary>
+        public int Count { get; }
 
         /// <summary>
         /// Gets the length of this <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
         /// </summary>
-        public abstract int Length { get; }
+        public int Length { get; }
+
+        /// <summary>
+        /// Gets the number of spanned elements in the list, including the separators.
+        /// See also: <seealso cref="Count"/>.
+        /// </summary>
+        public int AllElementCount { get; }
 
         /// <summary>
         /// Gets the spanned element at the specified index in the read-only list.
@@ -199,16 +235,18 @@ namespace Eutherion.Text
         /// <returns>
         /// The spanned element at the specified index in the read-only list.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public abstract TSpan this[int index] { get; }
 
-        /// <summary>
-        /// Gets the number of spanned elements in the list, excluding the separators.
-        /// See also: <seealso cref="AllElementCount"/>.
-        /// </summary>
-        public abstract int Count { get; }
+        private ReadOnlySeparatedSpanList(TSpan[] source, int count, int length, int allElementCount)
+        {
+            array = source;
+            Count = count;
+            Length = length;
+            AllElementCount = allElementCount;
+        }
 
         /// <summary>
         /// Returns an enumerator that iterates through the list.
@@ -216,15 +254,15 @@ namespace Eutherion.Text
         /// <returns>
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the list.
         /// </returns>
-        public abstract IEnumerator<TSpan> GetEnumerator();
+#if NET5_0_OR_GREATER
+        public ArrayEnumerator<TSpan> GetEnumerator() => new(array, Count);
+#else
+        public ArrayEnumerator<TSpan> GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
+#endif
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator<TSpan> IEnumerable<TSpan>.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
 
-        /// <summary>
-        /// Gets the number of spanned elements in the list, including the separators.
-        /// See also: <seealso cref="Count"/>.
-        /// </summary>
-        public abstract int AllElementCount { get; }
+        IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<TSpan>(array, Count);
 
         /// <summary>
         /// Enumerates all elements of the list, including separators.
@@ -245,7 +283,7 @@ namespace Eutherion.Text
         /// <returns>
         /// The start position of the spanned element relative to the start position of the first element.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public abstract int GetElementOffset(int index);
@@ -262,7 +300,7 @@ namespace Eutherion.Text
         /// <returns>
         /// The start position of the separator relative to the start position of the first element.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/> - 1.
         /// </exception>
         public abstract int GetSeparatorOffset(int index);
@@ -278,7 +316,7 @@ namespace Eutherion.Text
         /// <returns>
         /// The start position of the spanned element or separator relative to the start position of the first element.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="AllElementCount"/>.
         /// </exception>
         public abstract int GetElementOrSeparatorOffset(int index);

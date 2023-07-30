@@ -32,247 +32,6 @@ namespace System.Collections.Generic
     /// </typeparam>
     public class ReadOnlyList<T> : IReadOnlyList<T>
     {
-        // Disable null analysis here, since setting current to 'default' triggers it.
-        // Normal 'foreach' use will never return the default value for a type though.
-#if !NET472
-#nullable disable
-#endif
-        /// <summary>
-        /// Enumerates the elements of a <see cref="ReadOnlyList{T}"/>.
-        /// </summary>
-        public struct Enumerator : IEnumerator<T>
-        {
-            private readonly T[] array;
-            private readonly int count;
-
-            private int index;
-            private T current;
-
-            /// <summary>
-            /// Gets the element at the current position of the enumerator.
-            /// </summary>
-            public T Current => current;
-
-            internal Enumerator(T[] array, int count)
-            {
-                this.array = array;
-                this.count = count;
-                index = 0;
-                current = default;
-            }
-
-            /// <summary>
-            /// Advances the enumerator to the next element of the <see cref="ReadOnlyList{T}"/>.
-            /// </summary>
-            /// <returns>
-            /// <see langword="true"/> if the enumerator was successfully advanced to the next element;
-            /// <see langword="false"/> if the enumerator has passed the end of the list.
-            /// </returns>
-            public bool MoveNext()
-            {
-                if (index < count)
-                {
-                    current = array[index];
-                    index++;
-                    return true;
-                }
-                index = count + 1;
-                current = default;
-                return false;
-            }
-
-            void IEnumerator.Reset()
-            {
-                index = 0;
-                current = default;
-            }
-
-            object IEnumerator.Current
-            {
-                get
-                {
-                    if (index > 0 && index <= count) return Current;
-
-                    // Throw the appropriate exception.
-                    throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
-                }
-            }
-
-            /// <summary>
-            /// Has no effect. Method is required by the <see cref="IDisposable"/> interface.
-            /// </summary>
-            public void Dispose() { }
-        }
-#if !NET472
-#nullable enable
-#endif
-
-        /// <summary>
-        /// Collects a list of elements to be put into a <see cref="ReadOnlyList{T}"/>.
-        /// </summary>
-        // Implement IEnumerable<T> to enable collection initializer syntax.
-        public sealed class Builder : IReadOnlyCollection<T>
-        {
-            private const int DefaultCapacity = 4;
-
-            // Benchmarked using Array.Empty<T> rather than this, and it turns out having a static local performs much better.
-#if NET5_0_OR_GREATER
-#pragma warning disable CA1825 // Avoid zero-length array allocations
-#endif
-            private static readonly T[] EmptyArray = new T[0];
-#if NET5_0_OR_GREATER
-#pragma warning restore CA1825 // Avoid zero-length array allocations
-#endif
-
-            private T[] array;
-            private int count;
-
-            /// <summary>
-            /// Gets the current number of elements added to the builder.
-            /// </summary>
-            public int Count => count;
-
-            /// <summary>
-            /// Initializes a new instance of <see cref="Builder"/>.
-            /// </summary>
-            public Builder() => array = EmptyArray;
-
-            /// <summary>
-            /// Initializes a new instance of <see cref="Builder"/> with a sequence of elements.
-            /// </summary>
-            /// <param name="elements">
-            /// The sequence of elements to be added to the builder.
-            /// </param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="elements"/> is <see langword="null"/>.
-            /// </exception>
-            public Builder(IEnumerable<T> elements)
-            {
-                array = EmptyArray;
-                AddRange(elements);
-            }
-
-            /// <summary>
-            /// Adds an element to the builder.
-            /// </summary>
-            /// <param name="element">
-            /// The element to be added to the builder.
-            /// </param>
-            public void Add(T element)
-            {
-                int currentCapacity = array.Length;
-
-                if (count == currentCapacity)
-                {
-                    if (currentCapacity == 0)
-                    {
-                        array = new T[DefaultCapacity];
-                    }
-                    else
-                    {
-                        int newCapacity = currentCapacity * 2;
-                        T[] array = new T[newCapacity];
-                        Array.Copy(this.array, 0, array, 0, currentCapacity);
-                        this.array = array;
-                    }
-                }
-
-                int size = count;
-                count = size + 1;
-                array[size] = element;
-            }
-
-            /// <summary>
-            /// Adds a sequence of elements to the builder.
-            /// </summary>
-            /// <param name="elements">
-            /// The sequence of elements to be added to the builder.
-            /// </param>
-            /// <exception cref="ArgumentNullException">
-            /// <paramref name="elements"/> is <see langword="null"/>.
-            /// </exception>
-            public void AddRange(IEnumerable<T> elements)
-            {
-                if (elements == null) throw new ArgumentNullException(nameof(elements));
-
-                int minimumCapacity;
-                switch (elements)
-                {
-                    case ICollection<T> collection:
-                        minimumCapacity = count + collection.Count;
-                        goto growAndFillArray;
-                    case IReadOnlyCollection<T> readOnlyCollection:
-                        minimumCapacity = count + readOnlyCollection.Count;
-                    growAndFillArray:
-                        // Grow the array just once.
-                        if (minimumCapacity > 0)
-                        {
-                            int currentCapacity = array.Length;
-                            if (currentCapacity < minimumCapacity)
-                            {
-                                int newCapacity = currentCapacity == 0 ? DefaultCapacity : currentCapacity * 2;
-                                while (newCapacity < minimumCapacity) newCapacity *= 2;
-                                T[] array = new T[newCapacity];
-                                Array.Copy(this.array, 0, array, 0, count);
-                                this.array = array;
-                            }
-                        }
-
-                        // Can safely use foreach even if 'elements' is this very builder.
-                        // This because Enumerator saves its own copy of 'count' when it is created.
-                        int index = count;
-
-                        foreach (var element in elements)
-                        {
-                            array[index] = element;
-                            index++;
-                        }
-
-                        count = index;
-                        break;
-                    default:
-                        foreach (var element in elements)
-                        {
-                            Add(element);
-                        }
-                        break;
-                }
-            }
-
-            /// <summary>
-            /// Converts the builder to a <see cref="ReadOnlyList{T}"/> which contains the elements added to this builder
-            /// in the order in which they were added. The builder is then cleared.
-            /// </summary>
-            /// <returns>
-            /// The <see cref="ReadOnlyList{T}"/> contains the elements added to this builder.
-            /// </returns>
-            public ReadOnlyList<T> Commit()
-            {
-                if (this.count == 0) return Empty;
-                T[] array = this.array;
-                int count = this.count;
-                this.array = EmptyArray;
-                this.count = 0;
-                return new ReadOnlyList<T>(array, count);
-            }
-
-            /// <summary>
-            /// Returns an enumerator that iterates through the elements added to the builder.
-            /// </summary>
-            /// <returns>
-            /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the elements added to the builder.
-            /// </returns>
-#if NET5_0_OR_GREATER
-            public Enumerator GetEnumerator() => new(array, Count);
-#else
-            public Enumerator GetEnumerator() => new Enumerator(array, count);
-#endif
-
-            IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(array, count);
-
-            IEnumerator IEnumerable.GetEnumerator() => new Enumerator(array, count);
-        }
-
         /// <summary>
         /// Gets the empty <see cref="ReadOnlyList{T}"/>.
         /// </summary>
@@ -281,6 +40,27 @@ namespace System.Collections.Generic
 #else
         public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>(Array.Empty<T>(), 0);
 #endif
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="ReadOnlyList{T}"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder containing the elements of the list.
+        /// </param>
+        /// <returns>
+        /// The initialized <see cref="ReadOnlyList{T}"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="builder"/> is <see langword="null"/>.
+        /// </exception>
+        public static ReadOnlyList<T> FromBuilder(ArrayBuilder<T> builder)
+        {
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            var (array, count) = builder.Commit();
+            if (count == 0) return Empty;
+            return new ReadOnlyList<T>(array, count);
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ReadOnlyList{T}"/>.
@@ -304,11 +84,10 @@ namespace System.Collections.Generic
 
         private T[] ReadOnlyArray;
 
-        private ReadOnlyList(T[] array, int count)
-        {
-            ReadOnlyArray = array;
-            Count = count;
-        }
+        /// <summary>
+        /// Gets the number of elements in the list.
+        /// </summary>
+        public int Count { get; }
 
         /// <summary>
         /// Gets the element at the specified index in the read-only list.
@@ -319,8 +98,8 @@ namespace System.Collections.Generic
         /// <returns>
         /// The element at the specified index in the read-only list.
         /// </returns>
-        /// <exception cref="IndexOutOfRangeException">
-        /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="Count"/>.
         /// </exception>
         public T this[int index]
         {
@@ -336,10 +115,11 @@ namespace System.Collections.Generic
             }
         }
 
-        /// <summary>
-        /// Gets the number of elements in the list.
-        /// </summary>
-        public int Count { get; }
+        private ReadOnlyList(T[] array, int count)
+        {
+            ReadOnlyArray = array;
+            Count = count;
+        }
 
         /// <summary>
         /// Reduces the size of the internal array to its minimum, saving memory but involving an extra copy step.
@@ -361,13 +141,53 @@ namespace System.Collections.Generic
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the list.
         /// </returns>
 #if NET5_0_OR_GREATER
-        public Enumerator GetEnumerator() => new(ReadOnlyArray, Count);
+        public ArrayEnumerator<T> GetEnumerator() => new(ReadOnlyArray, Count);
 #else
-        public Enumerator GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+        public ArrayEnumerator<T> GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
 #endif
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
 
-        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(ReadOnlyArray, Count);
+        IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> region over this <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// The read-only memory representation of this <see cref="ReadOnlyList{T}"/>.
+        /// </returns>
+        public ReadOnlyMemory<T> AsMemory() => ReadOnlyArray.AsMemory(0, Count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan{T}"/> region over this <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// The read-only span representation of this <see cref="ReadOnlyList{T}"/>.
+        /// </returns>
+        public ReadOnlySpan<T> AsSpan() => ReadOnlyArray.AsSpan(0, Count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> region over an <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <param name="list">
+        /// The builder for which to create the read-only memory representation.
+        /// </param>
+#if NET472
+        public static implicit operator ReadOnlyMemory<T>(ReadOnlyList<T> list) => list == null ? default : list.AsMemory();
+#else
+        public static implicit operator ReadOnlyMemory<T>(ReadOnlyList<T>? list) => list == null ? default : list.AsMemory();
+#endif
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan{T}"/> region over this <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <param name="list">
+        /// The builder for which to create the read-only span representation.
+        /// </param>
+#if NET472
+        public static implicit operator ReadOnlySpan<T>(ReadOnlyList<T> list) => list == null ? default : list.AsSpan();
+#else
+        public static implicit operator ReadOnlySpan<T>(ReadOnlyList<T>? list) => list == null ? default : list.AsSpan();
+#endif
     }
 }

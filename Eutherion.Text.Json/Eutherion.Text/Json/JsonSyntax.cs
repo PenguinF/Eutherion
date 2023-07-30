@@ -97,12 +97,18 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
-        public virtual JsonSyntax GetChild(int index) => throw new IndexOutOfRangeException();
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
+        public virtual JsonSyntax GetChild(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
-        public virtual int GetChildStartPosition(int index) => throw new IndexOutOfRangeException();
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
+        public virtual int GetChildStartPosition(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>,

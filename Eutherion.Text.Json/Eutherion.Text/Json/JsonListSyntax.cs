@@ -74,6 +74,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
         public override JsonSyntax GetChild(int index)
         {
             if (index == 0) return SquareBracketOpen;
@@ -92,12 +95,15 @@ namespace Eutherion.Text.Json
                 return jsonSquareBracketClose;
             }
 
-            throw new IndexOutOfRangeException();
+            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
         public override int GetChildStartPosition(int index)
         {
             if (index == 0) return 0;
@@ -115,7 +121,7 @@ namespace Eutherion.Text.Json
                 return Length - JsonSpecialCharacter.SingleCharacterLength;
             }
 
-            throw new IndexOutOfRangeException();
+            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
         internal JsonListSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonListSyntax green) : base(parent)

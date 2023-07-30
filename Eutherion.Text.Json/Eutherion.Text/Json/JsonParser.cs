@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -113,8 +112,8 @@ namespace Eutherion.Text.Json
         internal static (List<IGreenJsonSymbol>, ReadOnlyList<JsonErrorInfo>) TokenizeAll(string json)
         {
             var parser = new JsonParser(json, DefaultMaximumDepth);
-            var tokens = parser._TokenizeAll().ToList();
-            return (tokens, parser.Errors.Commit());
+            var tokens = parser.TokenizeAllHelper().ToList();
+            return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
         }
 
         private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(int startPosition, int length)
@@ -125,7 +124,7 @@ namespace Eutherion.Text.Json
                         GreenJsonMissingValueSyntax.Value) },
                     GreenJsonBackgroundListSyntax.Create(
                         new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(length) })),
-                new ReadOnlyList<JsonErrorInfo>.Builder { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }.Commit());
+                ReadOnlyList<JsonErrorInfo>.FromBuilder(new ArrayBuilder<JsonErrorInfo> { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }));
 
         internal const JsonSymbolType ForegroundThreshold = JsonSymbolType.BooleanLiteral;
         internal const JsonSymbolType ValueDelimiterThreshold = JsonSymbolType.Colon;
@@ -133,8 +132,8 @@ namespace Eutherion.Text.Json
         private IEnumerator<IGreenJsonSymbol> Tokens;
         private readonly string Json;
         private readonly int MaximumDepth;
-        private readonly ReadOnlyList<JsonErrorInfo>.Builder Errors = new ReadOnlyList<JsonErrorInfo>.Builder();
-        private readonly List<GreenJsonBackgroundSyntax> BackgroundBuilder = new List<GreenJsonBackgroundSyntax>();
+        private readonly ArrayBuilder<JsonErrorInfo> Errors = new ArrayBuilder<JsonErrorInfo>();
+        private readonly ArrayBuilder<GreenJsonBackgroundSyntax> BackgroundBuilder = new ArrayBuilder<GreenJsonBackgroundSyntax>();
 
         // Invariant is that this index is always at the start of the yielded symbol.
         private int SymbolStartIndex;
@@ -183,15 +182,13 @@ namespace Eutherion.Text.Json
 
         private GreenJsonBackgroundListSyntax CaptureBackground()
         {
-            var background = GreenJsonBackgroundListSyntax.Create(BackgroundBuilder);
-            BackgroundBuilder.Clear();
-            return background;
+            return GreenJsonBackgroundListSyntax.Create(BackgroundBuilder);
         }
 
         private (GreenJsonValueSyntax, JsonSymbolType) ParseMap()
         {
-            var mapBuilder = new List<GreenJsonKeyValueSyntax>();
-            var keyValueSyntaxBuilder = new List<GreenJsonMultiValueSyntax>();
+            var mapBuilder = new ArrayBuilder<GreenJsonKeyValueSyntax>();
+            var keyValueSyntaxBuilder = new ArrayBuilder<GreenJsonMultiValueSyntax>();
 
             // Maintain a separate set of keys to aid error reporting on duplicate keys.
             HashSet<string> foundKeys = new HashSet<string>();
@@ -241,8 +238,6 @@ namespace Eutherion.Text.Json
                         break;
                 }
 
-                // Reuse keyValueSyntaxBuilder.
-                keyValueSyntaxBuilder.Clear();
                 keyValueSyntaxBuilder.Add(multiKeyNode);
 
                 // Keep parsing multi-values until encountering a non ':'.
@@ -321,7 +316,7 @@ namespace Eutherion.Text.Json
 
         private (GreenJsonValueSyntax, JsonSymbolType) ParseList()
         {
-            var listBuilder = new List<GreenJsonMultiValueSyntax>();
+            var listBuilder = new ArrayBuilder<GreenJsonMultiValueSyntax>();
 
             for (; ; )
             {
@@ -360,7 +355,7 @@ namespace Eutherion.Text.Json
             }
         }
 
-        private void ParseValues(List<GreenJsonValueWithBackgroundSyntax> valueNodesBuilder, JsonErrorCode multipleValuesErrorCode)
+        private void ParseValues(ArrayBuilder<GreenJsonValueWithBackgroundSyntax> valueNodesBuilder, JsonErrorCode multipleValuesErrorCode)
         {
             JsonSymbolType symbolType = ShiftToNextForegroundToken();
             if (symbolType >= ValueDelimiterThreshold) return;
@@ -402,7 +397,7 @@ namespace Eutherion.Text.Json
             }
         }
 
-        private GreenJsonMultiValueSyntax CreateMultiValueNode(List<GreenJsonValueWithBackgroundSyntax> valueNodesBuilder)
+        private GreenJsonMultiValueSyntax CreateMultiValueNode(ArrayBuilder<GreenJsonValueWithBackgroundSyntax> valueNodesBuilder)
         {
             var background = CaptureBackground();
             if (valueNodesBuilder.Count == 0)
@@ -418,7 +413,7 @@ namespace Eutherion.Text.Json
             CurrentDepth++;
             if (CurrentDepth >= MaximumDepth) throw new MaximumDepthExceededException();
 
-            var valueNodesBuilder = new List<GreenJsonValueWithBackgroundSyntax>();
+            var valueNodesBuilder = new ArrayBuilder<GreenJsonValueWithBackgroundSyntax>();
             ParseValues(valueNodesBuilder, multipleValuesErrorCode);
 
             CurrentDepth--;
@@ -429,9 +424,9 @@ namespace Eutherion.Text.Json
         // as it cannot go to a higher level in the stack to process value delimiter symbols.
         private RootJsonSyntax Parse()
         {
-            Tokens = _TokenizeAll().GetEnumerator();
+            Tokens = TokenizeAllHelper().GetEnumerator();
 
-            var valueNodesBuilder = new List<GreenJsonValueWithBackgroundSyntax>();
+            var valueNodesBuilder = new ArrayBuilder<GreenJsonValueWithBackgroundSyntax>();
 
             for (; ; )
             {
@@ -447,7 +442,7 @@ namespace Eutherion.Text.Json
 
                 if (CurrentToken.SymbolType == JsonSymbolType.Eof)
                 {
-                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), Errors.Commit());
+                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), ReadOnlyList<JsonErrorInfo>.FromBuilder(Errors));
                 }
 
                 // ] } , : -- treat all of these at the top level as an undefined symbol without any semantic meaning.
@@ -539,8 +534,7 @@ namespace Eutherion.Text.Json
             }
         }
 
-        [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Private counterpart of publicly accessible static method.")]
-        private IEnumerable<IGreenJsonSymbol> _TokenizeAll()
+        private IEnumerable<IGreenJsonSymbol> TokenizeAllHelper()
         {
             // This tokenizer uses labels with goto to switch between modes of tokenization.
 

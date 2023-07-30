@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonErrorTests.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -54,9 +54,9 @@ namespace Eutherion.Text.Json.Tests
 
         [Theory]
         [InlineData(JsonErrorCode.UnexpectedSymbol, JsonErrorLevel.Message, 0, 0, null)]
-        [InlineData(JsonErrorCode.Custom, JsonErrorLevel.Warning, 0, 1, new string[0])]
+        [InlineData(JsonErrorCode.ParseTreeTooDeep + 1, JsonErrorLevel.Warning, 0, 1, new string[0])]
         [InlineData(JsonErrorCode.ExpectedEof, JsonErrorLevel.Error, 1, 0, new[] { "\n", "" })]
-        [InlineData(JsonErrorCode.Custom + 999, (JsonErrorLevel)(-1), 0, 2, new[] { "Aa" })]
+        [InlineData(JsonErrorCode.ParseTreeTooDeep + 999, (JsonErrorLevel)(-1), 0, 2, new[] { "Aa" })]
         public void UnchangedParametersInError(JsonErrorCode errorCode, JsonErrorLevel errorLevel, int start, int length, string[] parameters)
         {
             JsonErrorInfoParameter[]? errorInfoParameters = parameters?.Select(x => new JsonErrorInfoParameter<string>(x))?.ToArrayEx();

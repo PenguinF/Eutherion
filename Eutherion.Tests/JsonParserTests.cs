@@ -19,7 +19,7 @@
 **********************************************************************************/
 #endregion
 
-using Eutherion.Tests;
+using Eutherion.Testing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -174,12 +174,12 @@ namespace Eutherion.Text.Json.Tests
             int expectedChildCount = expectedParseTree.ChildNodes.Count;
             Assert.Equal(expectedChildCount, actualParseTree.ChildCount);
 
-            Assert.Throws<IndexOutOfRangeException>(() => actualParseTree.GetChild(-1));
-            Assert.Throws<IndexOutOfRangeException>(() => actualParseTree.GetChild(expectedChildCount));
-            Assert.Throws<IndexOutOfRangeException>(() => actualParseTree.GetChildStartPosition(-1));
-            Assert.Throws<IndexOutOfRangeException>(() => actualParseTree.GetChildStartPosition(expectedChildCount));
-            Assert.Throws<IndexOutOfRangeException>(() => actualParseTree.GetChildStartOrEndPosition(-1));
-            Assert.Throws<IndexOutOfRangeException>(() => actualParseTree.GetChildStartOrEndPosition(expectedChildCount + 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => actualParseTree.GetChild(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => actualParseTree.GetChild(expectedChildCount));
+            Assert.Throws<ArgumentOutOfRangeException>(() => actualParseTree.GetChildStartPosition(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => actualParseTree.GetChildStartPosition(expectedChildCount));
+            Assert.Throws<ArgumentOutOfRangeException>(() => actualParseTree.GetChildStartOrEndPosition(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => actualParseTree.GetChildStartOrEndPosition(expectedChildCount + 1));
 
             int length = 0;
 
