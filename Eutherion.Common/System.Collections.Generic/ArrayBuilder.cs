@@ -215,5 +215,45 @@ namespace System.Collections.Generic
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ArrayEnumerator<T>(array, count);
 
         IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<T>(array, count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> region over this <see cref="ArrayBuilder{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// The read-only memory representation of this <see cref="ArrayBuilder{T}"/>.
+        /// </returns>
+        public ReadOnlyMemory<T> AsMemory() => array.AsMemory(0, count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan{T}"/> region over this <see cref="ArrayBuilder{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// The read-only span representation of this <see cref="ArrayBuilder{T}"/>.
+        /// </returns>
+        public ReadOnlySpan<T> AsSpan() => array.AsSpan(0, count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> region over an <see cref="ArrayBuilder{T}"/>.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder for which to create the read-only memory representation.
+        /// </param>
+#if NET472
+        public static implicit operator ReadOnlyMemory<T>(ArrayBuilder<T> builder) => builder == null ? default : builder.AsMemory();
+#else
+        public static implicit operator ReadOnlyMemory<T>(ArrayBuilder<T>? builder) => builder == null ? default : builder.AsMemory();
+#endif
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan{T}"/> region over this <see cref="ArrayBuilder{T}"/>.
+        /// </summary>
+        /// <param name="builder">
+        /// The builder for which to create the read-only span representation.
+        /// </param>
+#if NET472
+        public static implicit operator ReadOnlySpan<T>(ArrayBuilder<T> builder) => builder == null ? default : builder.AsSpan();
+#else
+        public static implicit operator ReadOnlySpan<T>(ArrayBuilder<T>? builder) => builder == null ? default : builder.AsSpan();
+#endif
     }
 }

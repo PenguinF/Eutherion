@@ -149,5 +149,45 @@ namespace System.Collections.Generic
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
 
         IEnumerator IEnumerable.GetEnumerator() => new ArrayEnumerator<T>(ReadOnlyArray, Count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> region over this <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// The read-only memory representation of this <see cref="ReadOnlyList{T}"/>.
+        /// </returns>
+        public ReadOnlyMemory<T> AsMemory() => ReadOnlyArray.AsMemory(0, Count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan{T}"/> region over this <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// The read-only span representation of this <see cref="ReadOnlyList{T}"/>.
+        /// </returns>
+        public ReadOnlySpan<T> AsSpan() => ReadOnlyArray.AsSpan(0, Count);
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlyMemory{T}"/> region over an <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <param name="list">
+        /// The builder for which to create the read-only memory representation.
+        /// </param>
+#if NET472
+        public static implicit operator ReadOnlyMemory<T>(ReadOnlyList<T> list) => list == null ? default : list.AsMemory();
+#else
+        public static implicit operator ReadOnlyMemory<T>(ReadOnlyList<T>? list) => list == null ? default : list.AsMemory();
+#endif
+
+        /// <summary>
+        /// Creates a new <see cref="ReadOnlySpan{T}"/> region over this <see cref="ReadOnlyList{T}"/>.
+        /// </summary>
+        /// <param name="list">
+        /// The builder for which to create the read-only span representation.
+        /// </param>
+#if NET472
+        public static implicit operator ReadOnlySpan<T>(ReadOnlyList<T> list) => list == null ? default : list.AsSpan();
+#else
+        public static implicit operator ReadOnlySpan<T>(ReadOnlyList<T>? list) => list == null ? default : list.AsSpan();
+#endif
     }
 }
