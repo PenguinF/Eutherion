@@ -50,13 +50,13 @@ namespace Eutherion.Text
             {
                 if (source[0] == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                 int length = source[0].Length;
-                int[] arrayElementOffsets = new int[count - 1];
+                int[] arrayElementOffsets = new int[count];  // First element == 0, no need to initialize it explicitly.
 
                 for (int i = 1; i < count; i++)
                 {
                     TSpan arrayElement = source[i];
                     if (arrayElement == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
-                    arrayElementOffsets[i - 1] = length;
+                    arrayElementOffsets[i] = length;
                     length += arrayElement.Length;
                 }
 
@@ -89,7 +89,7 @@ namespace Eutherion.Text
             {
                 if ((uint)index < (uint)Count)
                 {
-                    return index == 0 ? 0 : arrayElementOffsets[index - 1];
+                    return arrayElementOffsets[index];
                 }
 
                 throw ExceptionUtil.ThrowListIndexOutOfRangeException();
