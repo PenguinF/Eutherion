@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Contains extensions to the .NET standard libraries.</Description>
     <Authors>Henk Nicolai</Authors>
-    <Copyright>Copyright © 2004-2022 - Henk Nicolai</Copyright>
+    <Copyright>Copyright © 2004-2023 - Henk Nicolai</Copyright>
     <Summary>Contains extensions to the .NET standard libraries.</Summary>
     <PackageProjectUrl>https://github.com/PenguinF/Eutherion</PackageProjectUrl>
     <PackageIcon>penguinf128x128.png</PackageIcon>
@@ -19,6 +19,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
@@ -48,6 +49,7 @@
       <Visible>False</Visible>
       <PackagePath></PackagePath>
     </None>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
