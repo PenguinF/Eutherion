@@ -38,7 +38,7 @@ namespace Eutherion.Text
         {
             public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
-            public ZeroElements() : base(Array.Empty<TSpan>(), 0) { }
+            public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0) { }
 
             public override IEnumerator<TSpan> GetEnumerator() => EmptyEnumerator<TSpan>.Instance;
 
@@ -48,13 +48,13 @@ namespace Eutherion.Text
         private class OneOrMoreElements : ReadOnlySpanList<TSpan>
         {
             // Static because of necessary preprocessing.
-            public static OneOrMoreElements Create(TSpan[] source)
+            public static OneOrMoreElements Create(TSpan[] source, int count)
             {
                 if (source[0] == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                 int length = source[0].Length;
-                int[] arrayElementOffsets = new int[source.Length - 1];
+                int[] arrayElementOffsets = new int[count - 1];
 
-                for (int i = 1; i < source.Length; i++)
+                for (int i = 1; i < count; i++)
                 {
                     TSpan arrayElement = source[i];
                     if (arrayElement == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
@@ -62,15 +62,15 @@ namespace Eutherion.Text
                     length += arrayElement.Length;
                 }
 
-                return new OneOrMoreElements(source, arrayElementOffsets, length);
+                return new OneOrMoreElements(source, count, arrayElementOffsets, length);
             }
 
             private readonly int[] arrayElementOffsets;
 
             public override TSpan this[int index] => array[index];
 
-            private OneOrMoreElements(TSpan[] source, int[] arrayElementOffsets, int length)
-                : base(source, length)
+            private OneOrMoreElements(TSpan[] source, int count, int[] arrayElementOffsets, int length)
+                : base(source, count, length)
             {
                 this.arrayElementOffsets = arrayElementOffsets;
             }
@@ -104,8 +104,9 @@ namespace Eutherion.Text
         {
             if (source is ReadOnlySpanList<TSpan> readOnlySpanList) return readOnlySpanList;
             var array = source.ToArrayEx();
-            if (array.Length == 0) return Empty;
-            return OneOrMoreElements.Create(array);
+            int count = array.Length;
+            if (count == 0) return Empty;
+            return OneOrMoreElements.Create(array, count);
         }
 
         private readonly TSpan[] array;
@@ -113,7 +114,7 @@ namespace Eutherion.Text
         /// <summary>
         /// Gets the number of spanned elements in the list.
         /// </summary>
-        public int Count => array.Length;
+        public int Count { get; }
 
         /// <summary>
         /// Gets the length of this <see cref="ReadOnlySpanList{TSpan}"/>.
@@ -134,9 +135,10 @@ namespace Eutherion.Text
         /// </exception>
         public abstract TSpan this[int index] { get; }
 
-        private ReadOnlySpanList(TSpan[] source, int length)
+        private ReadOnlySpanList(TSpan[] source, int count, int length)
         {
             array = source;
+            Count = count;
             Length = length;
         }
 
