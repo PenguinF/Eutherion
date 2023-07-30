@@ -39,11 +39,9 @@ namespace Eutherion.Text
     {
         private class ZeroElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
         {
-            public override int Length => 0;
-
             public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
 
-            public override int Count => 0;
+            public ZeroElements() : base(Array.Empty<TSpan>(), 0) { }
 
             public override IEnumerator<TSpan> GetEnumerator() => EmptyEnumerator<TSpan>.Instance;
 
@@ -60,16 +58,13 @@ namespace Eutherion.Text
 
         private class OneOrMoreElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
         {
-            private readonly TSpan[] array;
-            private readonly TSeparator separator;
-            private readonly int[] arrayElementOffsets;
-
-            public OneOrMoreElements(TSpan[] source, TSeparator separator)
+            // Static because of necessary preprocessing.
+            public static OneOrMoreElements Create(TSpan[] source, TSeparator separator)
             {
                 if (source[0] == null) throw new ArgumentException($"One or more elements in {nameof(source)} is null", nameof(source));
                 int length = source[0].Length;
                 int separatorLength = separator.Length;
-                arrayElementOffsets = new int[source.Length - 1];
+                int[] arrayElementOffsets = new int[source.Length - 1];
 
                 for (int i = 1; i < source.Length; i++)
                 {
@@ -80,16 +75,20 @@ namespace Eutherion.Text
                     length += arrayElement.Length;
                 }
 
-                array = source;
-                this.separator = separator;
-                Length = length;
+                return new OneOrMoreElements(source, separator, arrayElementOffsets, length);
             }
 
-            public override int Length { get; }
+            private readonly TSeparator separator;
+            private readonly int[] arrayElementOffsets;
 
             public override TSpan this[int index] => array[index];
 
-            public override int Count => array.Length;
+            private OneOrMoreElements(TSpan[] source, TSeparator separator, int[] arrayElementOffsets, int length)
+                : base(source, length)
+            {
+                this.separator = separator;
+                this.arrayElementOffsets = arrayElementOffsets;
+            }
 
             public override IEnumerator<TSpan> GetEnumerator() => ((ICollection<TSpan>)array).GetEnumerator();
 
@@ -150,15 +149,21 @@ namespace Eutherion.Text
             var array = source.ToArrayEx();
             if (separator == null) throw new ArgumentNullException(nameof(separator));
             if (array.Length == 0) return Empty;
-            return new OneOrMoreElements(array, separator);
+            return OneOrMoreElements.Create(array, separator);
         }
 
-        private ReadOnlySeparatedSpanList() { }
+        private readonly TSpan[] array;
+
+        /// <summary>
+        /// Gets the number of spanned elements in the list, excluding the separators.
+        /// See also: <seealso cref="AllElementCount"/>.
+        /// </summary>
+        public int Count => array.Length;
 
         /// <summary>
         /// Gets the length of this <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
         /// </summary>
-        public abstract int Length { get; }
+        public int Length { get; }
 
         /// <summary>
         /// Gets the spanned element at the specified index in the read-only list.
@@ -174,11 +179,11 @@ namespace Eutherion.Text
         /// </exception>
         public abstract TSpan this[int index] { get; }
 
-        /// <summary>
-        /// Gets the number of spanned elements in the list, excluding the separators.
-        /// See also: <seealso cref="AllElementCount"/>.
-        /// </summary>
-        public abstract int Count { get; }
+        private ReadOnlySeparatedSpanList(TSpan[] source, int length)
+        {
+            array = source;
+            Length = length;
+        }
 
         /// <summary>
         /// Returns an enumerator that iterates through the list.
