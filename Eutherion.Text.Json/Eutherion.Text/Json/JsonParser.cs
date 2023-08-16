@@ -29,7 +29,7 @@ using System.Text;
 namespace Eutherion.Text.Json
 {
 #if NET5_0_OR_GREATER
-// Just ignore this warning for this file.
+    // Just ignore this warning for this file.
 #pragma warning disable IDE0090 // Use 'new(...)'
 #endif
 
@@ -116,14 +116,15 @@ namespace Eutherion.Text.Json
             return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
         }
 
-        private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(int startPosition, int length)
+        private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(string json, int startPosition)
             => new RootJsonSyntax(
+                json,
                 new GreenJsonMultiValueSyntax(
                     new[] { new GreenJsonValueWithBackgroundSyntax(
                         GreenJsonBackgroundListSyntax.Empty,
                         GreenJsonMissingValueSyntax.Value) },
                     GreenJsonBackgroundListSyntax.Create(
-                        new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(length) })),
+                        new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(json.Length) })),
                 ReadOnlyList<JsonErrorInfo>.FromBuilder(new ArrayBuilder<JsonErrorInfo> { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }));
 
         internal const JsonSymbolType ForegroundThreshold = JsonSymbolType.BooleanLiteral;
@@ -437,12 +438,15 @@ namespace Eutherion.Text.Json
                 catch (MaximumDepthExceededException)
                 {
                     // Just ignore everything so far and return a default parse tree.
-                    return CreateParseTreeTooDeepRootSyntax(CurrentLength - 1, Json.Length);
+                    return CreateParseTreeTooDeepRootSyntax(Json, CurrentLength - 1);
                 }
 
                 if (CurrentToken.SymbolType == JsonSymbolType.Eof)
                 {
-                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), ReadOnlyList<JsonErrorInfo>.FromBuilder(Errors));
+                    return new RootJsonSyntax(
+                        Json,
+                        CreateMultiValueNode(valueNodesBuilder),
+                        ReadOnlyList<JsonErrorInfo>.FromBuilder(Errors));
                 }
 
                 // ] } , : -- treat all of these at the top level as an undefined symbol without any semantic meaning.

@@ -31,6 +31,11 @@ namespace Eutherion.Text.Json
     public sealed class RootJsonSyntax : JsonSyntax
     {
         /// <summary>
+        /// Gets a reference to the JSON string that generated this parse tree.
+        /// </summary>
+        public string Json { get; }
+
+        /// <summary>
         /// Gets the root <see cref="JsonMultiValueSyntax"/> node.
         /// </summary>
         public JsonMultiValueSyntax Syntax { get; }
@@ -102,6 +107,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes a new instance of <see cref="RootJsonSyntax"/>.
         /// </summary>
+        /// <param name="json">
+        /// A reference to the JSON string that generated this parse tree.
+        /// </param>
         /// <param name="syntax">
         /// The root <see cref="GreenJsonMultiValueSyntax"/> node from which to construct a <see cref="JsonMultiValueSyntax"/> abstract syntax tree.
         /// </param>
@@ -109,10 +117,11 @@ namespace Eutherion.Text.Json
         /// The list containing all errors generated during a parse.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="syntax"/> and/or <paramref name="errors"/> are <see langword="null"/>.
+        /// <paramref name="json"/> and/or <paramref name="syntax"/> and/or <paramref name="errors"/> are <see langword="null"/>.
         /// </exception>
-        public RootJsonSyntax(GreenJsonMultiValueSyntax syntax, ReadOnlyList<JsonErrorInfo> errors)
+        public RootJsonSyntax(string json, GreenJsonMultiValueSyntax syntax, ReadOnlyList<JsonErrorInfo> errors)
         {
+            Json = json ?? throw new ArgumentNullException(nameof(json));
             if (syntax == null) throw new ArgumentNullException(nameof(syntax));
             Syntax = new JsonMultiValueSyntax(syntax, this);
             Errors = errors ?? throw new ArgumentNullException(nameof(errors));
