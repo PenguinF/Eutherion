@@ -54,6 +54,20 @@ namespace Eutherion.Text.Json
         public abstract JsonSyntax? ParentSyntax { get; }
 #endif
 
+        /// <summary>
+        /// Gets the root node of this syntax tree.
+        /// </summary>
+        // Suppress valid warning that ParentSyntax may be null.
+        // Contract is that only in RootJsonSyntax ParentSyntax may indeed return null,
+        // and in that class Root is overridden as well to prevent the NullReferenceException.
+#if !NET472
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#endif
+        public virtual RootJsonSyntax Root => ParentSyntax.Root;
+#if !NET472
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#endif
+
         private readonly SafeLazy<int> LazyAbsoluteStart;
 
         /// <summary>

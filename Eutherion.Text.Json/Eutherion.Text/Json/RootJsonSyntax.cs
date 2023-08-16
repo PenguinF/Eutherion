@@ -66,6 +66,11 @@ namespace Eutherion.Text.Json
 #endif
 
         /// <summary>
+        /// Gets the root node of this syntax tree, which is this syntax node.
+        /// </summary>
+        public override RootJsonSyntax Root => this;
+
+        /// <summary>
         /// Gets the number of children of this syntax node.
         /// </summary>
         public override int ChildCount => 1;
