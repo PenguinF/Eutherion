@@ -190,18 +190,16 @@ namespace Eutherion.Text.Json
             var mapBuilder = new ArrayBuilder<GreenJsonKeyValueSyntax>();
             var keyValueSyntaxBuilder = new ArrayBuilder<GreenJsonMultiValueSyntax>();
 
-            // Maintain a separate set of keys to aid error reporting on duplicate keys.
-            HashSet<string> foundKeys = new HashSet<string>();
-
             for (; ; )
             {
                 // Save CurrentLength for error reporting before parsing the key.
                 int keyStart = CurrentLength;
                 GreenJsonMultiValueSyntax multiKeyNode = ParseMultiValue(JsonErrorCode.MultiplePropertyKeys);
-                GreenJsonValueSyntax parsedKeyNode = multiKeyNode.ValueNode.ContentNode;
+                GreenJsonValueWithBackgroundSyntax parsedKeyNodeWithBackground = multiKeyNode.ValueNode;
+                GreenJsonValueSyntax parsedKeyNode = parsedKeyNodeWithBackground.ContentNode;
 
                 // Analyze if this is an actual, unique property key.
-                int parsedKeyNodeStart = keyStart + multiKeyNode.ValueNode.BackgroundBefore.Length;
+                int parsedKeyNodeStart = keyStart + parsedKeyNodeWithBackground.BackgroundBefore.Length;
                 bool gotKey;
                 Maybe<GreenJsonStringLiteralSyntax> validKey = Maybe<GreenJsonStringLiteralSyntax>.Nothing;
 
@@ -212,22 +210,7 @@ namespace Eutherion.Text.Json
                         break;
                     case GreenJsonStringLiteralSyntax stringLiteral:
                         gotKey = true;
-                        string propertyKey = stringLiteral.Value;
-
-                        // Expect unique keys.
-                        if (!foundKeys.Contains(propertyKey))
-                        {
-                            validKey = stringLiteral;
-                            foundKeys.Add(propertyKey);
-                        }
-                        else
-                        {
-                            Report(JsonParseErrors.PropertyKeyAlreadyExists(
-                                // Take the substring, key may contain escape sequences.
-                                Json.Substring(parsedKeyNodeStart + 1, parsedKeyNode.Length - 2),
-                                parsedKeyNodeStart,
-                                parsedKeyNode.Length));
-                        }
+                        validKey = stringLiteral;
                         break;
                     default:
                         gotKey = true;
