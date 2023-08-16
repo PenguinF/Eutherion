@@ -100,9 +100,19 @@ namespace Eutherion.Text.Json.Tests
                 null!,
                 ReadOnlyList<JsonErrorInfo>.Empty));
             Assert.Throws<ArgumentNullException>("errors", () => new RootJsonSyntax(
-                string.Empty,
+                "0",
                 CreateMultiValue(new GreenJsonIntegerLiteralSyntax(0, 1)),
                 null!));
+
+            // Lengths should be equal.
+            Assert.Throws<ArgumentException>("json", () => new RootJsonSyntax(
+                string.Empty,
+                CreateMultiValue(new GreenJsonIntegerLiteralSyntax(0, 1)),
+                ReadOnlyList<JsonErrorInfo>.Empty));
+            Assert.Throws<ArgumentException>("json", () => new RootJsonSyntax(
+                "-0",
+                CreateMultiValue(new GreenJsonIntegerLiteralSyntax(0, 1)),
+                ReadOnlyList<JsonErrorInfo>.Empty));
 
             // Both GreenJsonStringLiteralSyntax instances should be the same, and in below test they are not.
             Assert.Throws<ArgumentException>("validKey", () => new GreenJsonKeyValueSyntax(

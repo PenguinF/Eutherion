@@ -119,10 +119,21 @@ namespace Eutherion.Text.Json
         /// <exception cref="ArgumentNullException">
         /// <paramref name="json"/> and/or <paramref name="syntax"/> and/or <paramref name="errors"/> are <see langword="null"/>.
         /// </exception>
+        /// <exception cref="ArgumentException">
+        /// The lengths of <paramref name="json"/> and <paramref name="syntax"/> are different.
+        /// </exception>
         public RootJsonSyntax(string json, GreenJsonMultiValueSyntax syntax, ReadOnlyList<JsonErrorInfo> errors)
         {
             Json = json ?? throw new ArgumentNullException(nameof(json));
             if (syntax == null) throw new ArgumentNullException(nameof(syntax));
+
+            if (json.Length != syntax.Length)
+            {
+                throw new ArgumentException(
+                    $"The lengths of {nameof(json)} ({json.Length}) and {nameof(syntax)} ({syntax.Length}) are not equal",
+                    nameof(json));
+            }
+
             Syntax = new JsonMultiValueSyntax(syntax, this);
             Errors = errors ?? throw new ArgumentNullException(nameof(errors));
         }
