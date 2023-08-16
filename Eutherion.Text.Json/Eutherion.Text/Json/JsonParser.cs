@@ -34,10 +34,9 @@ namespace Eutherion.Text.Json
 #endif
 
     /// <summary>
-    /// Represents a single parse of a list of json tokens.
+    /// Represents a individual generation of a parse tree and errors from a source text in the JSON format.
     /// Based on https://www.json.org/.
     /// </summary>
-    // Visit calls return the parsed value syntax node, and true if the current token must still be processed.
     public sealed class JsonParser
     {
         /// <summary>
