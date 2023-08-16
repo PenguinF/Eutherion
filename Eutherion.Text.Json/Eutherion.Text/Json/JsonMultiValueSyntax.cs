@@ -58,12 +58,6 @@ namespace Eutherion.Text.Json
         public JsonBackgroundListSyntax BackgroundAfter => backgroundAfter.Object;
 
         /// <summary>
-        /// Gets the syntax node containing the first value.
-        /// Is <see cref="JsonMissingValueSyntax"/> if a value was expected but none given. (E.g. in "[0,,2]", between both commas.)
-        /// </summary>
-        public JsonValueWithBackgroundSyntax ValueNode => ValueNodes[0];
-
-        /// <summary>
         /// Gets the start position of this syntax node relative to its parent's start position.
         /// </summary>
         public override int Start => Parent.Match(
@@ -120,6 +114,12 @@ namespace Eutherion.Text.Json
             if (index == ValueNodes.Count) return Length - Green.BackgroundAfter.Length;
             throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
+
+        /// <summary>
+        /// Gets the syntax node containing the first value.
+        /// Is <see cref="JsonMissingValueSyntax"/> if a value was expected but none given. (E.g. in "[0,,2]", between both commas.)
+        /// </summary>
+        public JsonValueSyntax ValueNode => ValueNodes[0].ContentNode;
 
         private JsonMultiValueSyntax(Union<RootJsonSyntax, JsonListSyntax, JsonKeyValueSyntax> parent, GreenJsonMultiValueSyntax green)
         {
