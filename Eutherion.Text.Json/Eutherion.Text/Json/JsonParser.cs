@@ -201,16 +201,14 @@ namespace Eutherion.Text.Json
                 // Analyze if this is an actual, unique property key.
                 int parsedKeyNodeStart = keyStart + parsedKeyNodeWithBackground.BackgroundBefore.Length;
                 bool gotKey;
-                Maybe<GreenJsonStringLiteralSyntax> validKey = Maybe<GreenJsonStringLiteralSyntax>.Nothing;
 
                 switch (parsedKeyNode)
                 {
                     case GreenJsonMissingValueSyntax _:
                         gotKey = false;
                         break;
-                    case GreenJsonStringLiteralSyntax stringLiteral:
+                    case GreenJsonStringLiteralSyntax _:
                         gotKey = true;
-                        validKey = stringLiteral;
                         break;
                     default:
                         gotKey = true;
@@ -247,7 +245,7 @@ namespace Eutherion.Text.Json
                 }
 
                 // One key-value section done.
-                var jsonKeyValueSyntax = new GreenJsonKeyValueSyntax(validKey, keyValueSyntaxBuilder);
+                var jsonKeyValueSyntax = new GreenJsonKeyValueSyntax(keyValueSyntaxBuilder);
 
                 mapBuilder.Add(jsonKeyValueSyntax);
 

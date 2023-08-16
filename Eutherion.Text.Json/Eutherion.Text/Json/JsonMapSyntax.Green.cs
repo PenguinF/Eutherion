@@ -101,33 +101,6 @@ namespace Eutherion.Text.Json
                    + (missingCurlyClose ? 0 : JsonSpecialCharacter.SingleCharacterLength);
         }
 
-        /// <summary>
-        /// Enumerates all semantically valid key-value pairs together with their starting positions relative to the start position of this <see cref="GreenJsonMapSyntax"/>.
-        /// </summary>
-        public IEnumerable<(int keyNodeStartPosition, GreenJsonStringLiteralSyntax keyNode, int valueNodeStartPosition, GreenJsonValueSyntax valueNode)> ValidKeyValuePairs()
-        {
-            for (int i = 0; i < KeyValueNodes.Count; i++)
-            {
-                var keyValueNode = KeyValueNodes[i];
-
-                if (keyValueNode.ValidKey.IsJust(out var stringLiteral)
-                    && keyValueNode.FirstValueNode.IsJust(out var multiValueNode)
-                    && !(multiValueNode.ValueNode.ContentNode is GreenJsonMissingValueSyntax))
-                {
-                    // Only the first value can be valid, even if it's undefined.
-                    int keyNodeStart = GetKeyValueNodeStart(i) + keyValueNode.KeyNode.ValueNode.BackgroundBefore.Length;
-                    int valueNodeStart = GetKeyValueNodeStart(i) + keyValueNode.GetFirstValueNodeStart() + multiValueNode.ValueNode.BackgroundBefore.Length;
-
-                    yield return (keyNodeStart, stringLiteral, valueNodeStart, multiValueNode.ValueNode.ContentNode);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the start position of a key-value node relative to the start position of this <see cref="GreenJsonMapSyntax"/>.
-        /// </summary>
-        public int GetKeyValueNodeStart(int index) => JsonSpecialCharacter.SingleCharacterLength + KeyValueNodes.GetElementOffset(index);
-
         internal override TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitMapSyntax(this, arg);
     }
 }
