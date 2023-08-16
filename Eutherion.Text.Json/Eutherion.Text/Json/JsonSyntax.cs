@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,29 +45,44 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the parent syntax node of this instance. Returns <see langword="null"/> for the root node.
         /// </summary>
+        // If it becomes possible to change ParentSyntax during the lifetime of this object, e.g. when making a syntax tree editable,
+        // then make sure that LazyAbsoluteStart gets reinitalized exactly when the value of ParentSyntax changes.
+        // This should be an atomic operation for thread safety.
 #if NET472
         public abstract JsonSyntax ParentSyntax { get; }
 #else
         public abstract JsonSyntax? ParentSyntax { get; }
 #endif
 
+        private readonly SafeLazy<int> LazyAbsoluteStart;
+
         /// <summary>
         /// Gets the absolute start position of this syntax node. This is the position relative to the root's start position, which is zero.
         /// </summary>
-        // Suppress valid warning that ParentSyntax may be null. Contract is that only in subclasses where ParentSyntax may indeed return null,
-        // AbsoluteStart should be overridden as well to prevent the NullReferenceException.
-#if !NET472
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#endif
-        public virtual int AbsoluteStart => ParentSyntax.AbsoluteStart + Start;
-#if !NET472
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#endif
+        public int AbsoluteStart => LazyAbsoluteStart.Value;
 
         /// <summary>
         /// Gets the number of children of this syntax node.
         /// </summary>
         public virtual int ChildCount => 0;
+
+        internal JsonSyntax(SafeLazy<int> lazyAbsoluteStart)
+        {
+            LazyAbsoluteStart = lazyAbsoluteStart;
+        }
+
+        internal JsonSyntax()
+        {
+            // Suppress valid warning that ParentSyntax may be null.
+            // RootJsonSyntax calls the other constructor, so no NullReferenceException can be thrown.
+#if !NET472
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#endif
+            LazyAbsoluteStart = new SafeLazy<int>(() => ParentSyntax.AbsoluteStart + Start);
+#if !NET472
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#endif
+        }
 
         /// <summary>
         /// Gets if this syntax is a terminal symbol, i.e. if it has no child nodes and its <see cref="Length"/> is greater than zero.

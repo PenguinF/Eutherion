@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Threading;
 using System;
 using System.Collections.Generic;
 
@@ -63,11 +64,6 @@ namespace Eutherion.Text.Json
 #else
         public override JsonSyntax? ParentSyntax => null;
 #endif
-
-        /// <summary>
-        /// Gets the absolute start position of this syntax node.
-        /// </summary>
-        public override int AbsoluteStart => 0;
 
         /// <summary>
         /// Gets the number of children of this syntax node.
@@ -123,6 +119,8 @@ namespace Eutherion.Text.Json
         /// The lengths of <paramref name="json"/> and <paramref name="syntax"/> are different.
         /// </exception>
         public RootJsonSyntax(string json, GreenJsonMultiValueSyntax syntax, ReadOnlyList<JsonErrorInfo> errors)
+            // Accept overhead that for only the root node this creates an unnecessary extra check if evaluated.
+            : base(new SafeLazy<int>(() => 0))
         {
             Json = json ?? throw new ArgumentNullException(nameof(json));
             if (syntax == null) throw new ArgumentNullException(nameof(syntax));
