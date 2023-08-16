@@ -105,6 +105,30 @@ namespace Eutherion.Collections
         }
 
         /// <summary>
+        /// Gets if an object in the collection has already been initialized.
+        /// </summary>
+        /// <param name="index">
+        /// The zero-based index of the object to examine.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if the object at the specified index in the collection has been initialized,
+        /// otherwise <see langword="false"/>.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/>is less than 0 or greater than or equal to <see cref="Count"/>.
+        /// </exception>
+        public bool IsObjectCreated(int index)
+        {
+            // Cast to uint so negative values get flagged by this check too.
+            if ((uint)index < (uint)Count)
+            {
+                return Arr[index] != null;
+            }
+
+            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+        }
+
+        /// <summary>
         /// Gets the object at the specified index in the collection.
         /// </summary>
         /// <param name="index">

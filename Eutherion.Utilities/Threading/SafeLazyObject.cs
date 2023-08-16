@@ -60,6 +60,11 @@ namespace Eutherion.Threading
         }
 
         /// <summary>
+        /// Gets if <see cref="Object"/> has already been initialized.
+        /// </summary>
+        public bool IsObjectCreated => ConstructedObject != null;
+
+        /// <summary>
         /// Gets the result of the constructor.
         /// Note that if multiple threads race to construct the object, they will all call the constructor.
         /// Only one of the created objects is kept, and henceforth returned.
