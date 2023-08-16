@@ -21,6 +21,7 @@
 
 using Eutherion.Collections;
 using System;
+using System.Collections.Generic;
 
 namespace Eutherion.Text.Json
 {
@@ -123,6 +124,21 @@ namespace Eutherion.Text.Json
             }
 
             throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+        }
+
+        /// <summary>
+        /// Enumerates all semantically valid key-value pairs of this <see cref="JsonMapSyntax"/>.
+        /// These are all key-value pairs where its key is a string literal, and its value is not empty (<see cref="JsonMissingValueSyntax"/>).
+        /// </summary>
+        public IEnumerable<(JsonStringLiteralSyntax keyNode, JsonValueSyntax valueNode)> ValidKeyValuePairs()
+        {
+            foreach (var keyValueNode in KeyValueNodes)
+            {
+                if (keyValueNode.ValidKey.IsJust(out var stringLiteral) && keyValueNode.FirstValueNode.IsJust(out var valueNode))
+                {
+                    yield return (stringLiteral, valueNode);
+                }
+            }
         }
 
         internal JsonMapSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonMapSyntax green) : base(parent)
