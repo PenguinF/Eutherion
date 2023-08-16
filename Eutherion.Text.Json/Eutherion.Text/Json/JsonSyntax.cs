@@ -254,5 +254,23 @@ namespace Eutherion.Text.Json
 
             return EmptyEnumerable<IJsonSymbol>.Instance;
         }
+
+        /// <summary>
+        /// Creates a <see cref="ReadOnlyMemory{T}"/> over the portion of the source JSON string
+        /// that corresponds exactly to this syntax node.
+        /// </summary>
+        /// <returns>
+        /// The read-only character memory representation of the source JSON.
+        /// </returns>
+        public ReadOnlyMemory<char> SourceJsonAsMemory => Root.Json.AsMemory(AbsoluteStart, Length);
+
+        /// <summary>
+        /// Creates a <see cref="ReadOnlySpan{T}"/> over the portion of the source JSON string
+        /// that corresponds exactly to this syntax node.
+        /// </summary>
+        /// <returns>
+        /// The read-only character memory representation of the source JSON.
+        /// </returns>
+        public ReadOnlySpan<char> SourceJsonAsSpan => Root.Json.AsSpan(AbsoluteStart, Length);
     }
 }
