@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -44,9 +44,6 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the parent syntax node of this instance. Returns null for the root node.
         /// </summary>
-        /// <remarks>
-        /// Remember to override <see cref="AbsoluteStart"/> if there's a possibility of a null return from this property.
-        /// </remarks>
 #if NET472
         public abstract JsonSyntax ParentSyntax { get; }
 #else
