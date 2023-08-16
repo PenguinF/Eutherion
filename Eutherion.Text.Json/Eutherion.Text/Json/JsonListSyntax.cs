@@ -20,6 +20,7 @@
 #endregion
 
 using Eutherion.Collections;
+using Eutherion.Threading;
 using System;
 
 namespace Eutherion.Text.Json
@@ -34,11 +35,12 @@ namespace Eutherion.Text.Json
         /// </summary>
         public GreenJsonListSyntax Green { get; }
 
+        private readonly SafeLazyObject<JsonSquareBracketOpenSyntax> squareBracketOpen;
+
         /// <summary>
         /// Gets the <see cref="JsonSquareBracketOpenSyntax"/> node at the start of this list syntax node.
         /// </summary>
-        // Always create the [ and ], avoid overhead of SafeLazyObject.
-        public JsonSquareBracketOpenSyntax SquareBracketOpen { get; }
+        public JsonSquareBracketOpenSyntax SquareBracketOpen => squareBracketOpen.Object;
 
         /// <summary>
         /// Gets the non-empty collection of list item nodes separated by comma characters.
@@ -50,11 +52,12 @@ namespace Eutherion.Text.Json
         /// </summary>
         public SafeLazyObjectCollection<JsonCommaSyntax> Commas { get; }
 
+        private readonly SafeLazyObject<Maybe<JsonSquareBracketCloseSyntax>> squareBracketClose;
+
         /// <summary>
         /// Gets the <see cref="JsonSquareBracketCloseSyntax"/> node at the end of this list syntax node, if it exists.
         /// </summary>
-        // Always create the [ and ], avoid overhead of SafeLazyObject.
-        public Maybe<JsonSquareBracketCloseSyntax> SquareBracketClose { get; }
+        public Maybe<JsonSquareBracketCloseSyntax> SquareBracketClose => squareBracketClose.Object;
 
         /// <summary>
         /// Returns ListItemNodes.Count, or one less if the last element is a <see cref="JsonMissingValueSyntax"/>.
@@ -134,7 +137,7 @@ namespace Eutherion.Text.Json
         {
             Green = green;
 
-            SquareBracketOpen = new JsonSquareBracketOpenSyntax(this);
+            squareBracketOpen = new SafeLazyObject<JsonSquareBracketOpenSyntax>(() => new JsonSquareBracketOpenSyntax(this));
 
             int listItemNodeCount = green.ListItemNodes.Count;
             ListItemNodes = new SafeLazyObjectCollection<JsonMultiValueSyntax>(
@@ -145,9 +148,10 @@ namespace Eutherion.Text.Json
                 listItemNodeCount - 1,
                 index => new JsonCommaSyntax(this, index));
 
-            SquareBracketClose = green.MissingSquareBracketClose
-                               ? Maybe<JsonSquareBracketCloseSyntax>.Nothing
-                               : new JsonSquareBracketCloseSyntax(this);
+            squareBracketClose = new SafeLazyObject<Maybe<JsonSquareBracketCloseSyntax>>(
+                () => green.MissingSquareBracketClose
+                ? Maybe<JsonSquareBracketCloseSyntax>.Nothing
+                : new JsonSquareBracketCloseSyntax(this));
 
             FilteredListItemNodeCount = Green.FilteredListItemNodeCount;
         }
