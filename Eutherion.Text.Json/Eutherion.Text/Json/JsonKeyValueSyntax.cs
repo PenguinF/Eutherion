@@ -20,6 +20,7 @@
 #endregion
 
 using Eutherion.Collections;
+using Eutherion.Threading;
 using System;
 
 namespace Eutherion.Text.Json
@@ -101,6 +102,29 @@ namespace Eutherion.Text.Json
         /// </exception>
         public override int GetChildStartPosition(int index) => Green.ValueSectionNodes.GetElementOrSeparatorOffset(index);
 
+        /// <summary>
+        /// Gets the syntax node containing the key of this <see cref="JsonKeyValueSyntax"/>.
+        /// </summary>
+        public JsonValueSyntax KeyNode => ValueSectionNodes[0].ValueNode;
+
+        private readonly SafeLazy<Maybe<JsonStringLiteralSyntax>> LazyValidKey;
+
+        /// <summary>
+        /// If <see cref="KeyNode"/> contains a valid key, returns it.
+        /// </summary>
+        public Maybe<JsonStringLiteralSyntax> ValidKey => LazyValidKey.Value;
+
+        private readonly SafeLazy<Maybe<JsonValueSyntax>> LazyFirstValueNode;
+
+        /// <summary>
+        /// Returns the first value node containing the value of this <see cref="JsonKeyValueSyntax"/>, if it was provided.
+        /// </summary>
+        /// <remarks>
+        /// If this value node is a <see cref="JsonMissingValueSyntax"/>, <see cref="Maybe{T}.Nothing"/> is returned, e.g. for key &quot;x&quot;
+        /// in json '{ &quot;x&quot; : , &quot;y&quot;: 0 }';
+        /// </remarks>
+        public Maybe<JsonValueSyntax> FirstValueNode => LazyFirstValueNode.Value;
+
         internal JsonKeyValueSyntax(JsonMapSyntax parent, int parentKeyValueNodeIndex)
         {
             Parent = parent;
@@ -116,6 +140,26 @@ namespace Eutherion.Text.Json
             Colons = new SafeLazyObjectCollection<JsonColonSyntax>(
                 valueSectionNodeCount - 1,
                 index => new JsonColonSyntax(this, index));
+
+            // Create SafeLazy instances so child nodes only get initialized when evaluated.
+            LazyValidKey = new SafeLazy<Maybe<JsonStringLiteralSyntax>>(
+                () => KeyNode is JsonStringLiteralSyntax stringLiteral ? stringLiteral : Maybe<JsonStringLiteralSyntax>.Nothing);
+
+            LazyFirstValueNode = new SafeLazy<Maybe<JsonValueSyntax>>(
+                () =>
+                {
+                    if (ValueSectionNodes.Count > 1)
+                    {
+                        // Only the first value can be valid, even if it's undefined.
+                        JsonValueSyntax firstValueNode = ValueSectionNodes[1].ValueNode;
+                        if (!(firstValueNode is JsonMissingValueSyntax))
+                        {
+                            return firstValueNode;
+                        }
+                    }
+
+                    return Maybe<JsonValueSyntax>.Nothing;
+                });
         }
     }
 }
