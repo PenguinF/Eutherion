@@ -42,7 +42,7 @@ namespace Eutherion.Text.Json
         public abstract int Length { get; }
 
         /// <summary>
-        /// Gets the parent syntax node of this instance. Returns null for the root node.
+        /// Gets the parent syntax node of this instance. Returns <see langword="null"/> for the root node.
         /// </summary>
 #if NET472
         public abstract JsonSyntax ParentSyntax { get; }
@@ -51,7 +51,7 @@ namespace Eutherion.Text.Json
 #endif
 
         /// <summary>
-        /// Gets the absolute start position of this syntax node.
+        /// Gets the absolute start position of this syntax node. This is the position relative to the root's start position, which is zero.
         /// </summary>
         // Suppress valid warning that ParentSyntax may be null. Contract is that only in subclasses where ParentSyntax may indeed return null,
         // AbsoluteStart should be overridden as well to prevent the NullReferenceException.
@@ -94,6 +94,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node to return.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -102,6 +105,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start position.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -113,6 +119,12 @@ namespace Eutherion.Text.Json
         /// If <paramref name="index"/> is equal to <see cref="ChildCount"/>, the end position of the last child is returned.
         /// In neither case will the child node be initialized.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start or end position.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than <see cref="ChildCount"/>.
+        /// </exception>
         public int GetChildStartOrEndPosition(int index) => index == ChildCount ? Length : GetChildStartPosition(index);
 
         /// <summary>
