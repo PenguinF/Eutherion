@@ -211,18 +211,18 @@ namespace Eutherion.Text.Json.Tests
             return length;
         }
 
-        private static IEnumerable<(string json, ExpectedJsonTree parseTree, JsonErrorCode[] expectedErrors)> GetTestParseTrees()
-            => ExpectedJsonTrees.TestParseTrees.Select(x => (x.Item1, x.Item2, Array.Empty<JsonErrorCode>()))
-            .Concat(ExpectedJsonTrees.TestParseTreesWithErrors.Select(x => (x.Item1, x.Item2, x.Item3)));
+        private static IEnumerable<(string json, ExpectedJsonTree<RootJsonSyntax> parseTree, JsonErrorCode[] expectedErrors)> GetTestParseTrees()
+            => ExpectedJsonTrees.TestParseTrees.Select(x => (x.Item1, new ExpectedJsonTree<RootJsonSyntax> { x.Item2 }, Array.Empty<JsonErrorCode>()))
+            .Concat(ExpectedJsonTrees.TestParseTreesWithErrors.Select(x => (x.Item1, new ExpectedJsonTree<RootJsonSyntax> { x.Item2 }, x.Item3)));
 
         public static IEnumerable<object?[]> WrappedTestParseTrees() => TestUtilities.Wrap(GetTestParseTrees());
 
         [Theory]
         [MemberData(nameof(WrappedTestParseTrees))]
-        public void ParseTreeTests(string json, ExpectedJsonTree parseTree, JsonErrorCode[] expectedErrors)
+        public void ParseTreeTests(string json, ExpectedJsonTree<RootJsonSyntax> parseTree, JsonErrorCode[] expectedErrors)
         {
             RootJsonSyntax rootSyntax = JsonParser.Parse(json);
-            AssertParseTree(parseTree, null, 0, rootSyntax.Syntax);
+            AssertParseTree(parseTree, null, 0, rootSyntax);
 
             // Assert expected errors.
             Assert.Collection(
