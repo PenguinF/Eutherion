@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonStringLiteralSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -40,6 +40,11 @@ namespace Eutherion.Text.Json
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public override int Length => Green.Length;
+
+        /// <summary>
+        /// Returns <see langword="true"/> because this sytnax node represents a valid JSON value.
+        /// </summary>
+        public override bool IsValidValue => true;
 
         internal JsonStringLiteralSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonStringLiteralSyntax green) : base(parent) => Green = green;
 

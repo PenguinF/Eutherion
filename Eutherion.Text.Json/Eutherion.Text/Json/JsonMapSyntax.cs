@@ -66,6 +66,11 @@ namespace Eutherion.Text.Json
         public override int Length => Green.Length;
 
         /// <summary>
+        /// Returns <see langword="true"/> because this sytnax node represents a potentially valid JSON value.
+        /// </summary>
+        public override bool IsValidValue => true;
+
+        /// <summary>
         /// Gets the number of children of this syntax node.
         /// </summary>
         public override int ChildCount => KeyValueNodes.Count + Commas.Count + (Green.MissingCurlyClose ? 1 : 2);
@@ -130,11 +135,11 @@ namespace Eutherion.Text.Json
         }
 
         /// <summary>
-        /// Enumerates all semantically valid key-value pairs of this <see cref="JsonMapSyntax"/>.
+        /// Enumerates all semantically defined key-value pairs of this <see cref="JsonMapSyntax"/>.
         /// These are all key-value pairs where its key is a string literal, and its value is available.
         /// The returned value node may still contain errors or be a <see cref="JsonMissingValueSyntax"/>.
         /// </summary>
-        public IEnumerable<(JsonStringLiteralSyntax keyNode, JsonValueSyntax valueNode)> ValidKeyValuePairs()
+        public IEnumerable<(JsonStringLiteralSyntax keyNode, JsonValueSyntax valueNode)> DefinedKeyValuePairs()
         {
             foreach (var keyValueNode in KeyValueNodes)
             {

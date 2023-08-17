@@ -70,6 +70,11 @@ namespace Eutherion.Text.Json
         public override int Length => Green.Length;
 
         /// <summary>
+        /// Returns <see langword="true"/> because this sytnax node represents a potentially valid JSON value.
+        /// </summary>
+        public override bool IsValidValue => true;
+
+        /// <summary>
         /// Gets the number of children of this syntax node.
         /// </summary>
         public override int ChildCount => ListItemNodes.Count + Commas.Count + (Green.MissingSquareBracketClose ? 1 : 2);
