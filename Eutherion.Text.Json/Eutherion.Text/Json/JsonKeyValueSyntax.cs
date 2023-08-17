@@ -117,12 +117,8 @@ namespace Eutherion.Text.Json
         private readonly SafeLazy<Maybe<JsonValueSyntax>> LazyFirstValueNode;
 
         /// <summary>
-        /// Returns the first value node containing the value of this <see cref="JsonKeyValueSyntax"/>, if it was provided.
+        /// Returns the first value node containing the value of this <see cref="JsonKeyValueSyntax"/> if it was provided.
         /// </summary>
-        /// <remarks>
-        /// If this value node is a <see cref="JsonMissingValueSyntax"/>, <see cref="Maybe{T}.Nothing"/> is returned, e.g. for key &quot;x&quot;
-        /// in json '{ &quot;x&quot; : , &quot;y&quot;: 0 }';
-        /// </remarks>
         public Maybe<JsonValueSyntax> FirstValueNode => LazyFirstValueNode.Value;
 
         internal JsonKeyValueSyntax(JsonMapSyntax parent, int parentKeyValueNodeIndex)
@@ -146,19 +142,7 @@ namespace Eutherion.Text.Json
                 () => KeyNode is JsonStringLiteralSyntax stringLiteral ? stringLiteral : Maybe<JsonStringLiteralSyntax>.Nothing);
 
             LazyFirstValueNode = new SafeLazy<Maybe<JsonValueSyntax>>(
-                () =>
-                {
-                    if (ValueSectionNodes.Count > 1)
-                    {
-                        JsonValueSyntax firstValueNode = ValueSectionNodes[1].ValueNode;
-                        if (!(firstValueNode is JsonMissingValueSyntax))
-                        {
-                            return firstValueNode;
-                        }
-                    }
-
-                    return Maybe<JsonValueSyntax>.Nothing;
-                });
+                () => ValueSectionNodes.Count > 1 ? ValueSectionNodes[1].ValueNode : Maybe<JsonValueSyntax>.Nothing);
         }
     }
 }

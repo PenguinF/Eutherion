@@ -131,7 +131,8 @@ namespace Eutherion.Text.Json
 
         /// <summary>
         /// Enumerates all semantically valid key-value pairs of this <see cref="JsonMapSyntax"/>.
-        /// These are all key-value pairs where its key is a string literal, and its value is not empty (<see cref="JsonMissingValueSyntax"/>).
+        /// These are all key-value pairs where its key is a string literal, and its value is available.
+        /// The returned value node may still contain errors or be a <see cref="JsonMissingValueSyntax"/>.
         /// </summary>
         public IEnumerable<(JsonStringLiteralSyntax keyNode, JsonValueSyntax valueNode)> ValidKeyValuePairs()
         {
