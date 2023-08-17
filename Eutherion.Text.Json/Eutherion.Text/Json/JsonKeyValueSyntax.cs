@@ -150,7 +150,6 @@ namespace Eutherion.Text.Json
                 {
                     if (ValueSectionNodes.Count > 1)
                     {
-                        // Only the first value can be valid, even if it's undefined.
                         JsonValueSyntax firstValueNode = ValueSectionNodes[1].ValueNode;
                         if (!(firstValueNode is JsonMissingValueSyntax))
                         {
