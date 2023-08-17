@@ -27,7 +27,7 @@ namespace Eutherion
     /// <typeparam name="T">
     /// The type of the value.
     /// </typeparam>
-    public class Box<T>
+    public class Box<T> : IFunc<T>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Box{T}"/> class
@@ -42,5 +42,7 @@ namespace Eutherion
         /// Gets or sets the referenced value.
         /// </summary>
         public T Value { get; set; }
+
+        T IFunc<T>.Eval() => Value;
     }
 }

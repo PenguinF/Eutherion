@@ -33,7 +33,8 @@ namespace Eutherion
     // Task<T>             - A value that is evaluated asynchronously.
     // Lazy<T>/SafeLazy<T> - A value that is evaluated on the first call, and is then read-only and stored in memory.
     // SafeLazyObject<T>   - An object that is initialized on the first call, and is then read-only and stored in memory.
-    // Box<T>              - A value in memory (that can change).
+    // ConstantValue<T>    - A value in memory that cannot change.
+    // Box<T>              - A value in memory that can change.
     // ObservableValue<T>  - A value in memory that can change and has events to observe those changes.
     public static class IFuncExtensions
     {
@@ -62,15 +63,6 @@ namespace Eutherion
             public EncapsulatedLazy(Lazy<TResult> lazy) => Lazy = lazy;
 
             public TResult Eval() => Lazy.Value;
-        }
-
-        private struct EncapsulatedBox<TResult> : IFunc<TResult>
-        {
-            public readonly Box<TResult> Box;
-
-            public EncapsulatedBox(Box<TResult> box) => Box = box;
-
-            public TResult Eval() => Box.Value;
         }
 
         private struct EncapsulatedSafeLazy<TResult> : IFunc<TResult>
@@ -153,24 +145,6 @@ namespace Eutherion
         {
             if (lazy == null) throw new ArgumentNullException(nameof(lazy));
             return new EncapsulatedLazy<TResult>(lazy);
-        }
-
-        /// <summary>
-        /// Converts a <see cref="Box{TResult}"/> to an <see cref="IFunc{TResult}"/>.
-        /// </summary>
-        /// <typeparam name="TResult">
-        /// The type of the return value of the function.
-        /// </typeparam>
-        /// <param name="box">
-        /// The <see cref="Box{TResult}"/> to convert.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFunc{TResult}"/> wrapping <paramref name="box"/>.
-        /// </returns>
-        public static IFunc<TResult> ToIFunc<TResult>(this Box<TResult> box)
-        {
-            if (box == null) throw new ArgumentNullException(nameof(box));
-            return new EncapsulatedBox<TResult>(box);
         }
 
         /// <summary>
