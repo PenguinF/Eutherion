@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonValueSyntax.Green.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,6 +31,11 @@ namespace Eutherion.Text.Json
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public abstract int Length { get; }
+
+        /// <summary>
+        /// Returns if this is a <see cref="GreenJsonMissingValueSyntax"/> instance.
+        /// </summary>
+        public virtual bool IsMissingValue => false;
 
         internal abstract TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg);
     }

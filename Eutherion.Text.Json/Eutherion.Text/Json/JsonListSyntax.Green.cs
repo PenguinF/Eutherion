@@ -49,7 +49,7 @@ namespace Eutherion.Text.Json
                 int count = ListItemNodes.Count;
 
                 // Discard last item if it's a missing value, so that a trailing comma is ignored.
-                if (ListItemNodes[count - 1].ValueNode.ContentNode is GreenJsonMissingValueSyntax)
+                if (ListItemNodes[count - 1].ValueNode.ContentNode.IsMissingValue)
                 {
                     return count - 1;
                 }

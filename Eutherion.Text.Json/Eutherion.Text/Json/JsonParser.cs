@@ -268,7 +268,7 @@ namespace Eutherion.Text.Json
                     // Report missing value error from being reported if all value sections are empty.
                     // Example: { "key1":: 2, "key2": , }
                     // Skip the fist value section, it contains the key node.
-                    if (jsonKeyValueSyntax.ValueSectionNodes.Skip(1).All(x => x.ValueNode.ContentNode is GreenJsonMissingValueSyntax))
+                    if (jsonKeyValueSyntax.ValueSectionNodes.Skip(1).All(x => x.ValueNode.ContentNode.IsMissingValue))
                     {
                         Report(new JsonErrorInfo(
                             JsonErrorCode.MissingValue,
@@ -310,7 +310,7 @@ namespace Eutherion.Text.Json
                 JsonSymbolType symbolType = CurrentToken.SymbolType;
                 if (symbolType == JsonSymbolType.Comma)
                 {
-                    if (parsedValueNode.ValueNode.ContentNode is GreenJsonMissingValueSyntax)
+                    if (parsedValueNode.ValueNode.ContentNode.IsMissingValue)
                     {
                         // Two commas or '[,'.
                         Report(new JsonErrorInfo(
