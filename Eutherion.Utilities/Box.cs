@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Box.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 **********************************************************************************/
 #endregion
 
-namespace System
+namespace Eutherion
 {
     /// <summary>
     /// References a value, adding an indirection.
