@@ -802,6 +802,40 @@ namespace Eutherion.Text.Json.Tests
             },
             new[] { JsonErrorCode.MultiplePropertyKeySections, JsonErrorCode.MissingPropertyKey, JsonErrorCode.MissingValue }),
 
+            ("{::::}", new ExpectedJsonTree<JsonMultiValueSyntax>
+            {
+                new ExpectedJsonTree<JsonValueWithBackgroundSyntax>
+                {
+                    NoBackground,
+                    new ExpectedJsonTree<JsonMapSyntax>
+                    {
+                        CurlyOpen,
+                        new ExpectedJsonTree<JsonKeyValueSyntax>
+                        {
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground
+                        },
+                        CurlyClose
+                    }
+                },
+                NoBackground
+            },
+            new[]
+            {
+                JsonErrorCode.MultiplePropertyKeySections,
+                JsonErrorCode.MultiplePropertyKeySections,
+                JsonErrorCode.MultiplePropertyKeySections,
+                JsonErrorCode.MissingPropertyKey,
+                JsonErrorCode.MissingValue
+            }),
+
             ("{[:[}", new ExpectedJsonTree<JsonMultiValueSyntax>
             {
                 new ExpectedJsonTree<JsonValueWithBackgroundSyntax>
