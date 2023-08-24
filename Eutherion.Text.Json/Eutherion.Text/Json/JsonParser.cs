@@ -219,6 +219,7 @@ namespace Eutherion.Text.Json
                 keyValueSyntaxBuilder.Add(multiKeyNode);
 
                 // Keep parsing multi-values until encountering a non ':'.
+                bool gotValueSomewhere = false;
                 JsonSymbolType symbolType = CurrentToken.SymbolType;
                 bool gotColon = false;
                 while (symbolType == JsonSymbolType.Colon)
@@ -237,7 +238,9 @@ namespace Eutherion.Text.Json
                     }
 
                     // ParseMultiValue() guarantees that the next symbol is never a ValueStartSymbol.
-                    keyValueSyntaxBuilder.Add(ParseMultiValue(JsonErrorCode.MultipleValues));
+                    var multiValueNode = ParseMultiValue(JsonErrorCode.MultipleValues);
+                    gotValueSomewhere |= !multiValueNode.ValueNode.ContentNode.IsMissingValue;
+                    keyValueSyntaxBuilder.Add(multiValueNode);
                     symbolType = CurrentToken.SymbolType;
                 }
 
@@ -265,7 +268,7 @@ namespace Eutherion.Text.Json
                     // Report missing value error from being reported if all value sections are empty.
                     // Example: { "key1":: 2, "key2": , }
                     // Skip the fist value section, it contains the key node.
-                    if (jsonKeyValueSyntax.ValueSectionNodes.Skip(1).All(x => x.ValueNode.ContentNode.IsMissingValue))
+                    if (!gotValueSomewhere)
                     {
                         Report(new JsonErrorInfo(
                             JsonErrorCode.MissingValue,
