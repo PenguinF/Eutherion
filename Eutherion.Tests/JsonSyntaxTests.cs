@@ -22,7 +22,6 @@
 using Eutherion.Testing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Xunit;
 
@@ -262,27 +261,6 @@ namespace Eutherion.Text.Json.Tests
         {
             // Assert that none of these create a legal json value.
             Assert.Null(JsonValue.TryCreate(value));
-        }
-
-        private static IEnumerable<(IEnumerable<GreenJsonValueSyntax> valueNodes, int expectedFilteredItemNodesCount)> ListValuesTestCases()
-        {
-            yield return (new GreenJsonValueSyntax[] { GreenJsonMissingValueSyntax.Value }, 0);
-            yield return (new GreenJsonValueSyntax[] { new GreenJsonIntegerLiteralSyntax(1, 1) }, 1);
-
-            yield return (new GreenJsonValueSyntax[] { GreenJsonMissingValueSyntax.Value, new GreenJsonIntegerLiteralSyntax(1, 1) }, 2);
-            yield return (new GreenJsonValueSyntax[] { new GreenJsonIntegerLiteralSyntax(1, 1), GreenJsonMissingValueSyntax.Value }, 1);
-            yield return (new GreenJsonValueSyntax[] { GreenJsonMissingValueSyntax.Value, new GreenJsonIntegerLiteralSyntax(1, 1), GreenJsonMissingValueSyntax.Value }, 2);
-            yield return (new GreenJsonValueSyntax[] { new GreenJsonIntegerLiteralSyntax(1, 1), GreenJsonMissingValueSyntax.Value, GreenJsonMissingValueSyntax.Value }, 2);
-        }
-
-        public static IEnumerable<object?[]> WrappedListValuesTestCases() => TestUtilities.Wrap(ListValuesTestCases());
-
-        [Theory]
-        [MemberData(nameof(WrappedListValuesTestCases))]
-        public void CorrectFilteredListItemNodesCount(IEnumerable<GreenJsonValueSyntax> valueNodes, int expectedFilteredItemNodesCount)
-        {
-            GreenJsonListSyntax list = new(valueNodes.Select(CreateMultiValue).ToArray(), false);
-            Assert.Equal(expectedFilteredItemNodesCount, list.FilteredListItemNodeCount);
         }
     }
 }
