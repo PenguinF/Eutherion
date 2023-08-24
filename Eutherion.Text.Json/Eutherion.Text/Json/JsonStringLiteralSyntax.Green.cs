@@ -44,6 +44,11 @@ namespace Eutherion.Text.Json
         public JsonSymbolType SymbolType => JsonSymbolType.StringLiteral;
 
         /// <summary>
+        /// Returns <see langword="true"/> because this is a <see cref="GreenJsonStringLiteralSyntax"/> instance.
+        /// </summary>
+        public override bool IsStringLiteral => true;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonStringLiteralSyntax"/>.
         /// </summary>
         /// <param name="value">

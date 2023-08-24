@@ -200,23 +200,20 @@ namespace Eutherion.Text.Json
 
                 // Analyze if this is an actual, unique property key.
                 int parsedKeyNodeStart = keyStart + parsedKeyNodeWithBackground.BackgroundBefore.Length;
-                bool gotKey;
 
-                switch (parsedKeyNode)
+                // Expect the key node to be a string literal, so only do error analysis if this is not the case.
+                bool gotKey = parsedKeyNode.IsStringLiteral;
+                if (!gotKey)
                 {
-                    case GreenJsonMissingValueSyntax _:
-                        gotKey = false;
-                        break;
-                    case GreenJsonStringLiteralSyntax _:
-                        gotKey = true;
-                        break;
-                    default:
-                        gotKey = true;
+                    gotKey = !parsedKeyNode.IsMissingValue;
+
+                    if (gotKey)
+                    {
                         Report(new JsonErrorInfo(
                             JsonErrorCode.InvalidPropertyKey,
                             parsedKeyNodeStart,
                             parsedKeyNode.Length));
-                        break;
+                    }
                 }
 
                 keyValueSyntaxBuilder.Add(multiKeyNode);

@@ -37,6 +37,11 @@ namespace Eutherion.Text.Json
         /// </summary>
         public virtual bool IsMissingValue => false;
 
+        /// <summary>
+        /// Returns if this is a <see cref="GreenJsonStringLiteralSyntax"/> instance.
+        /// </summary>
+        public virtual bool IsStringLiteral => false;
+
         internal abstract TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg);
     }
 }
