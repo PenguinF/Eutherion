@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,11 +43,11 @@ namespace Eutherion.Text.Json
         public abstract int Length { get; }
 
         /// <summary>
-        /// Gets the parent syntax node of this instance. Returns null for the root node.
+        /// Gets the parent syntax node of this instance. Returns <see langword="null"/> for the root node.
         /// </summary>
-        /// <remarks>
-        /// Remember to override <see cref="AbsoluteStart"/> if there's a possibility of a null return from this property.
-        /// </remarks>
+        // If it becomes possible to change ParentSyntax during the lifetime of this object, e.g. when making a syntax tree editable,
+        // then make sure that LazyAbsoluteStart gets reinitalized exactly when the value of ParentSyntax changes.
+        // This should be an atomic operation for thread safety.
 #if NET472
         public abstract JsonSyntax ParentSyntax { get; }
 #else
@@ -54,22 +55,48 @@ namespace Eutherion.Text.Json
 #endif
 
         /// <summary>
-        /// Gets the absolute start position of this syntax node.
+        /// Gets the root node of this syntax tree.
         /// </summary>
-        // Suppress valid warning that ParentSyntax may be null. Contract is that only in subclasses where ParentSyntax may indeed return null,
-        // AbsoluteStart should be overridden as well to prevent the NullReferenceException.
+        // Suppress valid warning that ParentSyntax may be null.
+        // Contract is that only in RootJsonSyntax ParentSyntax may indeed return null,
+        // and in that class Root is overridden as well to prevent the NullReferenceException.
 #if !NET472
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #endif
-        public virtual int AbsoluteStart => ParentSyntax.AbsoluteStart + Start;
+        public virtual RootJsonSyntax Root => ParentSyntax.Root;
 #if !NET472
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #endif
+
+        private readonly SafeLazy<int> LazyAbsoluteStart;
+
+        /// <summary>
+        /// Gets the absolute start position of this syntax node. This is the position relative to the root's start position, which is zero.
+        /// </summary>
+        public int AbsoluteStart => LazyAbsoluteStart.Value;
 
         /// <summary>
         /// Gets the number of children of this syntax node.
         /// </summary>
         public virtual int ChildCount => 0;
+
+        internal JsonSyntax(SafeLazy<int> lazyAbsoluteStart)
+        {
+            LazyAbsoluteStart = lazyAbsoluteStart;
+        }
+
+        internal JsonSyntax()
+        {
+            // Suppress valid warning that ParentSyntax may be null.
+            // RootJsonSyntax calls the other constructor, so no NullReferenceException can be thrown.
+#if !NET472
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#endif
+            LazyAbsoluteStart = new SafeLazy<int>(() => ParentSyntax.AbsoluteStart + Start);
+#if !NET472
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#endif
+        }
 
         /// <summary>
         /// Gets if this syntax is a terminal symbol, i.e. if it has no child nodes and its <see cref="Length"/> is greater than zero.
@@ -97,6 +124,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node to return.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -105,6 +135,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start position.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -116,6 +149,12 @@ namespace Eutherion.Text.Json
         /// If <paramref name="index"/> is equal to <see cref="ChildCount"/>, the end position of the last child is returned.
         /// In neither case will the child node be initialized.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start or end position.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than <see cref="ChildCount"/>.
+        /// </exception>
         public int GetChildStartOrEndPosition(int index) => index == ChildCount ? Length : GetChildStartPosition(index);
 
         /// <summary>
@@ -215,5 +254,23 @@ namespace Eutherion.Text.Json
 
             return EmptyEnumerable<IJsonSymbol>.Instance;
         }
+
+        /// <summary>
+        /// Creates a <see cref="ReadOnlyMemory{T}"/> over the portion of the source JSON string
+        /// that corresponds exactly to this syntax node.
+        /// </summary>
+        /// <returns>
+        /// The read-only character memory representation of the source JSON.
+        /// </returns>
+        public ReadOnlyMemory<char> SourceJsonAsMemory => Root.Json.AsMemory(AbsoluteStart, Length);
+
+        /// <summary>
+        /// Creates a <see cref="ReadOnlySpan{T}"/> over the portion of the source JSON string
+        /// that corresponds exactly to this syntax node.
+        /// </summary>
+        /// <returns>
+        /// The read-only character memory representation of the source JSON.
+        /// </returns>
+        public ReadOnlySpan<char> SourceJsonAsSpan => Root.Json.AsSpan(AbsoluteStart, Length);
     }
 }

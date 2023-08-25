@@ -63,6 +63,11 @@ namespace Eutherion.Threading
         }
 
         /// <summary>
+        /// Gets if <see cref="Value"/> has already been initialized.
+        /// </summary>
+        public bool IsValueCreated => Func == null;
+
+        /// <summary>
         /// Gets the result of the evaluation of the function.
         /// The function is evaluated only once, when it is first needed.
         /// </summary>

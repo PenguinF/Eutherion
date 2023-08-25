@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ExpectedJsonTrees.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -802,6 +802,40 @@ namespace Eutherion.Text.Json.Tests
             },
             new[] { JsonErrorCode.MultiplePropertyKeySections, JsonErrorCode.MissingPropertyKey, JsonErrorCode.MissingValue }),
 
+            ("{::::}", new ExpectedJsonTree<JsonMultiValueSyntax>
+            {
+                new ExpectedJsonTree<JsonValueWithBackgroundSyntax>
+                {
+                    NoBackground,
+                    new ExpectedJsonTree<JsonMapSyntax>
+                    {
+                        CurlyOpen,
+                        new ExpectedJsonTree<JsonKeyValueSyntax>
+                        {
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground,
+                            Colon,
+                            NoValuesOrBackground
+                        },
+                        CurlyClose
+                    }
+                },
+                NoBackground
+            },
+            new[]
+            {
+                JsonErrorCode.MultiplePropertyKeySections,
+                JsonErrorCode.MultiplePropertyKeySections,
+                JsonErrorCode.MultiplePropertyKeySections,
+                JsonErrorCode.MissingPropertyKey,
+                JsonErrorCode.MissingValue
+            }),
+
             ("{[:[}", new ExpectedJsonTree<JsonMultiValueSyntax>
             {
                 new ExpectedJsonTree<JsonValueWithBackgroundSyntax>
@@ -923,7 +957,7 @@ namespace Eutherion.Text.Json.Tests
                 },
                 NoBackground
             },
-            new[] { JsonErrorCode.MissingValue, JsonErrorCode.PropertyKeyAlreadyExists, JsonErrorCode.UnexpectedEofInObject }),
+            new[] { JsonErrorCode.MissingValue, JsonErrorCode.UnexpectedEofInObject }),
         };
     }
 }

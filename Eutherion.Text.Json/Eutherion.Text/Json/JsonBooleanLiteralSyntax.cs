@@ -156,6 +156,11 @@ namespace Eutherion.Text.Json
         /// </summary>
         public abstract string LiteralJsonValue { get; }
 
+        /// <summary>
+        /// Returns <see langword="true"/> because this sytnax node represents a valid JSON value.
+        /// </summary>
+        public override bool IsValidValue => true;
+
         private JsonBooleanLiteralSyntax(JsonValueWithBackgroundSyntax parent) : base(parent) { }
 
         /// <summary>

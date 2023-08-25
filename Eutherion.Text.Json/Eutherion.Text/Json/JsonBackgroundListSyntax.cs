@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonBackgroundListSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -95,11 +95,23 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node to return.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
         public override JsonSyntax GetChild(int index) => BackgroundNodes[index];
 
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start position.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
+        /// </exception>
         public override int GetChildStartPosition(int index) => Green.BackgroundNodes.GetElementOffset(index);
 
         private JsonBackgroundListSyntax(Union<JsonValueWithBackgroundSyntax, JsonMultiValueSyntax> parent, GreenJsonBackgroundListSyntax green)

@@ -1,6 +1,6 @@
 ﻿#region License
 /*********************************************************************************
- * JsonMissingValueSyntax.Green.cs
+ * Box.cs
  *
  * Copyright (c) 2004-2023 Henk Nicolai
  *
@@ -19,35 +19,30 @@
 **********************************************************************************/
 #endregion
 
-namespace Eutherion.Text.Json
+namespace Eutherion
 {
     /// <summary>
-    /// Represents a missing value. It has a length of 0.
+    /// References a value, adding an indirection.
     /// </summary>
-    public sealed class GreenJsonMissingValueSyntax : GreenJsonValueSyntax
+    /// <typeparam name="T">
+    /// The type of the value.
+    /// </typeparam>
+    public class Box<T> : IFunc<T>
     {
         /// <summary>
-        /// Returns the singleton instance.
+        /// Initializes a new instance of the <see cref="Box{T}"/> class
+        /// with an initial value for its <see cref="Value"/> property.
         /// </summary>
-        public static readonly GreenJsonMissingValueSyntax Value
-#if NET5_0_OR_GREATER
-            = new();
-#else
-            = new GreenJsonMissingValueSyntax();
-#endif
+        /// <param name="value">
+        /// The initial value to reference.
+        /// </param>
+        public Box(T value) => Value = value;
 
         /// <summary>
-        /// Gets the length of the text span corresponding with this syntax node.
+        /// Gets or sets the referenced value.
         /// </summary>
-        public override int Length => 0;
+        public T Value { get; set; }
 
-        /// <summary>
-        /// Returns <see langword="true"/> because this is a <see cref="GreenJsonMissingValueSyntax"/> instance.
-        /// </summary>
-        public override bool IsMissingValue => true;
-
-        private GreenJsonMissingValueSyntax() { }
-
-        internal override TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitMissingValueSyntax(this, arg);
+        T IFunc<T>.Eval() => Value;
     }
 }

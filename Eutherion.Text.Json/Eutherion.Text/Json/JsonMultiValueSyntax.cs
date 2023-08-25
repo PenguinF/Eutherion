@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonMultiValueSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -22,23 +22,21 @@
 using Eutherion.Collections;
 using Eutherion.Threading;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Eutherion.Text.Json
 {
     /// <summary>
     /// Represents a syntax node which contains one or more value nodes together with all background syntax that precedes and follows it.
-    /// The root node of any abstract syntax tree is of this type.
     /// </summary>
     public sealed class JsonMultiValueSyntax : JsonSyntax
     {
         /// <summary>
         /// Gets the parent syntax node of this instance.
         /// </summary>
-        public Union<_void, JsonListSyntax, JsonKeyValueSyntax> Parent { get; }
+        public Union<RootJsonSyntax, JsonListSyntax, JsonKeyValueSyntax> Parent { get; }
 
         /// <summary>
-        /// Gets the index of this syntax node in its parent's collection, or 0 if this syntax node is the root node.
+        /// Gets the index of this syntax node in its parent's collection, or 0 if this syntax node is a direct child of the root node.
         /// </summary>
         public int ParentIndex { get; }
 
@@ -60,13 +58,7 @@ namespace Eutherion.Text.Json
         public JsonBackgroundListSyntax BackgroundAfter => backgroundAfter.Object;
 
         /// <summary>
-        /// Gets the syntax node containing the first value.
-        /// Is <see cref="JsonMissingValueSyntax"/> if a value was expected but none given. (E.g. in "[0,,2]", between both commas.)
-        /// </summary>
-        public JsonValueWithBackgroundSyntax ValueNode => ValueNodes[0];
-
-        /// <summary>
-        /// Gets the start position of this syntax node relative to its parent's start position, or 0 if this syntax node is the root node.
+        /// Gets the start position of this syntax node relative to its parent's start position.
         /// </summary>
         public override int Start => Parent.Match(
             whenOption1: _ => 0,
@@ -79,23 +71,12 @@ namespace Eutherion.Text.Json
         public override int Length => Green.Length;
 
         /// <summary>
-        /// Gets the parent syntax node of this instance. Returns null for the root node.
+        /// Gets the parent syntax node of this instance.
         /// </summary>
-        [MaybeNull]
         public override JsonSyntax ParentSyntax => Parent.Match<JsonSyntax>(
-            // Override Match() constraint, since a null JsonSyntax can be returned.
-#if NET472
-            whenOption1: _ => null,
-#else
-            whenOption1: _ => null!,
-#endif
+            whenOption1: x => x,
             whenOption2: x => x,
             whenOption3: x => x);
-
-        /// <summary>
-        /// Gets the absolute start position of this syntax node.
-        /// </summary>
-        public override int AbsoluteStart => Parent.IsOption1() ? 0 : base.AbsoluteStart;
 
         /// <summary>
         /// Gets the number of children of this syntax node.
@@ -105,6 +86,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node to return.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -118,6 +102,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start position.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -128,7 +115,13 @@ namespace Eutherion.Text.Json
             throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
-        private JsonMultiValueSyntax(Union<_void, JsonListSyntax, JsonKeyValueSyntax> parent, GreenJsonMultiValueSyntax green)
+        /// <summary>
+        /// Gets the syntax node containing the first value.
+        /// Is <see cref="JsonMissingValueSyntax"/> if a value was expected but none given. (E.g. in "[0,,2]", between both commas.)
+        /// </summary>
+        public JsonValueSyntax ValueNode => ValueNodes[0].ContentNode;
+
+        private JsonMultiValueSyntax(Union<RootJsonSyntax, JsonListSyntax, JsonKeyValueSyntax> parent, GreenJsonMultiValueSyntax green)
         {
             Parent = parent;
             Green = green;
@@ -141,8 +134,8 @@ namespace Eutherion.Text.Json
         }
 
         // For root nodes.
-        internal JsonMultiValueSyntax(GreenJsonMultiValueSyntax green)
-            : this(_void._, green)
+        internal JsonMultiValueSyntax(GreenJsonMultiValueSyntax green, RootJsonSyntax parent)
+            : this(parent, green)
         {
             // Do not assign ParentIndex, its value is meaningless in this case.
         }

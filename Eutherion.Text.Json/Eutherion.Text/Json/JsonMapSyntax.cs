@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonMapSyntax.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@
 #endregion
 
 using Eutherion.Collections;
+using Eutherion.Threading;
 using System;
+using System.Collections.Generic;
 
 namespace Eutherion.Text.Json
 {
@@ -34,11 +36,12 @@ namespace Eutherion.Text.Json
         /// </summary>
         public GreenJsonMapSyntax Green { get; }
 
+        private readonly SafeLazyObject<JsonCurlyOpenSyntax> curlyOpen;
+
         /// <summary>
         /// Gets the <see cref="JsonCurlyOpenSyntax"/> node at the start of this map syntax node.
         /// </summary>
-        // Always create the { and }, avoid overhead of SafeLazyObject.
-        public JsonCurlyOpenSyntax CurlyOpen { get; }
+        public JsonCurlyOpenSyntax CurlyOpen => curlyOpen.Object;
 
         /// <summary>
         /// Gets the non-empty collection of key-value nodes separated by comma characters.
@@ -50,16 +53,22 @@ namespace Eutherion.Text.Json
         /// </summary>
         public SafeLazyObjectCollection<JsonCommaSyntax> Commas { get; }
 
+        private readonly SafeLazyObject<Maybe<JsonCurlyCloseSyntax>> curlyClose;
+
         /// <summary>
         /// Gets the <see cref="JsonCurlyCloseSyntax"/> node at the end of this map syntax node, if it exists.
         /// </summary>
-        // Always create the { and }, avoid overhead of SafeLazyObject.
-        public Maybe<JsonCurlyCloseSyntax> CurlyClose { get; }
+        public Maybe<JsonCurlyCloseSyntax> CurlyClose => curlyClose.Object;
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public override int Length => Green.Length;
+
+        /// <summary>
+        /// Returns <see langword="true"/> because this sytnax node represents a potentially valid JSON value.
+        /// </summary>
+        public override bool IsValidValue => true;
 
         /// <summary>
         /// Gets the number of children of this syntax node.
@@ -69,6 +78,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Initializes the child at the given <paramref name="index"/> and returns it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node to return.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -96,6 +108,9 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the start position of the child at the given <paramref name="index"/>, without initializing it.
         /// </summary>
+        /// <param name="index">
+        /// The index of the child node for which to return the start position.
+        /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="index"/> is less than 0 or greater than or equal to <see cref="ChildCount"/>.
         /// </exception>
@@ -119,11 +134,27 @@ namespace Eutherion.Text.Json
             throw ExceptionUtil.ThrowListIndexOutOfRangeException();
         }
 
+        /// <summary>
+        /// Enumerates all semantically defined key-value pairs of this <see cref="JsonMapSyntax"/>.
+        /// These are all key-value pairs where its key is a string literal, and its value is available.
+        /// The returned value node may still contain errors or be a <see cref="JsonMissingValueSyntax"/>.
+        /// </summary>
+        public IEnumerable<(JsonStringLiteralSyntax keyNode, JsonValueSyntax valueNode)> DefinedKeyValuePairs()
+        {
+            foreach (var keyValueNode in KeyValueNodes)
+            {
+                if (keyValueNode.ValidKey.IsJust(out var stringLiteral) && keyValueNode.FirstValueNode.IsJust(out var valueNode))
+                {
+                    yield return (stringLiteral, valueNode);
+                }
+            }
+        }
+
         internal JsonMapSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonMapSyntax green) : base(parent)
         {
             Green = green;
 
-            CurlyOpen = new JsonCurlyOpenSyntax(this);
+            curlyOpen = new SafeLazyObject<JsonCurlyOpenSyntax>(() => new JsonCurlyOpenSyntax(this));
 
             int keyValueNodeCount = green.KeyValueNodes.Count;
             KeyValueNodes = new SafeLazyObjectCollection<JsonKeyValueSyntax>(
@@ -134,9 +165,10 @@ namespace Eutherion.Text.Json
                 keyValueNodeCount - 1,
                 index => new JsonCommaSyntax(this, index));
 
-            CurlyClose = green.MissingCurlyClose
-                       ? Maybe<JsonCurlyCloseSyntax>.Nothing
-                       : new JsonCurlyCloseSyntax(this);
+            curlyClose = new SafeLazyObject<Maybe<JsonCurlyCloseSyntax>>(
+                () => green.MissingCurlyClose
+                ? Maybe<JsonCurlyCloseSyntax>.Nothing
+                : new JsonCurlyCloseSyntax(this));
         }
 
         internal override TResult Accept<T, TResult>(JsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitMapSyntax(this, arg);

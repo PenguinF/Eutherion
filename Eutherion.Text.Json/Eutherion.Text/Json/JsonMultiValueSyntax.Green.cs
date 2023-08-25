@@ -39,12 +39,12 @@ namespace Eutherion.Text.Json
         // For clarity, the surrounding brackets are given, though they are not part of this syntax node.
         //
         // []            - ValueNode.BackgroundBefore.BackgroundSymbols.Count == 0
-        //                 ValueNode.ContentNode is GreenJsonMissingValueSyntax
+        //                 ValueNode.ContentNodeIs.IsMissingValue
         //                 ValueNodes.Count == 1
         //                 BackgroundAfter.BackgroundSymbols.Count == 0
         //
         // [/**/]        - ValueNode.BackgroundBefore.BackgroundSymbols.Count == 1  (one JsonComment)
-        //                 ValueNode.ContentNode is GreenJsonMissingValueSyntax
+        //                 ValueNode.ContentNodeIs.IsMissingValue
         //                 ValueNodes.Count == 1
         //                 BackgroundAfter.BackgroundSymbols.Count == 0
         //

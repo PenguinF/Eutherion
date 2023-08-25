@@ -90,12 +90,6 @@ namespace Eutherion.Text.Json
         InvalidPropertyKey,
 
         /// <summary>
-        /// Occurs when a property key is already defined in an object.
-        /// This error has a single <see cref="string"/> <see cref="JsonErrorInfoParameter"/> representing the duplicate property key.
-        /// </summary>
-        PropertyKeyAlreadyExists,
-
-        /// <summary>
         /// Occurs when a property key is missing before a ':' symbol.
         /// </summary>
         MissingPropertyKey,

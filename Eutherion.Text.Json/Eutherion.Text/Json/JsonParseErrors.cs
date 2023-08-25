@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonParseErrors.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -155,29 +155,5 @@ namespace Eutherion.Text.Json
 #endif
                 JsonErrorCode.UnrecognizedValue, position, length,
                 new JsonErrorInfoParameter<string>(unrecognizedValue));
-
-        /// <summary>
-        /// Creates a <see cref="JsonErrorInfo"/> for when a property key is already defined in an object.
-        /// </summary>
-        /// <param name="duplicateKey">
-        /// The property key which is defined more than once in an object.
-        /// </param>
-        /// <param name="position">
-        /// The position of the text span where the error occurred.
-        /// </param>
-        /// <param name="length">
-        /// The length of the text span where the error occurred.
-        /// </param>
-        /// <returns>
-        /// The new <see cref="JsonErrorInfo"/>.
-        /// </returns>
-        public static JsonErrorInfo PropertyKeyAlreadyExists(string duplicateKey, int position, int length)
-#if NET5_0_OR_GREATER
-            => new(
-#else
-            => new JsonErrorInfo(
-#endif
-                JsonErrorCode.PropertyKeyAlreadyExists, position, length,
-                new JsonErrorInfoParameter<string>(duplicateKey));
     }
 }

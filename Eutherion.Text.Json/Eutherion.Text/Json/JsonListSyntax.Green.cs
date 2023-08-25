@@ -40,25 +40,6 @@ namespace Eutherion.Text.Json
         public bool MissingSquareBracketClose { get; }
 
         /// <summary>
-        /// Returns ListItemNodes.Count, or one less if the last element is a <see cref="GreenJsonMissingValueSyntax"/>.
-        /// </summary>
-        public int FilteredListItemNodeCount
-        {
-            get
-            {
-                int count = ListItemNodes.Count;
-
-                // Discard last item if it's a missing value, so that a trailing comma is ignored.
-                if (ListItemNodes[count - 1].ValueNode.ContentNode is GreenJsonMissingValueSyntax)
-                {
-                    return count - 1;
-                }
-
-                return count;
-            }
-        }
-
-        /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public override int Length { get; }

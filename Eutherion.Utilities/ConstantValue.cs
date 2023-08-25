@@ -1,8 +1,8 @@
 ﻿#region License
 /*********************************************************************************
- * Box.cs
+ * ConstantValue.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,28 +19,29 @@
 **********************************************************************************/
 #endregion
 
-namespace System
+namespace Eutherion
 {
     /// <summary>
-    /// References a value, adding an indirection.
+    /// Provides an implementation for <see cref="IFunc{TResult}"/> that always returns the same value stored in memory.
     /// </summary>
     /// <typeparam name="T">
-    /// The type of the value.
+    /// The type of the value to encapsulate.
     /// </typeparam>
-    public class Box<T>
+    public class ConstantValue<T> : IFunc<T>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Box{T}"/> class
-        /// with an initial value for its <see cref="Value"/> property.
+        /// Initializes a new instance of the <see cref="ConstantValue{T}"/> class.
         /// </summary>
         /// <param name="value">
-        /// The initial value to reference.
+        /// The value to encapsulate.
         /// </param>
-        public Box(T value) => Value = value;
+        public ConstantValue(T value) => Value = value;
 
         /// <summary>
-        /// Gets or sets the referenced value.
+        /// Gets the constant value.
         /// </summary>
-        public T Value { get; set; }
+        public T Value { get; }
+
+        T IFunc<T>.Eval() => Value;
     }
 }

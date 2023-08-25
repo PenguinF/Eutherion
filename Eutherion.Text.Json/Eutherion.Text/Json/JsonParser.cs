@@ -29,15 +29,14 @@ using System.Text;
 namespace Eutherion.Text.Json
 {
 #if NET5_0_OR_GREATER
-// Just ignore this warning for this file.
+    // Just ignore this warning for this file.
 #pragma warning disable IDE0090 // Use 'new(...)'
 #endif
 
     /// <summary>
-    /// Represents a single parse of a list of json tokens.
+    /// Represents a individual generation of a parse tree and errors from a source text in the JSON format.
     /// Based on https://www.json.org/.
     /// </summary>
-    // Visit calls return the parsed value syntax node, and true if the current token must still be processed.
     public sealed class JsonParser
     {
         /// <summary>
@@ -116,14 +115,15 @@ namespace Eutherion.Text.Json
             return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
         }
 
-        private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(int startPosition, int length)
+        private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(string json, int startPosition)
             => new RootJsonSyntax(
+                json,
                 new GreenJsonMultiValueSyntax(
                     new[] { new GreenJsonValueWithBackgroundSyntax(
                         GreenJsonBackgroundListSyntax.Empty,
                         GreenJsonMissingValueSyntax.Value) },
                     GreenJsonBackgroundListSyntax.Create(
-                        new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(length) })),
+                        new GreenJsonBackgroundSyntax[] { GreenJsonWhitespaceSyntax.Create(json.Length) })),
                 ReadOnlyList<JsonErrorInfo>.FromBuilder(new ArrayBuilder<JsonErrorInfo> { new JsonErrorInfo(JsonErrorCode.ParseTreeTooDeep, startPosition, 1) }));
 
         internal const JsonSymbolType ForegroundThreshold = JsonSymbolType.BooleanLiteral;
@@ -190,57 +190,36 @@ namespace Eutherion.Text.Json
             var mapBuilder = new ArrayBuilder<GreenJsonKeyValueSyntax>();
             var keyValueSyntaxBuilder = new ArrayBuilder<GreenJsonMultiValueSyntax>();
 
-            // Maintain a separate set of keys to aid error reporting on duplicate keys.
-            HashSet<string> foundKeys = new HashSet<string>();
-
             for (; ; )
             {
                 // Save CurrentLength for error reporting before parsing the key.
                 int keyStart = CurrentLength;
                 GreenJsonMultiValueSyntax multiKeyNode = ParseMultiValue(JsonErrorCode.MultiplePropertyKeys);
-                GreenJsonValueSyntax parsedKeyNode = multiKeyNode.ValueNode.ContentNode;
+                GreenJsonValueWithBackgroundSyntax parsedKeyNodeWithBackground = multiKeyNode.ValueNode;
+                GreenJsonValueSyntax parsedKeyNode = parsedKeyNodeWithBackground.ContentNode;
 
                 // Analyze if this is an actual, unique property key.
-                int parsedKeyNodeStart = keyStart + multiKeyNode.ValueNode.BackgroundBefore.Length;
-                bool gotKey;
-                Maybe<GreenJsonStringLiteralSyntax> validKey = Maybe<GreenJsonStringLiteralSyntax>.Nothing;
+                int parsedKeyNodeStart = keyStart + parsedKeyNodeWithBackground.BackgroundBefore.Length;
 
-                switch (parsedKeyNode)
+                // Expect the key node to be a string literal, so only do error analysis if this is not the case.
+                bool gotKey = parsedKeyNode.IsStringLiteral;
+                if (!gotKey)
                 {
-                    case GreenJsonMissingValueSyntax _:
-                        gotKey = false;
-                        break;
-                    case GreenJsonStringLiteralSyntax stringLiteral:
-                        gotKey = true;
-                        string propertyKey = stringLiteral.Value;
+                    gotKey = !parsedKeyNode.IsMissingValue;
 
-                        // Expect unique keys.
-                        if (!foundKeys.Contains(propertyKey))
-                        {
-                            validKey = stringLiteral;
-                            foundKeys.Add(propertyKey);
-                        }
-                        else
-                        {
-                            Report(JsonParseErrors.PropertyKeyAlreadyExists(
-                                // Take the substring, key may contain escape sequences.
-                                Json.Substring(parsedKeyNodeStart + 1, parsedKeyNode.Length - 2),
-                                parsedKeyNodeStart,
-                                parsedKeyNode.Length));
-                        }
-                        break;
-                    default:
-                        gotKey = true;
+                    if (gotKey)
+                    {
                         Report(new JsonErrorInfo(
                             JsonErrorCode.InvalidPropertyKey,
                             parsedKeyNodeStart,
                             parsedKeyNode.Length));
-                        break;
+                    }
                 }
 
                 keyValueSyntaxBuilder.Add(multiKeyNode);
 
                 // Keep parsing multi-values until encountering a non ':'.
+                bool gotValueSomewhere = false;
                 JsonSymbolType symbolType = CurrentToken.SymbolType;
                 bool gotColon = false;
                 while (symbolType == JsonSymbolType.Colon)
@@ -259,12 +238,14 @@ namespace Eutherion.Text.Json
                     }
 
                     // ParseMultiValue() guarantees that the next symbol is never a ValueStartSymbol.
-                    keyValueSyntaxBuilder.Add(ParseMultiValue(JsonErrorCode.MultipleValues));
+                    var multiValueNode = ParseMultiValue(JsonErrorCode.MultipleValues);
+                    gotValueSomewhere |= !multiValueNode.ValueNode.ContentNode.IsMissingValue;
+                    keyValueSyntaxBuilder.Add(multiValueNode);
                     symbolType = CurrentToken.SymbolType;
                 }
 
                 // One key-value section done.
-                var jsonKeyValueSyntax = new GreenJsonKeyValueSyntax(validKey, keyValueSyntaxBuilder);
+                var jsonKeyValueSyntax = new GreenJsonKeyValueSyntax(keyValueSyntaxBuilder);
 
                 mapBuilder.Add(jsonKeyValueSyntax);
 
@@ -287,7 +268,7 @@ namespace Eutherion.Text.Json
                     // Report missing value error from being reported if all value sections are empty.
                     // Example: { "key1":: 2, "key2": , }
                     // Skip the fist value section, it contains the key node.
-                    if (jsonKeyValueSyntax.ValueSectionNodes.Skip(1).All(x => x.ValueNode.ContentNode is GreenJsonMissingValueSyntax))
+                    if (!gotValueSomewhere)
                     {
                         Report(new JsonErrorInfo(
                             JsonErrorCode.MissingValue,
@@ -329,7 +310,7 @@ namespace Eutherion.Text.Json
                 JsonSymbolType symbolType = CurrentToken.SymbolType;
                 if (symbolType == JsonSymbolType.Comma)
                 {
-                    if (parsedValueNode.ValueNode.ContentNode is GreenJsonMissingValueSyntax)
+                    if (parsedValueNode.ValueNode.ContentNode.IsMissingValue)
                     {
                         // Two commas or '[,'.
                         Report(new JsonErrorInfo(
@@ -437,12 +418,15 @@ namespace Eutherion.Text.Json
                 catch (MaximumDepthExceededException)
                 {
                     // Just ignore everything so far and return a default parse tree.
-                    return CreateParseTreeTooDeepRootSyntax(CurrentLength - 1, Json.Length);
+                    return CreateParseTreeTooDeepRootSyntax(Json, CurrentLength - 1);
                 }
 
                 if (CurrentToken.SymbolType == JsonSymbolType.Eof)
                 {
-                    return new RootJsonSyntax(CreateMultiValueNode(valueNodesBuilder), ReadOnlyList<JsonErrorInfo>.FromBuilder(Errors));
+                    return new RootJsonSyntax(
+                        Json,
+                        CreateMultiValueNode(valueNodesBuilder),
+                        ReadOnlyList<JsonErrorInfo>.FromBuilder(Errors));
                 }
 
                 // ] } , : -- treat all of these at the top level as an undefined symbol without any semantic meaning.
