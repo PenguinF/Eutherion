@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net5.0;netcoreapp3.1;net472</TargetFrameworks>
-    <FileVersion>1.4.0.0</FileVersion>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <Version>1.4.0</Version>
+    <FileVersion>1.5.0.0</FileVersion>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <Version>1.5.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Contains miscellaneous utilities to supplement .NET standard libraries.</Description>
     <Authors>Henk Nicolai</Authors>
