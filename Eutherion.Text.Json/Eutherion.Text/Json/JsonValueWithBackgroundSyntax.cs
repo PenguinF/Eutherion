@@ -131,7 +131,7 @@ namespace Eutherion.Text.Json
         {
             if (index == 0) return BackgroundBefore;
             if (index == 1) return ContentNode;
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Eutherion.Text.Json
         {
             if (index == 0) return 0;
             if (index == 1) return Green.BackgroundBefore.Length;
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         internal JsonValueWithBackgroundSyntax(JsonMultiValueSyntax parent, int parentValueNodeIndex)

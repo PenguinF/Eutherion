@@ -72,7 +72,7 @@ namespace System.Collections.Generic
                     return array[index];
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
         }
 

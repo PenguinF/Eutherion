@@ -36,11 +36,11 @@ namespace Eutherion.Text
     {
         private class ZeroElements : ReadOnlySpanList<TSpan>
         {
-            public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            public override TSpan this[int index] => throw ExceptionUtility.ThrowListIndexOutOfRangeException();
 
             public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0) { }
 
-            public override int GetElementOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            public override int GetElementOffset(int index) => throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         private class OneOrMoreElements : ReadOnlySpanList<TSpan>
@@ -75,7 +75,7 @@ namespace Eutherion.Text
                         return array[index];
                     }
 
-                    throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                    throw ExceptionUtility.ThrowListIndexOutOfRangeException();
                 }
             }
 
@@ -92,7 +92,7 @@ namespace Eutherion.Text
                     return arrayElementOffsets[index];
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
         }
 

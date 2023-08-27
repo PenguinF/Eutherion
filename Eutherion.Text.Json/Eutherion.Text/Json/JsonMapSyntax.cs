@@ -102,7 +102,7 @@ namespace Eutherion.Text.Json
                 return jsonCurlyClose;
             }
 
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Eutherion.Text.Json
                 return Length - JsonSpecialCharacter.SingleCharacterLength;
             }
 
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
