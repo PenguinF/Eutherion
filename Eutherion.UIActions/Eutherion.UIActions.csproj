@@ -16,7 +16,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -49,7 +48,11 @@
       <Visible>False</Visible>
       <PackagePath></PackagePath>
     </None>
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <Content Include="README.md">
+      <Pack>True</Pack>
+      <Visible>True</Visible>
+      <PackagePath></PackagePath>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
