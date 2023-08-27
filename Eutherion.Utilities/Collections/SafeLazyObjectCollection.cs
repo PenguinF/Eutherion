@@ -125,7 +125,7 @@ namespace Eutherion.Collections
                 return Arr[index] != null;
             }
 
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Eutherion.Collections
                     return Arr[index];
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
         }
 

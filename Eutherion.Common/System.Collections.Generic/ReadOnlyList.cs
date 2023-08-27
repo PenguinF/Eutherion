@@ -111,7 +111,7 @@ namespace System.Collections.Generic
                     return ReadOnlyArray[index];
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
         }
 

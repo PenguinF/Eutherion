@@ -1,6 +1,6 @@
 ﻿#region License
 /*********************************************************************************
- * ExceptionUtil.cs
+ * ExceptionUtility.cs
  *
  * Copyright (c) 2004-2023 Henk Nicolai
  *
@@ -33,7 +33,7 @@ namespace Eutherion
     /// None of the methods actually return, but they do return an <see cref="Exception"/> or the expected type
     /// to provide a way to e.g. make conditional statements syntactically valid.
     /// </remarks>
-    public static class ExceptionUtil
+    public static class ExceptionUtility
     {
         /// <summary>
         /// Throws the exception which would be generated if <see cref="IEnumerator.Current"/> is called

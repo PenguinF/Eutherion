@@ -87,7 +87,7 @@ namespace Eutherion.Text.Json
         public override JsonSyntax GetChild(int index)
         {
             if (index == 0) return Syntax;
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Eutherion.Text.Json
         public override int GetChildStartPosition(int index)
         {
             if (index == 0) return 0;
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>

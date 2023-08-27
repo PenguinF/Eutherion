@@ -96,7 +96,7 @@ namespace Eutherion.Text.Json
         {
             if (index < ValueNodes.Count) return ValueNodes[index];
             if (index == ValueNodes.Count) return BackgroundAfter;
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Eutherion.Text.Json
         {
             if (index < ValueNodes.Count) return Green.ValueNodes.GetElementOffset(index);
             if (index == ValueNodes.Count) return Length - Green.BackgroundAfter.Length;
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>

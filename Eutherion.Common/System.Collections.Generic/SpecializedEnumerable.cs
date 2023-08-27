@@ -73,8 +73,8 @@ namespace System.Collections.Generic
 
         void IEnumerator.Reset() { }
         bool IEnumerator.MoveNext() => false;
-        TResult IEnumerator<TResult>.Current => throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
-        object IEnumerator.Current => throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
+        TResult IEnumerator<TResult>.Current => throw ExceptionUtility.ThrowInvalidEnumerationOperationException();
+        object IEnumerator.Current => throw ExceptionUtility.ThrowInvalidEnumerationOperationException();
         void IDisposable.Dispose() { }
     }
 
@@ -132,11 +132,11 @@ namespace System.Collections.Generic
         // MoveNext() Current MoveNext() Dispose()
         void IEnumerator.Reset() => index = -1;
         bool IEnumerator.MoveNext() { index++; return index == 0; }
-        TResult IEnumerator<TResult>.Current => index == 0 ? element : throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
+        TResult IEnumerator<TResult>.Current => index == 0 ? element : throw ExceptionUtility.ThrowInvalidEnumerationOperationException();
 #if NET472
-        object IEnumerator.Current => index == 0 ? element : throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
+        object IEnumerator.Current => index == 0 ? element : throw ExceptionUtility.ThrowInvalidEnumerationOperationException();
 #else
-        object? IEnumerator.Current => index == 0 ? element : throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
+        object? IEnumerator.Current => index == 0 ? element : throw ExceptionUtility.ThrowInvalidEnumerationOperationException();
 #endif
         void IDisposable.Dispose() { }
     }

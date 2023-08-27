@@ -39,17 +39,17 @@ namespace Eutherion.Text
     {
         private class ZeroElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
         {
-            public override TSpan this[int index] => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            public override TSpan this[int index] => throw ExceptionUtility.ThrowListIndexOutOfRangeException();
 
             public ZeroElements() : base(Array.Empty<TSpan>(), 0, 0, 0) { }
 
             public override IEnumerable<Union<TSpan, TSeparator>> AllElements => EmptyEnumerable<Union<TSpan, TSeparator>>.Instance;
 
-            public override int GetElementOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            public override int GetElementOffset(int index) => throw ExceptionUtility.ThrowListIndexOutOfRangeException();
 
-            public override int GetSeparatorOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            public override int GetSeparatorOffset(int index) => throw ExceptionUtility.ThrowListIndexOutOfRangeException();
 
-            public override int GetElementOrSeparatorOffset(int index) => throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            public override int GetElementOrSeparatorOffset(int index) => throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         private class OneOrMoreElements : ReadOnlySeparatedSpanList<TSpan, TSeparator>
@@ -87,7 +87,7 @@ namespace Eutherion.Text
                         return array[index];
                     }
 
-                    throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                    throw ExceptionUtility.ThrowListIndexOutOfRangeException();
                 }
             }
 
@@ -119,7 +119,7 @@ namespace Eutherion.Text
                     return arrayElementOffsets[index];
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
 
             public override int GetSeparatorOffset(int index)
@@ -131,7 +131,7 @@ namespace Eutherion.Text
                     return arrayElementOffsets[index] - separator.Length;
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
 
             public override int GetElementOrSeparatorOffset(int index)
@@ -143,7 +143,7 @@ namespace Eutherion.Text
                     return offset;
                 }
 
-                throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+                throw ExceptionUtility.ThrowListIndexOutOfRangeException();
             }
         }
 

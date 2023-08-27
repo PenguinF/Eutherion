@@ -101,7 +101,7 @@ namespace Eutherion.Text.Json
                 return jsonSquareBracketClose;
             }
 
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Eutherion.Text.Json
                 return Length - JsonSpecialCharacter.SingleCharacterLength;
             }
 
-            throw ExceptionUtil.ThrowListIndexOutOfRangeException();
+            throw ExceptionUtility.ThrowListIndexOutOfRangeException();
         }
 
         internal JsonListSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonListSyntax green) : base(parent)
