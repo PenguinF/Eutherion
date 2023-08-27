@@ -99,7 +99,7 @@ namespace System.Collections.Generic
                 if (index > 0 && index <= count) return Current;
 
                 // Throw the appropriate exception.
-                throw ExceptionUtil.ThrowInvalidEnumerationOperationException();
+                throw ExceptionUtility.ThrowInvalidEnumerationOperationException();
             }
         }
 
