@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Union.Generate.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -34,11 +34,11 @@ namespace System
 
         private static readonly string OtherwiseParamName = "otherwise";
 
-        internal static ArgumentException InvalidPatternMatchArgumentException(int typeIndex)
+        internal static InvalidPatternMatchException InvalidPatternMatchArgumentException(int typeIndex)
 #if NET5_0_OR_GREATER
             => new($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
 #else
-            => new ArgumentException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
+            => new InvalidPatternMatchException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
 #endif
 
 #if DEBUG
@@ -257,7 +257,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref=""Func{{T, TResult}}""/>.
         /// </returns>
-        /// <exception cref=""ArgumentException"">
+        /// <exception cref=""{nameof(InvalidPatternMatchException)}"">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>({ConcatList(optionCount, typeIndex => $@"
