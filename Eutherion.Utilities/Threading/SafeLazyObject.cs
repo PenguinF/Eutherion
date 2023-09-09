@@ -34,7 +34,7 @@ namespace Eutherion.Threading
     /// This class uses the race-to-initialize pattern. This guarantees that <see cref="Object"/> always returns the same object,
     /// but it is possible that multiple threads race and evaluate the constructor function, which should therefore be cheap.
     /// </remarks>
-    public struct SafeLazyObject<TObject> where TObject : class
+    public class SafeLazyObject<TObject> where TObject : class
     {
 #if NET472
         private volatile Func<TObject> Constructor;

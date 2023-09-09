@@ -10,5 +10,5 @@ Contains extensions to the .NET standard libraries:
   * Bit vector (uint/ulong) extensions, such as _BitExtensions.SetBits()_, to enumerate over all set bits of a value.
   * Specialized IEnumerable\<T\> implementations for zero or one elements.
   * A way to create string keys of different types without having to copy the implementation (_StringKey\<T\>_ where 'T' is an otherwise meaningless type value to add type safety).
-  * Other, miscellaneous members (_void_, ExceptionUtility, etc.)
+  * Other, miscellaneous members (_void_, _ExceptionUtility_, etc.)
   

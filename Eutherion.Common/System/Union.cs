@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Union.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2023 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -219,7 +219,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
@@ -537,7 +537,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
@@ -955,7 +955,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
@@ -1477,7 +1477,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
@@ -2107,7 +2107,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
@@ -2849,7 +2849,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
@@ -3707,7 +3707,7 @@ namespace System
         /// <returns>
         /// The result of the invoked <see cref="Func{T, TResult}"/>.
         /// </returns>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="InvalidPatternMatchException">
         /// No function argument was defined that matches the value.
         /// </exception>
         public abstract TResult Match<TResult>(
