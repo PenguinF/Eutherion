@@ -133,9 +133,7 @@ namespace System.Linq
         }
 
         /// <summary>
-        /// Enumerates each element of a sequence. This is useful to protect references to mutable collections
-        /// from being leaked. Instead, only the elements of a mutable collection are enumerated, and casts
-        /// to mutable destination collection types will fail.
+        /// Enumerates each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">
         /// The type of the elements of <paramref name="source"/>.
@@ -149,6 +147,11 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// The value returned from this method cannot be cast to (potentially mutable) destination collection types.
+        /// This method is useful therefore to allow a protected collection to be enumerated by untrusted client code,
+        /// without having to give such code a direct reference to that collection.
+        /// </remarks>
         public static IEnumerable<TSource> Enumerate<TSource>(this IEnumerable<TSource> source)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
