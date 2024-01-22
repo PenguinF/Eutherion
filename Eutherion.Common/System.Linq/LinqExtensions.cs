@@ -2,7 +2,7 @@
 /*********************************************************************************
  * LinqExtensions.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2024 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -133,9 +133,7 @@ namespace System.Linq
         }
 
         /// <summary>
-        /// Enumerates each element of a sequence. This is useful to protect references to mutable collections
-        /// from being leaked. Instead, only the elements of a mutable collection are enumerated, and casts
-        /// to mutable destination collection types will fail.
+        /// Enumerates each element of a sequence.
         /// </summary>
         /// <typeparam name="TSource">
         /// The type of the elements of <paramref name="source"/>.
@@ -149,6 +147,11 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
+        /// <remarks>
+        /// The value returned from this method cannot be cast to (potentially mutable) destination collection types.
+        /// This method is useful therefore to allow a protected collection to be enumerated by untrusted client code,
+        /// without having to give such code a direct reference to that collection.
+        /// </remarks>
         public static IEnumerable<TSource> Enumerate<TSource>(this IEnumerable<TSource> source)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -162,6 +165,37 @@ namespace System.Linq
             {
                 yield return element;
             }
+        }
+
+        /// <summary>
+        /// Enumerates an optional value.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the optional value.
+        /// </typeparam>
+        /// <param name="source">
+        /// An optional value.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> that enumerates the value in <paramref name="source"/> if it exists, and is otherwise empty.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        /// An intended use for this method is to allow natural integration of optional values in Enumerable.SelectMany() and LINQ expressions,
+        /// so an <see cref="IEnumerable{T}"/> of <see cref="Maybe{T}"/> can be flattened into a regular <see cref="IEnumerable{T}"/>.
+        /// </remarks>
+        public static IEnumerable<TSource> Enumerate<TSource>(this Maybe<TSource> source)
+#if !NET472
+            where TSource : notnull
+#endif
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            return source.Match(
+                whenNothing: () => EmptyEnumerable<TSource>.Instance,
+                whenJust: x => (IEnumerable<TSource>)new SingleElementEnumerable<TSource>(x));
         }
 
         /// <summary>
