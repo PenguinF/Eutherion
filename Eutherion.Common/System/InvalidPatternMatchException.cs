@@ -2,7 +2,7 @@
 /*********************************************************************************
  * InvalidPatternMatchException.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2024 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ using System.Runtime.Serialization;
 namespace System
 {
     /// <summary>
-    /// Occurs when there is no specified implementation for pattern to match.
+    /// Occurs when there is no specified implementation for a pattern to match.
     /// </summary>
     [Serializable]
     public class InvalidPatternMatchException : Exception
@@ -77,7 +77,7 @@ namespace System
         /// <paramref name="info"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="SerializationException">
-        /// The class name is null or System.Exception.HResult is zero (0).
+        /// The class name is <see langword="null"/> or <see cref="Exception.HResult"/> is zero (0).
         /// </exception>
         protected InvalidPatternMatchException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
