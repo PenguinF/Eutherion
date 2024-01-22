@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonMultiValueSyntax.Green.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2024 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -39,12 +39,12 @@ namespace Eutherion.Text.Json
         // For clarity, the surrounding brackets are given, though they are not part of this syntax node.
         //
         // []            - ValueNode.BackgroundBefore.BackgroundSymbols.Count == 0
-        //                 ValueNode.ContentNodeIs.IsMissingValue
+        //                 ValueNode.ContentNode.IsMissingValue
         //                 ValueNodes.Count == 1
         //                 BackgroundAfter.BackgroundSymbols.Count == 0
         //
         // [/**/]        - ValueNode.BackgroundBefore.BackgroundSymbols.Count == 1  (one JsonComment)
-        //                 ValueNode.ContentNodeIs.IsMissingValue
+        //                 ValueNode.ContentNode.IsMissingValue
         //                 ValueNodes.Count == 1
         //                 BackgroundAfter.BackgroundSymbols.Count == 0
         //
