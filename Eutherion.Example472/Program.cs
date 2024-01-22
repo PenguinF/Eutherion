@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Program.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2024 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ namespace Eutherion.Example472
             try
             {
                 // StringKey<T>
-                Console.WriteLine($"hashes of \"1\", \"2\": {new StringKey<Dummy>("1").GetHashCode()}, {new StringKey<Dummy>("2").GetHashCode()}");
+                Console.WriteLine($"Hashes of \"1\", \"2\": {"1".GetHashCode()}, {"2".GetHashCode()}");
+                Console.WriteLine($"Hashes of \"1\", \"2\" wrapped in {nameof(StringKey<Dummy>)}: {new StringKey<Dummy>("1").GetHashCode()}, {new StringKey<Dummy>("2").GetHashCode()}");
+                Console.WriteLine();
 
                 // Maybe<T>
                 var possibleIntStrings = new Maybe<string>[] { Maybe<string>.Nothing, "-20", "x", "20" };
