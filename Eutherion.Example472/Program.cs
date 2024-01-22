@@ -88,6 +88,38 @@ namespace Eutherion.Example472
 
                 Console.WriteLine();
 
+                // Mixing Maybe<> and IEnumerable<> in LINQ, ToStringInvariant
+
+                // Create versions of the same sequence, normal vs one where its values are wrapped in Maybe<> and with extra Nothing values.
+                IEnumerable<double> numbers = new[] { -1.01, 0, double.MaxValue };
+                IEnumerable<Maybe<double>> maybeNumbers = numbers
+                    .Select(x => (Maybe<double>)x)
+                    .Intercalate(Maybe<double>.Nothing)
+                    .SurroundIfAny(Maybe<double>.Nothing, Maybe<double>.Nothing);
+
+                // Convert IEnumerable<double> to IEnumerable<string> using ToStringInvariant()
+                // which returns the same result independent of the current UI culture.
+                var numberDisplayStrings = from x in numbers
+                                           select x.ToStringInvariant();
+
+                // The same conversion, but now starting from a IEnumerable<Maybe<double>>.
+                // Note that the outer LINQ expression depends on Enumerable.SelectMany(),
+                // whereas the inner LINQ expression depends on Maybe.SelectMany().
+                var maybeNumberDisplayStrings = from maybeX in maybeNumbers
+                                                select (from x in maybeX
+                                                        select x.ToStringInvariant());
+
+                // Converting IEnumerable<Maybe<double>> to IEnumerable<double> by treating Maybe<> as having zero or one elements.
+                var flattened = from maybeNumber in maybeNumbers
+                                from number in maybeNumber.Enumerate()
+                                select number;
+
+                Console.WriteLine("IEnumerable<Maybe<>>:");
+                Console.WriteLine($"  IEnumerable<double> x =         {{ {Join(numberDisplayStrings)} }}");
+                Console.WriteLine($"  IEnumerable<Maybe<double>> mx = {{ {Join(maybeNumberDisplayStrings.Select(DisplayWithPrettyNullString))} }}");
+                Console.WriteLine($"  Flattening mx:                  {{ {Join(flattened)} }}");
+                Console.WriteLine();
+
                 // Union<T1, T2, T3>, UnreachableException, _void
                 var unionValues = new Union<_void, int, string>[] { _void._, 8, "x", _void._, -1, "-1" };
 
@@ -124,7 +156,7 @@ namespace Eutherion.Example472
                 Console.WriteLine($"Dictionary.Count: {dictionary.Count}");
                 Console.WriteLine();
 
-                // UIntExtensions.SetBits
+                // BitExtensions.SetBits
                 Console.Write("Enumerating set bits in 89: ");
                 Console.Write(string.Join(" + ", 89u.SetBits().Select(bit => $"{bit} (index: {BitOperations.Log2(bit)})")));
                 Console.WriteLine();
@@ -200,7 +232,7 @@ namespace Eutherion.Example472
                     .Select(x => x.SurroundIfAny("\"", "\""))
                     // Put ", " between each successive subsequence, but not at the start or end.
                     .Intercalate(", ")
-                    // Flatten the entire set yielding a stream of characters.
+                    // Flatten the entire sequence yielding a stream of characters.
                     .SelectMany(x => x)
                     // And output.
                     .ForEach(Console.Write);
