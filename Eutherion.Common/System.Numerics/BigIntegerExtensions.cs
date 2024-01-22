@@ -28,28 +28,6 @@ namespace System.Numerics
     /// </summary>
     public static class BigIntegerExtensions
     {
-#if NET472
-        /// <summary>
-        /// Returns a locale invariant representation of a <see cref="BigInteger"/>.
-        /// </summary>
-        /// <param name="value">
-        /// The value to convert.
-        /// </param>
-        /// <returns>
-        /// The locale invariant representation.
-        /// </returns>
-        /// <remarks>
-        /// On targets other than .NET 4.7.2, this method is named 'ToStringInvariant()'.
-        /// </remarks>
-        // Choosing a name for an extension method that also exists for regular System types will result in the compiler
-        // complaining about not having a reference to System.Numerics at call sites even if the call resolves to an overload
-        // that doesn't require it.
-        // Pragmatic but ugly solution is to permute the name. Conceptually this single method would have to be moved to its
-        // own assembly.
-        // Other .NET targets don't have this problem, they contain an implicit reference to BigInteger.
-        public static string ToInvariantString(this BigInteger value)
-            => value.ToString(CultureInfo.InvariantCulture);
-#else
         /// <summary>
         /// Returns a locale invariant representation of a <see cref="BigInteger"/>.
         /// </summary>
@@ -61,6 +39,5 @@ namespace System.Numerics
         /// </returns>
         public static string ToStringInvariant(this BigInteger value)
             => value.ToString(CultureInfo.InvariantCulture);
-#endif
     }
 }

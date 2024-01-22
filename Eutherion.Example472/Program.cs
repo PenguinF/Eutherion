@@ -23,7 +23,8 @@ using Eutherion.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+using BitExtensions = System.Numerics.BitExtensions;
+using BitOperations = System.Numerics.BitOperations;
 
 namespace Eutherion.Example472
 {
@@ -158,7 +159,7 @@ namespace Eutherion.Example472
 
                 // BitExtensions.SetBits
                 Console.Write("Enumerating set bits in 89: ");
-                Console.Write(string.Join(" + ", 89u.SetBits().Select(bit => $"{bit} (index: {BitOperations.Log2(bit)})")));
+                Console.Write(string.Join(" + ", BitExtensions.SetBits(89u).Select(bit => $"{bit} (index: {BitOperations.Log2(bit)})")));
                 Console.WriteLine();
 
                 // LinqExtensions.Sequence, UtilityExtensions.Times
