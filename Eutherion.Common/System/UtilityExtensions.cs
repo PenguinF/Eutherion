@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UtilityExtensions.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2024 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 #endregion
 
 using System.Globalization;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace System
@@ -210,18 +209,6 @@ namespace System
         /// The locale invariant representation.
         /// </returns>
         public static string ToStringInvariant(this ushort value)
-            => value.ToString(CultureInfo.InvariantCulture);
-
-        /// <summary>
-        /// Returns a locale invariant representation of a <see cref="BigInteger"/>.
-        /// </summary>
-        /// <param name="value">
-        /// The value to convert.
-        /// </param>
-        /// <returns>
-        /// The locale invariant representation.
-        /// </returns>
-        public static string ToStringInvariant(this BigInteger value)
             => value.ToString(CultureInfo.InvariantCulture);
 
         /// <summary>
