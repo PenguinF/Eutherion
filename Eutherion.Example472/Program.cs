@@ -287,7 +287,7 @@ namespace Eutherion.Example472
                 Console.WriteLine();
                 Console.WriteLine();
 
-                // Subsequences & Intercalate & SurroundIfAny.
+                // Subsequences & Intercalate & SurroundIfAny & Concat.
                 string baseSequence = "abcd";
                 Console.WriteLine($"Subsequences of \"{baseSequence}\":");
                 // -> , "a", "b", "ab", "c", "ac", "bc", "abc", "d", "ad", "bd", "abd", "cd", "acd", "bcd", "abcd"
@@ -301,7 +301,7 @@ namespace Eutherion.Example472
                     // Put ", " between each successive subsequence, but not at the start or end.
                     .Intercalate(", ")
                     // Flatten the entire sequence yielding a stream of characters.
-                    .SelectMany(x => x)
+                    .Concat()
                     // And output.
                     .ForEach(Console.Write);
                 Console.WriteLine();
