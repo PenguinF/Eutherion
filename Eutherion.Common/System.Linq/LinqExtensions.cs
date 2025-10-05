@@ -619,9 +619,9 @@ namespace System.Linq
         /// </exception>
         /// <remarks>
         /// For example, these two expressions have the same effect:
-        /// <code>string.Join(separator, values);</code>
-        /// <code>new string(values.Intercalate(separator).SelectMany(x => x).ToArray());</code>
-        /// Note that the Intercalate() version needs a SelectMany() to flatten the result into a single IEnumerable&lt;char&gt;.
+        /// <code>string.Join(separator, values)</code>
+        /// <code>new string(values.Intercalate(separator).Concat().ToArray())</code>
+        /// Note that the expression with Intercalate() needs a Concat() to flatten the result into a single IEnumerable&lt;char&gt;.
         /// </remarks>
 
         // Terminology-wise reusing 'Join' matching string.Join() would be nice, except that Enumerable.Join() exists already
