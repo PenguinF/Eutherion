@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonParser.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,8 +35,12 @@ namespace Eutherion.Text.Json
 
     /// <summary>
     /// Represents a individual generation of a parse tree and errors from a source text in the JSON format.
-    /// Based on https://www.json.org/.
     /// </summary>
+    /// <remarks>
+    /// This is a stack-based parser, which means it cannot handle JSON structures that have a nesting level greater than a maximum depth.
+    /// This parser is based on https://www.json.org/, but is not standards compliant. It allows C-style comments, and (currently) lacks
+    /// support for floating point numbers.
+    /// </remarks>
     public sealed class JsonParser
     {
         /// <summary>
@@ -153,7 +157,7 @@ namespace Eutherion.Text.Json
 
 #if !NET472
             // Bypass static null analysis, CurrentToken is only used after ShiftToNextForegroundToken() assigns to it.
-            // (The heavy lifting is done in Parse(), which assigns to these non-null fields) which is the only publicly accessible method.)
+            // (The heavy lifting is done in Parse(), which assigns to these non-null fields and is the only publicly accessible method.)
             Tokens = null!;
             CurrentToken = null!;
 #endif
