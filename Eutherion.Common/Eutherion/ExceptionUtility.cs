@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ExceptionUtility.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace Eutherion
     /// Contains helper methods to throw common .NET exceptions to access their built-in string resources.
     /// </summary>
     /// <remarks>
-    /// None of the methods actually return, but they do return an <see cref="Exception"/> or the expected type
+    /// None of the methods actually return, but they do return an <see cref="Exception"/> of the expected type
     /// to provide a way to e.g. make conditional statements syntactically valid.
     /// </remarks>
     public static class ExceptionUtility

@@ -2,7 +2,7 @@
 /*********************************************************************************
  * LinqExtensions.cs
  *
- * Copyright (c) 2004-2024 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,6 +33,32 @@ namespace System.Linq
     public static class LinqExtensions
     {
         /// <summary>
+        /// Flattens a sequence of sequences into a single sequence.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of the sequences in <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of sequences of elements.
+        /// </param>
+        /// <returns>
+        /// The flattened sequence.
+        /// </returns>
+        /// <remarks>
+        /// This method is an alias for:
+        /// <code>
+        /// System.Linq.Enumerable.SelectMany(source, x => x)
+        /// </code>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> Concat<TSource>(this IEnumerable<IEnumerable<TSource>> source)
+        {
+            return source.SelectMany(x => x);
+        }
+
+        /// <summary>
         /// Determines whether there is any element in a sequence, and returns that element.
         /// </summary>
         /// <typeparam name="TSource">
@@ -42,10 +68,10 @@ namespace System.Linq
         /// An <see cref="IEnumerable{TSource}"/> whose elements to check.
         /// </param>
         /// <param name="value">
-        /// Returns the found element if true was returned, otherwise a default value.
+        /// Returns the found element if <see langword="true"/> was returned, otherwise a default value.
         /// </param>
         /// <returns>
-        /// true if the source sequence contains an element, otherwise false.
+        /// <see langword="true"/> if the source sequence contains an element, otherwise <see langword="false"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
@@ -101,10 +127,10 @@ namespace System.Linq
         /// A function to test each element for a condition.
         /// </param>
         /// <param name="value">
-        /// Returns the found element if true was returned, otherwise a default value.
+        /// Returns the found element if <see langword="true"/> was returned, otherwise a default value.
         /// </param>
         /// <returns>
-        /// true if any elements in the source sequence pass the test in the specified predicate, otherwise false.
+        /// <see langword="true"/> if any elements in the source sequence pass the test in the specified predicate, otherwise <see langword="false"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.
@@ -593,9 +619,9 @@ namespace System.Linq
         /// </exception>
         /// <remarks>
         /// For example, these two expressions have the same effect:
-        /// <code>string.Join(separator, values);</code>
-        /// <code>new string(values.Intercalate(separator).SelectMany(x => x).ToArray());</code>
-        /// Note that the Intercalate() version needs a SelectMany() to flatten the result into a single IEnumerable&lt;char&gt;.
+        /// <code>string.Join(separator, values)</code>
+        /// <code>new string(values.Intercalate(separator).Concat().ToArray())</code>
+        /// Note that the expression with Intercalate() needs a Concat() to flatten the result into a single IEnumerable&lt;char&gt;.
         /// </remarks>
 
         // Terminology-wise reusing 'Join' matching string.Join() would be nice, except that Enumerable.Join() exists already
