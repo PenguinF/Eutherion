@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Program.cs
  *
- * Copyright (c) 2004-2024 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ namespace Eutherion.Example472
                 string DisplayNothingJust<T>(Maybe<T> maybeX) /*where T : notnull*/
                 {
                     string s = $"[IsNothing: {maybeX.IsNothing} IsJust(): ";
-                    if (maybeX.IsJust(out T/*?*/ someX)) s += $"{bool.TrueString}({someX})"; else s += bool.FalseString;
+                    if (maybeX.IsJust(out var someX)) s += $"{bool.TrueString}({someX})"; else s += bool.FalseString;
                     return s + "]";
                 };
                 string Join<T>(IEnumerable<T> collection) => string.Join(", ", collection);
