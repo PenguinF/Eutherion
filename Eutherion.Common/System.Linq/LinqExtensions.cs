@@ -2,7 +2,7 @@
 /*********************************************************************************
  * LinqExtensions.cs
  *
- * Copyright (c) 2004-2024 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,6 +32,32 @@ namespace System.Linq
     /// </summary>
     public static class LinqExtensions
     {
+        /// <summary>
+        /// Flattens a sequence of sequences into a single sequence.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of the sequences in <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of sequences of elements.
+        /// </param>
+        /// <returns>
+        /// The flattened sequence.
+        /// </returns>
+        /// <remarks>
+        /// This method is an alias for:
+        /// <code>
+        /// System.Linq.Enumerable.SelectMany(source, x => x)
+        /// </code>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> Concat<TSource>(this IEnumerable<IEnumerable<TSource>> source)
+        {
+            return source.SelectMany(x => x);
+        }
+
         /// <summary>
         /// Determines whether there is any element in a sequence, and returns that element.
         /// </summary>
