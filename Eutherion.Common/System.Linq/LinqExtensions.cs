@@ -68,10 +68,10 @@ namespace System.Linq
         /// An <see cref="IEnumerable{TSource}"/> whose elements to check.
         /// </param>
         /// <param name="value">
-        /// Returns the found element if true was returned, otherwise a default value.
+        /// Returns the found element if <see langword="true"/> was returned, otherwise a default value.
         /// </param>
         /// <returns>
-        /// true if the source sequence contains an element, otherwise false.
+        /// <see langword="true"/> if the source sequence contains an element, otherwise <see langword="false"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
@@ -127,10 +127,10 @@ namespace System.Linq
         /// A function to test each element for a condition.
         /// </param>
         /// <param name="value">
-        /// Returns the found element if true was returned, otherwise a default value.
+        /// Returns the found element if <see langword="true"/> was returned, otherwise a default value.
         /// </param>
         /// <returns>
-        /// true if any elements in the source sequence pass the test in the specified predicate, otherwise false.
+        /// <see langword="true"/> if any elements in the source sequence pass the test in the specified predicate, otherwise <see langword="false"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> or <paramref name="predicate"/> is <see langword="null"/>.
