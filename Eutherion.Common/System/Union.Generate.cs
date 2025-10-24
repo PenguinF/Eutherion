@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Union.Generate.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -29,16 +29,16 @@ namespace System
         private static string TypeParameter(int typeIndex)
             => $"T{typeIndex}";
 
-        private static string WhenOptionParamName(int typeIndex)
+        private static string WhenOptionParameterName(int typeIndex)
             => $"whenOption{typeIndex}";
 
-        private static readonly string OtherwiseParamName = "otherwise";
+        private static readonly string OtherwiseParameterName = "otherwise";
 
         internal static InvalidPatternMatchException InvalidPatternMatchArgumentException(int typeIndex)
 #if NET5_0_OR_GREATER
-            => new($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
+            => new($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParameterName(typeIndex)} and {OtherwiseParameterName} parameters are null.");
 #else
-            => new InvalidPatternMatchException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParamName(typeIndex)} and {OtherwiseParamName} parameters are null.");
+            => new InvalidPatternMatchException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParameterName(typeIndex)} and {OtherwiseParameterName} parameters are null.");
 #endif
 
 #if DEBUG
@@ -99,13 +99,13 @@ namespace System
             => $"ToOption{typeIndex}";
 
         private static string WhenOptionParamRef(int typeIndex)
-            => $@"<paramref name=""{WhenOptionParamName(typeIndex)}""/>";
+            => $@"<paramref name=""{WhenOptionParameterName(typeIndex)}""/>";
 
         private static string MatchMethodFuncOverloadParameter(int typeIndex)
-            => $"[AllowNull] Func<{TypeParameter(typeIndex)}, TResult> {WhenOptionParamName(typeIndex)} = null,";
+            => $"[AllowNull] Func<{TypeParameter(typeIndex)}, TResult> {WhenOptionParameterName(typeIndex)} = null,";
 
         private static string MatchMethodActionOverloadParameter(int typeIndex)
-            => $"[AllowNull] Action<{TypeParameter(typeIndex)}> {WhenOptionParamName(typeIndex)} = null,";
+            => $"[AllowNull] Action<{TypeParameter(typeIndex)}> {WhenOptionParameterName(typeIndex)} = null,";
 
         private static string ClassSummary(int optionCount)
     => $@"
@@ -154,17 +154,17 @@ namespace System
 
             public override TResult Match<TResult>({ConcatList(optionCount, paramOption => $@"
                 {MatchMethodFuncOverloadParameter(paramOption)}")}
-                [AllowNull] Func<TResult> {OtherwiseParamName} = null)
-                => {WhenOptionParamName(typeIndex)} != null ? {WhenOptionParamName(typeIndex)}(Value)
-                : {OtherwiseParamName} != null ? {OtherwiseParamName}()
+                [AllowNull] Func<TResult> {OtherwiseParameterName} = null)
+                => {WhenOptionParameterName(typeIndex)} != null ? {WhenOptionParameterName(typeIndex)}(Value)
+                : {OtherwiseParameterName} != null ? {OtherwiseParameterName}()
                 : throw {ClassName}.InvalidPatternMatchArgumentException({typeIndex});
 
             public override void Match({ConcatList(optionCount, paramOption => $@"
                 {MatchMethodActionOverloadParameter(paramOption)}")}
-                [AllowNull] Action {OtherwiseParamName} = null)
+                [AllowNull] Action {OtherwiseParameterName} = null)
             {{
-                if ({WhenOptionParamName(typeIndex)} != null) {WhenOptionParamName(typeIndex)}(Value);
-                else {OtherwiseParamName}?.Invoke();
+                if ({WhenOptionParameterName(typeIndex)} != null) {WhenOptionParameterName(typeIndex)}(Value);
+                else {OtherwiseParameterName}?.Invoke();
             }}
 
             public override string ToString() => Value.ToString() ?? string.Empty;
@@ -244,13 +244,13 @@ namespace System
 
         private static string MatchMethodFuncOverloadSummaryParameters(int typeIndex)
             => $@"
-        /// <param name=""{WhenOptionParamName(typeIndex)}"">
+        /// <param name=""{WhenOptionParameterName(typeIndex)}"">
         /// The <see cref=""Func{{{TypeParameter(typeIndex)}, TResult}}""/> to invoke when the value is of the {Ordinal(typeIndex)} type.
         /// </param>";
 
         private static string MatchMethodFuncOverload(int optionCount)
             => $@"
-        /// <param name=""{OtherwiseParamName}"">
+        /// <param name=""{OtherwiseParameterName}"">
         /// The <see cref=""Func{{TResult}}""/> to invoke if no function is specified for the type of the value.
         /// If {CommaSeparatedList(optionCount - 1, WhenOptionParamRef)} and {WhenOptionParamRef(optionCount)} are given, this parameter is not used.
         /// </param>
@@ -262,7 +262,7 @@ namespace System
         /// </exception>
         public abstract TResult Match<TResult>({ConcatList(optionCount, typeIndex => $@"
             {MatchMethodFuncOverloadParameter(typeIndex)}")}
-            [AllowNull] Func<TResult> {OtherwiseParamName} = null)
+            [AllowNull] Func<TResult> {OtherwiseParameterName} = null)
 #if !NET472
             where TResult : notnull
 #endif
@@ -277,19 +277,19 @@ namespace System
 
         private static string MatchMethodActionOverloadSummaryParameters(int typeIndex)
             => $@"
-        /// <param name=""{WhenOptionParamName(typeIndex)}"">
+        /// <param name=""{WhenOptionParameterName(typeIndex)}"">
         /// The <see cref=""Action{{{TypeParameter(typeIndex)}}}""/> to invoke when the value is of the {Ordinal(typeIndex)} type.
         /// </param>";
 
         private static string MatchMethodActionOverload(int optionCount)
             => $@"
-        /// <param name=""{OtherwiseParamName}"">
+        /// <param name=""{OtherwiseParameterName}"">
         /// The <see cref=""Action""/> to invoke if no action is specified for the type of the value.
         /// If {CommaSeparatedList(optionCount - 1, WhenOptionParamRef)} and {WhenOptionParamRef(optionCount)} are given, this parameter is not used.
         /// </param>
         public abstract void Match({ConcatList(optionCount, typeIndex => $@"
             {MatchMethodActionOverloadParameter(typeIndex)}")}
-            [AllowNull] Action {OtherwiseParamName} = null);
+            [AllowNull] Action {OtherwiseParameterName} = null);
 ";
 
         private static string ClassBody(int optionCount)
