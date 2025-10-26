@@ -172,6 +172,38 @@ namespace Eutherion.Example472
                 new[] { 6, 7, 8 }.ForEach(n => Console.WriteLine(CheckNumberOfElements(unionValues, n)));
                 Console.WriteLine();
 
+                // Union.EqualityComparer
+                Union<_void, int, string>.EqualityComparer defaultComparer = Union<_void, int, string>.EqualityComparer.Default;
+                Union<_void, int, string>.EqualityComparer ignoreCaseComparer = new Union<_void, int, string>.EqualityComparer(
+                    equalityComparer3: StringComparer.OrdinalIgnoreCase);
+
+                for (int i = 0; i < unionValues.Length; i++)
+                {
+                    for (int j = i; j < unionValues.Length; j++)
+                    {
+                        var value1 = unionValues[i];
+                        var value2 = unionValues[j];
+
+                        // Relevant output:
+                        // -> Equality of string: "x" and string: "X":  False (default)  True (ignore case)
+                        Console.WriteLine($"Equality of {PrintUnionValue(value1)} and {PrintUnionValue(value2)}:  "
+                            + defaultComparer.Equals(value1, value2) + " (default)  "
+                            + ignoreCaseComparer.Equals(value1, value2) + " (ignore case)");
+                    }
+                }
+
+                for (int i = 0; i < unionValues.Length; i++)
+                {
+                    var value = unionValues[i];
+
+                    // -> Hash code of string: "x":  1800933665 (default)  193472829 (ignore case)
+                    //    Hash code of string: "X":  1800968513 (default)  193472829 (ignore case)
+                    Console.WriteLine($"Hash code of {PrintUnionValue(value)}:  "
+                        + defaultComparer.GetHashCode(value) + " (default)  "
+                        + ignoreCaseComparer.GetHashCode(value) + " (ignore case)");
+                }
+                Console.WriteLine();
+
                 // DictionaryExtensions.GetOrAdd
                 Dictionary<string, string> dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 // -> GetOrAdd(1): one
