@@ -130,7 +130,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.
@@ -495,7 +495,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2, T3}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.
@@ -977,7 +977,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2, T3, T4}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.
@@ -1580,7 +1580,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.
@@ -2308,7 +2308,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.
@@ -3165,7 +3165,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6, T7>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.
@@ -4155,7 +4155,7 @@ namespace System
         /// <summary>
         /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> values for equality and generate their hash codes.
         /// </summary>
-        public class EqualityComparer
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6, T7, T8>>
         {
             /// <summary>
             /// Gets the equality comparer for values of the first type.

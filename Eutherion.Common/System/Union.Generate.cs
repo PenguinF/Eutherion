@@ -261,7 +261,7 @@ using System.Diagnostics.CodeAnalysis;
         /// <summary>
         /// Defines methods to test {See(ReferToClassName(optionCount))} values for equality and generate their hash codes.
         /// </summary>
-        public class {EqualityComparerClassName}
+        public class {EqualityComparerClassName} : IEqualityComparer<{ParametrizedClassName(optionCount)}>
         {{{ConcatList(optionCount, typeIndex => $@"
             /// <summary>
             /// Gets the equality comparer for values of the {Ordinal(typeIndex)} type.
