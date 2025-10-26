@@ -114,11 +114,20 @@ namespace System
         private static string MatchMethodActionOverloadParameter(int typeIndex)
             => $"[AllowNull] Action<{TypeParameter(typeIndex)}> {WhenOptionParameterName(typeIndex)} = null,";
 
+        private static string EqualityComparerPropertyName(int typeIndex)
+            => $"EqualityComparer{typeIndex}";
+
+        private static string EqualityComparerParameterName(int typeIndex)
+            => $"equalityComparer{typeIndex}";
+
         private static string ParametrizedClassName(int optionCount)
             => $"{ClassName}<{TypeParameters(optionCount)}>";
 
         private static string ReferToClassName(int optionCount)
             => $"{ClassName}{{{TypeParameters(optionCount)}}}";
+
+        private static string LangwordNull
+            => $@"<see langword=""null""/>";
 
         private static string LangwordFalse
             => $@"<see langword=""false""/>";
@@ -151,6 +160,7 @@ namespace System
 **********************************************************************************/
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 ";
 
@@ -224,7 +234,23 @@ using System.Diagnostics.CodeAnalysis;
         /// Defines methods to test {See(ReferToClassName(optionCount))} values for equality and generate their hash codes.
         /// </summary>
         public class {EqualityComparerClassName}
-        {{
+        {{{ConcatList(optionCount, typeIndex => $@"
+            /// <summary>
+            /// Gets the equality comparer for values of the {Ordinal(typeIndex)} type.
+            /// </summary>
+            public IEqualityComparer<{TypeParameter(typeIndex)}> {EqualityComparerPropertyName(typeIndex)} {{ get; }}
+")}
+            /// <summary>
+            /// Creates a new {See(EqualityComparerClassName)} from equality comparers for each of the possible types.
+            /// </summary>{ConcatList(optionCount, typeIndex => $@"
+            /// <param name=""{EqualityComparerParameterName(typeIndex)}"">
+            /// The equality comparer for values of the {Ordinal(typeIndex)} type. If {LangwordNull}, {See("EqualityComparer{T}.Default")} is used.
+            /// </param>")}
+            public {EqualityComparerClassName}({ConcatList(optionCount, typeIndex => $@"
+                [AllowNull] IEqualityComparer<{TypeParameter(typeIndex)}> {EqualityComparerParameterName(typeIndex)} = null{(typeIndex < optionCount).Conditional(() => ",", () => ")")}")}
+            {{{ConcatList(optionCount, typeIndex => $@"
+                {EqualityComparerPropertyName(typeIndex)} = {EqualityComparerParameterName(typeIndex)} ?? EqualityComparer<{TypeParameter(typeIndex)}>.Default;")}
+            }}
         }}
 ";
 

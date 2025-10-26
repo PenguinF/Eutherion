@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System
@@ -119,6 +120,32 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+            }
         }
 
         /// <summary>
@@ -399,6 +426,42 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+            }
         }
 
         /// <summary>
@@ -779,6 +842,52 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+            }
         }
 
         /// <summary>
@@ -1263,6 +1372,62 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+            }
         }
 
         /// <summary>
@@ -1855,6 +2020,72 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the sixth type.
+            /// </summary>
+            public IEqualityComparer<T6> EqualityComparer6 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer6">
+            /// The equality comparer for values of the sixth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null,
+                [AllowNull] IEqualityComparer<T6> equalityComparer6 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+                EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+            }
         }
 
         /// <summary>
@@ -2559,6 +2790,82 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the sixth type.
+            /// </summary>
+            public IEqualityComparer<T6> EqualityComparer6 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the seventh type.
+            /// </summary>
+            public IEqualityComparer<T7> EqualityComparer7 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer6">
+            /// The equality comparer for values of the sixth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer7">
+            /// The equality comparer for values of the seventh type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null,
+                [AllowNull] IEqualityComparer<T6> equalityComparer6 = null,
+                [AllowNull] IEqualityComparer<T7> equalityComparer7 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+                EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+                EqualityComparer7 = equalityComparer7 ?? EqualityComparer<T7>.Default;
+            }
         }
 
         /// <summary>
@@ -3379,6 +3686,92 @@ namespace System
         /// </summary>
         public class EqualityComparer
         {
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the sixth type.
+            /// </summary>
+            public IEqualityComparer<T6> EqualityComparer6 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the seventh type.
+            /// </summary>
+            public IEqualityComparer<T7> EqualityComparer7 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the eighth type.
+            /// </summary>
+            public IEqualityComparer<T8> EqualityComparer8 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer6">
+            /// The equality comparer for values of the sixth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer7">
+            /// The equality comparer for values of the seventh type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer8">
+            /// The equality comparer for values of the eighth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null,
+                [AllowNull] IEqualityComparer<T6> equalityComparer6 = null,
+                [AllowNull] IEqualityComparer<T7> equalityComparer7 = null,
+                [AllowNull] IEqualityComparer<T8> equalityComparer8 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+                EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+                EqualityComparer7 = equalityComparer7 ?? EqualityComparer<T7>.Default;
+                EqualityComparer8 = equalityComparer8 ?? EqualityComparer<T8>.Default;
+            }
         }
 
         /// <summary>
