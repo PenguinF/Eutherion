@@ -24,7 +24,14 @@ using System.Linq;
 
 namespace System
 {
+#if DEBUG
+    /// <summary>
+    /// Allow access to Union in DEBUG mode.
+    /// </summary>
+    public static class Union
+#else
     internal static class Union
+#endif
     {
         private static string TypeParameter(int typeIndex)
             => $"T{typeIndex}";
@@ -42,7 +49,7 @@ namespace System
 #endif
 
 #if DEBUG
-        public const int MaxOptionsToGenerate = 8;
+        internal const int MaxOptionsToGenerate = 8;
 
         private static string Cardinal(int number)
             => number == 1 ? "one"
