@@ -111,6 +111,15 @@ namespace System
         private static string MatchMethodActionOverloadParameter(int typeIndex)
             => $"[AllowNull] Action<{TypeParameter(typeIndex)}> {WhenOptionParameterName(typeIndex)} = null,";
 
+        private static string ParametrizedClassName(int optionCount)
+            => $"{ClassName}<{TypeParameters(optionCount)}>";
+
+        private static string ReferToClassName(int optionCount)
+            => $"{ClassName}{{{TypeParameters(optionCount)}}}";
+
+        private static string See(string reference)
+            => $@"<see cref=""{reference}""/>";
+
         private static string LicenseHeaderAndUsingStatements()
             => $@"#region License
 /*********************************************************************************
@@ -158,14 +167,14 @@ using System.Diagnostics.CodeAnalysis;
 
         private static string ClassHeader(int optionCount)
             => $@"
-    public abstract class {ClassName}<{TypeParameters(optionCount)}>
+    public abstract class {ParametrizedClassName(optionCount)}
 " + $@"#if !NET472{ConcatList(optionCount, GenericNotNullConstraintForTypeParam)}
 " + $@"#endif
     {{";
 
         private static Func<int, string> SubClass(int optionCount)
             => typeIndex => $@"
-        private sealed class {SubClassName(typeIndex)} : {ClassName}<{TypeParameters(optionCount)}>
+        private sealed class {SubClassName(typeIndex)} : {ParametrizedClassName(optionCount)}
         {{
             public readonly {TypeParameter(typeIndex)} Value;
 
@@ -203,15 +212,15 @@ using System.Diagnostics.CodeAnalysis;
         private static Func<int, string> PublicStaticConstructor(int optionCount)
             => typeIndex => $@"
         /// <summary>
-        /// Creates a new <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> with a value of the {Ordinal(typeIndex)} type.
+        /// Creates a new {See(ReferToClassName(optionCount))} with a value of the {Ordinal(typeIndex)} type.
         /// </summary>
-        public static {ClassName}<{TypeParameters(optionCount)}> {OptionMethodName(typeIndex)}({TypeParameter(typeIndex)} value) => new {SubClassName(typeIndex)}(value);
+        public static {ParametrizedClassName(optionCount)} {OptionMethodName(typeIndex)}({TypeParameter(typeIndex)} value) => new {SubClassName(typeIndex)}(value);
 ";
 
         private static Func<int, string> ImplicitCastOperator(int optionCount)
             => typeIndex => $@"
         /// <summary>Converts a value to a {ClassName} instance.</summary>
-        public static implicit operator {ClassName}<{TypeParameters(optionCount)}>({TypeParameter(typeIndex)} value) => new {SubClassName(typeIndex)}(value);
+        public static implicit operator {ParametrizedClassName(optionCount)}({TypeParameter(typeIndex)} value) => new {SubClassName(typeIndex)}(value);
 ";
 
         private static string PrivateConstructor()
@@ -222,10 +231,10 @@ using System.Diagnostics.CodeAnalysis;
         private static Func<int, string> IsOptionMethod(int optionCount)
             => typeIndex => $@"
         /// <summary>
-        /// Checks if this <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> contains a value of the {Ordinal(typeIndex)} type.
+        /// Checks if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> contains a value of the {Ordinal(typeIndex)} type; otherwise false.
+        /// True if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type; otherwise false.
         /// </returns>
         public virtual bool {IsOptionMethodName(typeIndex)}() => false;
 ";
@@ -233,13 +242,13 @@ using System.Diagnostics.CodeAnalysis;
         private static Func<int, string> IsOptionMethodWithParameter(int optionCount)
             => typeIndex => $@"
         /// <summary>
-        /// Checks if this <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> contains a value of the {Ordinal(typeIndex)} type.
+        /// Checks if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type.
         /// </summary>
         /// <param name=""value"">
         /// The value of the {Ordinal(typeIndex)} type, if this function returns true; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> contains a value of the {Ordinal(typeIndex)} type; otherwise false.
+        /// True if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type; otherwise false.
         /// </returns>
         public virtual bool {IsOptionMethodName(typeIndex)}([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out {TypeParameter(typeIndex)} value)
         {{
@@ -251,13 +260,13 @@ using System.Diagnostics.CodeAnalysis;
         private static Func<int, string> ToOptionMethod(int optionCount)
             => typeIndex => $@"
         /// <summary>
-        /// Casts this <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> to a value of the {Ordinal(typeIndex)} type.
+        /// Casts this {See(ReferToClassName(optionCount))} to a value of the {Ordinal(typeIndex)} type.
         /// </summary>
         /// <returns>
         /// The value of the {Ordinal(typeIndex)} type.
         /// </returns>
         /// <exception cref=""InvalidCastException"">
-        /// Occurs when this <see cref=""{ClassName}{{{TypeParameters(optionCount)}}}""/> does not contain a value of the {Ordinal(typeIndex)} type.
+        /// Occurs when this {See(ReferToClassName(optionCount))} does not contain a value of the {Ordinal(typeIndex)} type.
         /// </exception>
         public virtual {TypeParameter(typeIndex)} {ToOptionMethodName(typeIndex)}() => throw new InvalidCastException();
 ";
@@ -265,7 +274,7 @@ using System.Diagnostics.CodeAnalysis;
         private static string MatchMethodFuncOverloadSummary()
             => $@"
         /// <summary>
-        /// Invokes a <see cref=""Func{{T, TResult}}""/> based on the type of the value and returns its result.
+        /// Invokes a {See("Func{T, TResult}")} based on the type of the value and returns its result.
         /// </summary>
         /// <typeparam name=""TResult"">
         /// Type of the value to return.
@@ -274,17 +283,17 @@ using System.Diagnostics.CodeAnalysis;
         private static string MatchMethodFuncOverloadSummaryParameters(int typeIndex)
             => $@"
         /// <param name=""{WhenOptionParameterName(typeIndex)}"">
-        /// The <see cref=""Func{{{TypeParameter(typeIndex)}, TResult}}""/> to invoke when the value is of the {Ordinal(typeIndex)} type.
+        /// The {See($@"Func{{{TypeParameter(typeIndex)}, TResult}}")} to invoke when the value is of the {Ordinal(typeIndex)} type.
         /// </param>";
 
         private static string MatchMethodFuncOverload(int optionCount)
             => $@"
         /// <param name=""{OtherwiseParameterName}"">
-        /// The <see cref=""Func{{TResult}}""/> to invoke if no function is specified for the type of the value.
+        /// The {See("Func{TResult}")} to invoke if no function is specified for the type of the value.
         /// If {CommaSeparatedList(optionCount - 1, WhenOptionParamRef)} and {WhenOptionParamRef(optionCount)} are given, this parameter is not used.
         /// </param>
         /// <returns>
-        /// The result of the invoked <see cref=""Func{{T, TResult}}""/>.
+        /// The result of the invoked {See("Func{T, TResult}")}.
         /// </returns>
         /// <exception cref=""{nameof(InvalidPatternMatchException)}"">
         /// No function argument was defined that matches the value.
@@ -301,19 +310,19 @@ using System.Diagnostics.CodeAnalysis;
         private static string MatchMethodActionOverloadSummary()
             => $@"
         /// <summary>
-        /// Invokes an <see cref=""Action{{T}}""/> based on the type of the value.
+        /// Invokes an {See("Action{T}")} based on the type of the value.
         /// </summary>";
 
         private static string MatchMethodActionOverloadSummaryParameters(int typeIndex)
             => $@"
         /// <param name=""{WhenOptionParameterName(typeIndex)}"">
-        /// The <see cref=""Action{{{TypeParameter(typeIndex)}}}""/> to invoke when the value is of the {Ordinal(typeIndex)} type.
+        /// The {See($@"Action{{{TypeParameter(typeIndex)}}}")} to invoke when the value is of the {Ordinal(typeIndex)} type.
         /// </param>";
 
         private static string MatchMethodActionOverload(int optionCount)
             => $@"
         /// <param name=""{OtherwiseParameterName}"">
-        /// The <see cref=""Action""/> to invoke if no action is specified for the type of the value.
+        /// The {See("Action")} to invoke if no action is specified for the type of the value.
         /// If {CommaSeparatedList(optionCount - 1, WhenOptionParamRef)} and {WhenOptionParamRef(optionCount)} are given, this parameter is not used.
         /// </param>
         public abstract void Match({ConcatList(optionCount, typeIndex => $@"
