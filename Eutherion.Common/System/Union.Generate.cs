@@ -20,7 +20,10 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace System
 {
@@ -321,6 +324,30 @@ namespace System
 namespace System
 {{{string.Concat(GenerateList(2, MaxOptionsToGenerate - 1, UnionClass))}}}
 ";
+
+        /// <summary>
+        /// Auto-generates Union.cs.
+        /// </summary>
+        public static void GenerateCodeAndOutputToFile(DirectoryInfo solutionDir)
+        {
+            try
+            {
+                // UTF8 encoding with preamble, Encoding.UTF8 doesn't do this.
+                Encoding utf8WithPreamble = new UTF8Encoding(true, true);
+
+                // Expect dir tree to look like this: [solution_dir]\Eutherion.Common\System
+                DirectoryInfo unionCodeFileDir = solutionDir
+                    .GetDirectories("Eutherion.Common")[0]
+                    .GetDirectories("System")[0];
+
+                File.WriteAllText(unionCodeFileDir.FullName + "\\Union.cs", GenerateCode(), utf8WithPreamble);
+            }
+            catch (Exception exception)
+            {
+                Debugger.Break();
+                GC.KeepAlive(exception);
+            }
+        }
 #endif
     }
 }
