@@ -120,6 +120,12 @@ namespace System
         private static string EqualityComparerParameterName(int typeIndex)
             => $"equalityComparer{typeIndex}";
 
+        private static string SingleDispatchedEqualsMethodName
+            => $"Equals";
+
+        private static string DoubleDispatchedEqualsMethodName(int typeIndex)
+            => $"Equals{typeIndex}";
+
         private static string ParametrizedClassName(int optionCount)
             => $"{ClassName}<{TypeParameters(optionCount)}>";
 
@@ -224,6 +230,10 @@ using System.Diagnostics.CodeAnalysis;
                 else {OtherwiseParameterName}?.Invoke();
             }}
 
+            private protected override bool {DoubleDispatchedEqualsMethodName(typeIndex)}(EqualityComparer equalityComparer, {TypeParameter(typeIndex)} x) => equalityComparer.{EqualityComparerPropertyName(typeIndex)}.Equals(x, Value);
+
+            private protected override bool {SingleDispatchedEqualsMethodName}(EqualityComparer equalityComparer, {ParametrizedClassName(optionCount)} y) => y.{DoubleDispatchedEqualsMethodName(typeIndex)}(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }}
 ";
@@ -250,6 +260,25 @@ using System.Diagnostics.CodeAnalysis;
                 [AllowNull] IEqualityComparer<{TypeParameter(typeIndex)}> {EqualityComparerParameterName(typeIndex)} = null{(typeIndex < optionCount).Conditional(() => ",", () => ")")}")}
             {{{ConcatList(optionCount, typeIndex => $@"
                 {EqualityComparerPropertyName(typeIndex)} = {EqualityComparerParameterName(typeIndex)} ?? EqualityComparer<{TypeParameter(typeIndex)}>.Default;")}
+            }}
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name=""x"">
+            /// The first value to compare.
+            /// </param>
+            /// <param name=""y"">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// {LangwordTrue} if the values are equal; otherwise, {LangwordFalse}.
+            /// </returns>
+            public bool Equals([AllowNull] {ParametrizedClassName(optionCount)} x, [AllowNull] {ParametrizedClassName(optionCount)} y)
+            {{
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.{SingleDispatchedEqualsMethodName}(this, y);
             }}
         }}
 ";
@@ -375,6 +404,14 @@ using System.Diagnostics.CodeAnalysis;
             [AllowNull] Action {OtherwiseParameterName} = null);
 ";
 
+        // Use a double dispatch mechanism for determining equality.
+        private static string PrivateEqualityMethods(int optionCount)
+            => $@"{ConcatList(optionCount, typeIndex => $@"
+        private protected virtual bool {DoubleDispatchedEqualsMethodName(typeIndex)}(EqualityComparer equalityComparer, {TypeParameter(typeIndex)} y) => false;")}
+
+        private protected abstract bool {SingleDispatchedEqualsMethodName}(EqualityComparer equalityComparer, {ParametrizedClassName(optionCount)} y);
+";
+
         private static string ClassBody(int optionCount)
             => string.Concat(
                 ConcatList(optionCount, SubClass(optionCount)),
@@ -390,7 +427,8 @@ using System.Diagnostics.CodeAnalysis;
                 MatchMethodFuncOverload(optionCount),
                 MatchMethodActionOverloadSummary(),
                 ConcatList(optionCount, MatchMethodActionOverloadSummaryParameters),
-                MatchMethodActionOverload(optionCount));
+                MatchMethodActionOverload(optionCount),
+                PrivateEqualityMethods(optionCount));
 
         private static string ClassFooter()
             => $@"    }}

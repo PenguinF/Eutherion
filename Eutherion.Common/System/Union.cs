@@ -76,6 +76,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -112,6 +116,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y) => y.Equals2(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -145,6 +153,25 @@ namespace System
             {
                 EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
                 EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2> x, [AllowNull] Union<T1, T2> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -282,6 +309,11 @@ namespace System
             [AllowNull] Action<T1> whenOption1 = null,
             [AllowNull] Action<T2> whenOption2 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y);
     }
 
     /// <summary>
@@ -342,6 +374,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -380,6 +416,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals2(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -417,6 +457,10 @@ namespace System
                 if (whenOption3 != null) whenOption3(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals3(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -461,6 +505,25 @@ namespace System
                 EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
                 EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
                 EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3> x, [AllowNull] Union<T1, T2, T3> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -648,6 +711,12 @@ namespace System
             [AllowNull] Action<T2> whenOption2 = null,
             [AllowNull] Action<T3> whenOption3 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y);
     }
 
     /// <summary>
@@ -714,6 +783,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -753,6 +826,10 @@ namespace System
                 if (whenOption2 != null) whenOption2(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals2(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -794,6 +871,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals3(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -833,6 +914,10 @@ namespace System
                 if (whenOption4 != null) whenOption4(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals4(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -887,6 +972,25 @@ namespace System
                 EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
                 EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
                 EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4> x, [AllowNull] Union<T1, T2, T3, T4> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -1124,6 +1228,13 @@ namespace System
             [AllowNull] Action<T3> whenOption3 = null,
             [AllowNull] Action<T4> whenOption4 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y);
     }
 
     /// <summary>
@@ -1196,6 +1307,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1237,6 +1352,10 @@ namespace System
                 if (whenOption2 != null) whenOption2(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals2(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -1280,6 +1399,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals3(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1322,6 +1445,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals4(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1363,6 +1490,10 @@ namespace System
                 if (whenOption5 != null) whenOption5(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals5(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -1427,6 +1558,25 @@ namespace System
                 EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
                 EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
                 EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5> x, [AllowNull] Union<T1, T2, T3, T4, T5> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -1714,6 +1864,14 @@ namespace System
             [AllowNull] Action<T4> whenOption4 = null,
             [AllowNull] Action<T5> whenOption5 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y);
     }
 
     /// <summary>
@@ -1792,6 +1950,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1835,6 +1997,10 @@ namespace System
                 if (whenOption2 != null) whenOption2(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals2(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -1880,6 +2046,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals3(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1923,6 +2093,10 @@ namespace System
                 if (whenOption4 != null) whenOption4(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals4(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -1968,6 +2142,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals5(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2011,6 +2189,10 @@ namespace System
                 if (whenOption6 != null) whenOption6(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals6(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2085,6 +2267,25 @@ namespace System
                 EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
                 EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
                 EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5, T6> x, [AllowNull] Union<T1, T2, T3, T4, T5, T6> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -2422,6 +2623,15 @@ namespace System
             [AllowNull] Action<T5> whenOption5 = null,
             [AllowNull] Action<T6> whenOption6 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+        private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y);
     }
 
     /// <summary>
@@ -2506,6 +2716,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2551,6 +2765,10 @@ namespace System
                 if (whenOption2 != null) whenOption2(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals2(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2598,6 +2816,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals3(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2643,6 +2865,10 @@ namespace System
                 if (whenOption4 != null) whenOption4(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals4(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2690,6 +2916,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals5(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2736,6 +2966,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals6(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2781,6 +3015,10 @@ namespace System
                 if (whenOption7 != null) whenOption7(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals7(EqualityComparer equalityComparer, T7 x) => equalityComparer.EqualityComparer7.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals7(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2865,6 +3103,25 @@ namespace System
                 EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
                 EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
                 EqualityComparer7 = equalityComparer7 ?? EqualityComparer<T7>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7> x, [AllowNull] Union<T1, T2, T3, T4, T5, T6, T7> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -3252,6 +3509,16 @@ namespace System
             [AllowNull] Action<T6> whenOption6 = null,
             [AllowNull] Action<T7> whenOption7 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+        private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
+        private protected virtual bool Equals7(EqualityComparer equalityComparer, T7 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y);
     }
 
     /// <summary>
@@ -3342,6 +3609,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals1(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3389,6 +3660,10 @@ namespace System
                 if (whenOption2 != null) whenOption2(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals2(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3438,6 +3713,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals3(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3485,6 +3764,10 @@ namespace System
                 if (whenOption4 != null) whenOption4(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals4(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3534,6 +3817,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals5(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3581,6 +3868,10 @@ namespace System
                 if (whenOption6 != null) whenOption6(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals6(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3630,6 +3921,10 @@ namespace System
                 else otherwise?.Invoke();
             }
 
+            private protected override bool Equals7(EqualityComparer equalityComparer, T7 x) => equalityComparer.EqualityComparer7.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals7(equalityComparer, Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3677,6 +3972,10 @@ namespace System
                 if (whenOption8 != null) whenOption8(Value);
                 else otherwise?.Invoke();
             }
+
+            private protected override bool Equals8(EqualityComparer equalityComparer, T8 x) => equalityComparer.EqualityComparer8.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals8(equalityComparer, Value);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3771,6 +4070,25 @@ namespace System
                 EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
                 EqualityComparer7 = equalityComparer7 ?? EqualityComparer<T7>.Default;
                 EqualityComparer8 = equalityComparer8 ?? EqualityComparer<T8>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7, T8> x, [AllowNull] Union<T1, T2, T3, T4, T5, T6, T7, T8> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
             }
         }
 
@@ -4208,5 +4526,16 @@ namespace System
             [AllowNull] Action<T7> whenOption7 = null,
             [AllowNull] Action<T8> whenOption8 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+        private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
+        private protected virtual bool Equals7(EqualityComparer equalityComparer, T7 y) => false;
+        private protected virtual bool Equals8(EqualityComparer equalityComparer, T8 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y);
     }
 }
