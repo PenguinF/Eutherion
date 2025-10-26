@@ -136,7 +136,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -144,7 +144,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -152,10 +152,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -167,10 +167,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -417,7 +417,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -425,7 +425,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -433,7 +433,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -441,10 +441,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -456,10 +456,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -471,10 +471,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -798,7 +798,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -806,7 +806,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -814,7 +814,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -822,7 +822,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -830,10 +830,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -845,10 +845,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -860,10 +860,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -875,10 +875,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -1283,7 +1283,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -1291,7 +1291,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -1299,7 +1299,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -1307,7 +1307,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -1315,7 +1315,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -1323,10 +1323,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -1338,10 +1338,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -1353,10 +1353,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -1368,10 +1368,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -1383,10 +1383,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -1876,7 +1876,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -1884,7 +1884,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -1892,7 +1892,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -1900,7 +1900,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -1908,7 +1908,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -1916,7 +1916,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6() => false;
 
@@ -1924,10 +1924,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -1939,10 +1939,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -1954,10 +1954,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -1969,10 +1969,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -1984,10 +1984,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -1999,10 +1999,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the sixth type, if this function returns true; otherwise a default value.
+        /// The value of the sixth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T6 value)
         {
@@ -2581,7 +2581,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -2589,7 +2589,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -2597,7 +2597,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -2605,7 +2605,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -2613,7 +2613,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -2621,7 +2621,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6() => false;
 
@@ -2629,7 +2629,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7() => false;
 
@@ -2637,10 +2637,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -2652,10 +2652,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -2667,10 +2667,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -2682,10 +2682,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -2697,10 +2697,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -2712,10 +2712,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the sixth type, if this function returns true; otherwise a default value.
+        /// The value of the sixth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T6 value)
         {
@@ -2727,10 +2727,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type.
         /// </summary>
         /// <param name="value">
-        /// The value of the seventh type, if this function returns true; otherwise a default value.
+        /// The value of the seventh type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T7 value)
         {
@@ -3402,7 +3402,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -3410,7 +3410,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -3418,7 +3418,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -3426,7 +3426,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -3434,7 +3434,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -3442,7 +3442,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6() => false;
 
@@ -3450,7 +3450,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7() => false;
 
@@ -3458,7 +3458,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption8() => false;
 
@@ -3466,10 +3466,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -3481,10 +3481,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -3496,10 +3496,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -3511,10 +3511,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -3526,10 +3526,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -3541,10 +3541,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the sixth type, if this function returns true; otherwise a default value.
+        /// The value of the sixth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T6 value)
         {
@@ -3556,10 +3556,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type.
         /// </summary>
         /// <param name="value">
-        /// The value of the seventh type, if this function returns true; otherwise a default value.
+        /// The value of the seventh type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T7 value)
         {
@@ -3571,10 +3571,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the eighth type, if this function returns true; otherwise a default value.
+        /// The value of the eighth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption8([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T8 value)
         {

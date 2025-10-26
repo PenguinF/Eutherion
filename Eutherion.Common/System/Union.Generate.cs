@@ -117,6 +117,12 @@ namespace System
         private static string ReferToClassName(int optionCount)
             => $"{ClassName}{{{TypeParameters(optionCount)}}}";
 
+        private static string LangwordFalse
+            => $@"<see langword=""false""/>";
+
+        private static string LangwordTrue
+            => $@"<see langword=""true""/>";
+
         private static string See(string reference)
             => $@"<see cref=""{reference}""/>";
 
@@ -234,7 +240,7 @@ using System.Diagnostics.CodeAnalysis;
         /// Checks if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type.
         /// </summary>
         /// <returns>
-        /// True if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type; otherwise false.
+        /// {LangwordTrue} if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type; otherwise {LangwordFalse}.
         /// </returns>
         public virtual bool {IsOptionMethodName(typeIndex)}() => false;
 ";
@@ -245,10 +251,10 @@ using System.Diagnostics.CodeAnalysis;
         /// Checks if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type.
         /// </summary>
         /// <param name=""value"">
-        /// The value of the {Ordinal(typeIndex)} type, if this function returns true; otherwise a default value.
+        /// The value of the {Ordinal(typeIndex)} type, if this function returns {LangwordTrue}; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type; otherwise false.
+        /// {LangwordTrue} if this {See(ReferToClassName(optionCount))} contains a value of the {Ordinal(typeIndex)} type; otherwise {LangwordFalse}.
         /// </returns>
         public virtual bool {IsOptionMethodName(typeIndex)}([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out {TypeParameter(typeIndex)} value)
         {{
