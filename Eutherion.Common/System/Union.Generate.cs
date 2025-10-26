@@ -211,7 +211,7 @@ using System.Diagnostics.CodeAnalysis;
                 else {OtherwiseParameterName}?.Invoke();
             }}
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }}
 ";
 

@@ -75,7 +75,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2>
@@ -111,7 +111,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3>
@@ -346,7 +346,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3>
@@ -384,7 +384,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -637,7 +637,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4>
@@ -677,7 +677,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4>
@@ -717,7 +717,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4>
@@ -757,7 +757,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -1066,7 +1066,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5>
@@ -1108,7 +1108,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5>
@@ -1150,7 +1150,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5>
@@ -1192,7 +1192,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5>
@@ -1234,7 +1234,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -1599,7 +1599,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5, T6>
@@ -1643,7 +1643,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5, T6>
@@ -1687,7 +1687,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5, T6>
@@ -1731,7 +1731,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5, T6>
@@ -1775,7 +1775,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType6 : Union<T1, T2, T3, T4, T5, T6>
@@ -1819,7 +1819,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -2240,7 +2240,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2286,7 +2286,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2332,7 +2332,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2378,7 +2378,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2424,7 +2424,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType6 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2470,7 +2470,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType7 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2516,7 +2516,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
@@ -2993,7 +2993,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3041,7 +3041,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3089,7 +3089,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3137,7 +3137,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3185,7 +3185,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType6 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3233,7 +3233,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType7 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3281,7 +3281,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType8 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3329,7 +3329,7 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         /// <summary>
