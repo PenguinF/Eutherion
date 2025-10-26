@@ -127,6 +127,9 @@ namespace System
         private static string MatchMethodActionOverloadParameter(int typeIndex)
             => $"[AllowNull] Action<{TypeParameter(typeIndex)}> {WhenOptionParameterName(typeIndex)} = null,";
 
+        private static string DefaultEqualityComparerPropertyName
+            => "Default";
+
         private static string EqualityComparerPropertyName(int typeIndex)
             => $"EqualityComparer{typeIndex}";
 
@@ -262,7 +265,12 @@ using System.Diagnostics.CodeAnalysis;
         /// Defines methods to test {See(ReferToClassName(optionCount))} values for equality and generate their hash codes.
         /// </summary>
         public class {EqualityComparerClassName} : IEqualityComparer<{ParametrizedClassName(optionCount)}>
-        {{{ConcatList(optionCount, typeIndex => $@"
+        {{
+            /// <summary>
+            /// Returns a default equality comparer for {See(ReferToClassName(optionCount))} based on default comparers defined in {See("EqualityComparer{T}")}.
+            /// </summary>
+            public static EqualityComparer {DefaultEqualityComparerPropertyName} {{ get; }} = new EqualityComparer();
+{ConcatList(optionCount, typeIndex => $@"
             /// <summary>
             /// Gets the equality comparer for values of the {Ordinal(typeIndex)} type.
             /// </summary>

@@ -133,6 +133,11 @@ namespace System
         public class EqualityComparer : IEqualityComparer<Union<T1, T2>>
         {
             /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
             public IEqualityComparer<T1> EqualityComparer1 { get; }
@@ -497,6 +502,11 @@ namespace System
         /// </summary>
         public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3>>
         {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
             /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
@@ -979,6 +989,11 @@ namespace System
         /// </summary>
         public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4>>
         {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
             /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
@@ -1582,6 +1597,11 @@ namespace System
         /// </summary>
         public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5>>
         {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
             /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
@@ -2310,6 +2330,11 @@ namespace System
         /// </summary>
         public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6>>
         {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5, T6}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
             /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
@@ -3167,6 +3192,11 @@ namespace System
         /// </summary>
         public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6, T7>>
         {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
             /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
@@ -4157,6 +4187,11 @@ namespace System
         /// </summary>
         public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6, T7, T8>>
         {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
             /// <summary>
             /// Gets the equality comparer for values of the first type.
             /// </summary>
