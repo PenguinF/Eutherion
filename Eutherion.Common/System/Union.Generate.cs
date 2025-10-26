@@ -44,12 +44,6 @@ namespace System
 #if DEBUG
         public const int MaxOptionsToGenerate = 8;
 
-#if NET472
-        public static string GeneratedCode { get; private set; }
-#else
-        public static string? GeneratedCode { get; private set; }
-#endif
-
         private static string Cardinal(int number)
             => number == 1 ? "one"
             : number == 2 ? "two"
@@ -320,12 +314,6 @@ namespace System
 namespace System
 {{{string.Concat(GenerateList(2, MaxOptionsToGenerate - 1, UnionClass))}}}
 ";
-
-        // Generates code for the Union<> classes.
-        public static void Generate()
-        {
-            GeneratedCode = GenerateCode();
-        }
 #endif
     }
 }
