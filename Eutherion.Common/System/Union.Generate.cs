@@ -51,6 +51,19 @@ namespace System
             => new InvalidPatternMatchException($"{nameof(Union)} value is of type {TypeParameter(typeIndex)}, but both {WhenOptionParameterName(typeIndex)} and {OtherwiseParameterName} parameters are null.");
 #endif
 
+        internal static int ShiftHashCode(int hashCode, int positions)
+        {
+            // Use ValueTuple's algorithm to shift a hash code before it's combined.
+            do
+            {
+                hashCode = ((hashCode << 5) | (int)((uint)hashCode >> 27)) + hashCode;
+                positions--;
+            }
+            while (positions > 0);
+
+            return hashCode;
+        }
+
 #if DEBUG
         internal const int MaxOptionsToGenerate = 8;
 
@@ -125,6 +138,9 @@ namespace System
 
         private static string DoubleDispatchedEqualsMethodName(int typeIndex)
             => $"Equals{typeIndex}";
+
+        private static string SingleDispatchedGetHashCodeMethodName
+            => $"GetHashCode";
 
         private static string ParametrizedClassName(int optionCount)
             => $"{ClassName}<{TypeParameters(optionCount)}>";
@@ -234,6 +250,8 @@ using System.Diagnostics.CodeAnalysis;
 
             private protected override bool {SingleDispatchedEqualsMethodName}(EqualityComparer equalityComparer, {ParametrizedClassName(optionCount)} y) => y.{DoubleDispatchedEqualsMethodName(typeIndex)}(equalityComparer, Value);
 
+            private protected override int {SingleDispatchedGetHashCodeMethodName}(EqualityComparer equalityComparer) => {(typeIndex == 1).Conditional(() => $"equalityComparer.{EqualityComparerPropertyName(typeIndex)}.GetHashCode(Value)", () => $"Union.ShiftHashCode(equalityComparer.{EqualityComparerPropertyName(typeIndex)}.GetHashCode(Value), {typeIndex - 1})")};
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }}
 ";
@@ -279,6 +297,21 @@ using System.Diagnostics.CodeAnalysis;
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.{SingleDispatchedEqualsMethodName}(this, y);
+            }}
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name=""value"">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] {ParametrizedClassName(optionCount)} value)
+            {{
+                if (value is null) return 0;
+                return value.{SingleDispatchedGetHashCodeMethodName}(this);
             }}
         }}
 ";
@@ -410,6 +443,8 @@ using System.Diagnostics.CodeAnalysis;
         private protected virtual bool {DoubleDispatchedEqualsMethodName(typeIndex)}(EqualityComparer equalityComparer, {TypeParameter(typeIndex)} y) => false;")}
 
         private protected abstract bool {SingleDispatchedEqualsMethodName}(EqualityComparer equalityComparer, {ParametrizedClassName(optionCount)} y);
+
+        private protected abstract int {SingleDispatchedGetHashCodeMethodName}(EqualityComparer equalityComparer);
 ";
 
         private static string ClassBody(int optionCount)

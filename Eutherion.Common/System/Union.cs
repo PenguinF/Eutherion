@@ -80,6 +80,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -119,6 +121,8 @@ namespace System
             private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -172,6 +176,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -314,6 +333,8 @@ namespace System
         private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -378,6 +399,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -420,6 +443,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals2(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -461,6 +486,8 @@ namespace System
             private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -524,6 +551,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -717,6 +759,8 @@ namespace System
         private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -787,6 +831,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -830,6 +876,8 @@ namespace System
             private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -875,6 +923,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals3(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -918,6 +968,8 @@ namespace System
             private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -991,6 +1043,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -1235,6 +1302,8 @@ namespace System
         private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -1311,6 +1380,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1356,6 +1427,8 @@ namespace System
             private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -1403,6 +1476,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals3(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1449,6 +1524,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals4(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -1494,6 +1571,8 @@ namespace System
             private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals5(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -1577,6 +1656,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -1872,6 +1966,8 @@ namespace System
         private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -1954,6 +2050,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2001,6 +2099,8 @@ namespace System
             private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2050,6 +2150,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals3(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2097,6 +2199,8 @@ namespace System
             private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2146,6 +2250,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals5(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2193,6 +2299,8 @@ namespace System
             private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals6(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer6.GetHashCode(Value), 5);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2286,6 +2394,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5, T6> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -2632,6 +2755,8 @@ namespace System
         private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -2720,6 +2845,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2769,6 +2896,8 @@ namespace System
             private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2820,6 +2949,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals3(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2869,6 +3000,8 @@ namespace System
             private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -2920,6 +3053,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals5(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -2970,6 +3105,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals6(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer6.GetHashCode(Value), 5);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3019,6 +3156,8 @@ namespace System
             private protected override bool Equals7(EqualityComparer equalityComparer, T7 x) => equalityComparer.EqualityComparer7.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals7(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer7.GetHashCode(Value), 6);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3122,6 +3261,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -3519,6 +3673,8 @@ namespace System
         private protected virtual bool Equals7(EqualityComparer equalityComparer, T7 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -3613,6 +3769,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals1(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3664,6 +3822,8 @@ namespace System
             private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3717,6 +3877,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals3(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3768,6 +3930,8 @@ namespace System
             private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3821,6 +3985,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals5(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3872,6 +4038,8 @@ namespace System
             private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals6(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer6.GetHashCode(Value), 5);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -3925,6 +4093,8 @@ namespace System
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals7(equalityComparer, Value);
 
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer7.GetHashCode(Value), 6);
+
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
@@ -3976,6 +4146,8 @@ namespace System
             private protected override bool Equals8(EqualityComparer equalityComparer, T8 x) => equalityComparer.EqualityComparer8.Equals(x, Value);
 
             private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals8(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer8.GetHashCode(Value), 7);
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
         }
@@ -4089,6 +4261,21 @@ namespace System
                 if (x is null) return y is null;
                 if (y is null) return false;
                 return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7, T8> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
             }
         }
 
@@ -4537,5 +4724,7 @@ namespace System
         private protected virtual bool Equals8(EqualityComparer equalityComparer, T8 y) => false;
 
         private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 }
