@@ -34,8 +34,11 @@ namespace System
     /// The second type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2>
 #if !NET472
@@ -355,8 +358,11 @@ namespace System
     /// The third type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3>
 #if !NET472
@@ -789,8 +795,11 @@ namespace System
     /// The fourth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4>
 #if !NET472
@@ -1340,8 +1349,11 @@ namespace System
     /// The fifth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5>
 #if !NET472
@@ -2012,8 +2024,11 @@ namespace System
     /// The sixth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5, T6>
 #if !NET472
@@ -2809,8 +2824,11 @@ namespace System
     /// The seventh type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5, T6, T7>
 #if !NET472
@@ -3735,8 +3753,11 @@ namespace System
     /// The eighth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5, T6, T7, T8>
 #if !NET472

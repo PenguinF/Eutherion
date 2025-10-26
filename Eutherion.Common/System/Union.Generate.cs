@@ -195,8 +195,11 @@ using System.Diagnostics.CodeAnalysis;
     /// Encapsulates a value which can have {Cardinal(optionCount)} different types.
     /// </summary>{ConcatList(optionCount, ClassSummaryTypeParam)}
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an {See(EqualityComparerClassName)} inner class
+    /// implementing {See("IEqualityComparer{T}")} for this type with a
+    /// {See($"{EqualityComparerClassName}.{DefaultEqualityComparerPropertyName}")} property to access a default implementation.
     /// </remarks>";
 
         private static string ClassSummaryTypeParam(int typeIndex)
