@@ -115,6 +115,13 @@ namespace System
         }
 
         /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
+        }
+
+        /// <summary>
         /// Creates a new <see cref="Union{T1, T2}"/> with a value of the first type.
         /// </summary>
         public static Union<T1, T2> Option1(T1 value) => new ValueOfType1(value);
@@ -385,6 +392,13 @@ namespace System
             }
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
         }
 
         /// <summary>
@@ -758,6 +772,13 @@ namespace System
             }
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
         }
 
         /// <summary>
@@ -1235,6 +1256,13 @@ namespace System
             }
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
         }
 
         /// <summary>
@@ -1820,6 +1848,13 @@ namespace System
             }
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
         }
 
         /// <summary>
@@ -2517,6 +2552,13 @@ namespace System
             }
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
         }
 
         /// <summary>
@@ -3330,6 +3372,13 @@ namespace System
             }
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer
+        {
         }
 
         /// <summary>

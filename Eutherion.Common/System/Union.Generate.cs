@@ -93,6 +93,9 @@ namespace System
         private static string SubClassName(int typeIndex)
             => $"ValueOfType{typeIndex}";
 
+        private static string EqualityComparerClassName
+            => $"EqualityComparer";
+
         private static string OptionMethodName(int typeIndex)
             => $"Option{typeIndex}";
 
@@ -212,6 +215,16 @@ using System.Diagnostics.CodeAnalysis;
             }}
 
             public override string ToString() => Value?.ToString() ?? string.Empty;
+        }}
+";
+
+        private static string EqualityComparerClass(int optionCount)
+            => $@"
+        /// <summary>
+        /// Defines methods to test {See(ReferToClassName(optionCount))} values for equality and generate their hash codes.
+        /// </summary>
+        public class {EqualityComparerClassName}
+        {{
         }}
 ";
 
@@ -339,6 +352,7 @@ using System.Diagnostics.CodeAnalysis;
         private static string ClassBody(int optionCount)
             => string.Concat(
                 ConcatList(optionCount, SubClass(optionCount)),
+                EqualityComparerClass(optionCount),
                 ConcatList(optionCount, PublicStaticConstructor(optionCount)),
                 ConcatList(optionCount, ImplicitCastOperator(optionCount)),
                 PrivateConstructor(),
