@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UtilityExtensions.cs
  *
- * Copyright (c) 2004-2024 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -372,6 +372,39 @@ namespace System
             if (action == null) throw new ArgumentNullException(nameof(action));
 
             for (int i = numberOfIterations; i > 0; --i) action();
+        }
+
+        /// <summary>
+        /// Functional equivalent of the conditional operator '?:'; returns the result of one of the two functions,
+        /// depending on whether the given condition is <see langword="true"/> or <see langword="false"/>.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of value to return from <paramref name="ifTrue"/> or <paramref name="ifFalse"/>.
+        /// </typeparam>
+        /// <param name="condition">
+        /// The boolean value that determines which of the two functions is called to return a result.
+        /// </param>
+        /// <param name="ifTrue">
+        /// The function to call if <paramref name="condition"/> is <see langword="true"/>.
+        /// </param>
+        /// <param name="ifFalse">
+        /// The function to call if <paramref name="condition"/> is <see langword="false"/>.
+        /// </param>
+        /// <returns>
+        /// The result of one of the two functions, depending on whether the given condition is <see langword="true"/> or <see langword="false"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="ifFalse"/> or <paramref name="ifTrue"/> is <see langword="null"/>.
+        /// </exception>
+        /// <remarks>
+        /// This is mainly intended to allow the use of the conditional operator in string interpolation expressions.
+        /// </remarks>
+        public static T Conditional<T>(this bool condition, Func<T> ifTrue, Func<T> ifFalse)
+        {
+            if (ifTrue == null) throw new ArgumentNullException(nameof(ifTrue));
+            if (ifFalse == null) throw new ArgumentNullException(nameof(ifFalse));
+
+            return condition ? ifTrue() : ifFalse();
         }
     }
 }

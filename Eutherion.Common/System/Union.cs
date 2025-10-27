@@ -2,7 +2,7 @@
 /*********************************************************************************
  * Union.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 **********************************************************************************/
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System
@@ -33,8 +34,11 @@ namespace System
     /// The second type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2>
 #if !NET472
@@ -75,7 +79,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2>
@@ -111,7 +121,85 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2> x, [AllowNull] Union<T1, T2> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -136,7 +224,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -144,7 +232,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -152,10 +240,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -167,10 +255,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -248,6 +336,13 @@ namespace System
             [AllowNull] Action<T1> whenOption1 = null,
             [AllowNull] Action<T2> whenOption2 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -263,8 +358,11 @@ namespace System
     /// The third type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3>
 #if !NET472
@@ -308,7 +406,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3>
@@ -346,7 +450,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3>
@@ -384,7 +494,95 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3> x, [AllowNull] Union<T1, T2, T3> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -417,7 +615,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -425,7 +623,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -433,7 +631,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -441,10 +639,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -456,10 +654,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -471,10 +669,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -571,6 +769,14 @@ namespace System
             [AllowNull] Action<T2> whenOption2 = null,
             [AllowNull] Action<T3> whenOption3 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -589,8 +795,11 @@ namespace System
     /// The fourth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4>
 #if !NET472
@@ -637,7 +846,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4>
@@ -677,7 +892,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4>
@@ -717,7 +938,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4>
@@ -757,7 +984,105 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4> x, [AllowNull] Union<T1, T2, T3, T4> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -798,7 +1123,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -806,7 +1131,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -814,7 +1139,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -822,7 +1147,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -830,10 +1155,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -845,10 +1170,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -860,10 +1185,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -875,10 +1200,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -994,6 +1319,15 @@ namespace System
             [AllowNull] Action<T3> whenOption3 = null,
             [AllowNull] Action<T4> whenOption4 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -1015,8 +1349,11 @@ namespace System
     /// The fifth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5>
 #if !NET472
@@ -1066,7 +1403,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5>
@@ -1108,7 +1451,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5>
@@ -1150,7 +1499,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5>
@@ -1192,7 +1547,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5>
@@ -1234,7 +1595,115 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y) => y.Equals5(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5> x, [AllowNull] Union<T1, T2, T3, T4, T5> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -1283,7 +1752,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -1291,7 +1760,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -1299,7 +1768,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -1307,7 +1776,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -1315,7 +1784,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -1323,10 +1792,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -1338,10 +1807,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -1353,10 +1822,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -1368,10 +1837,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -1383,10 +1852,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -1521,6 +1990,16 @@ namespace System
             [AllowNull] Action<T4> whenOption4 = null,
             [AllowNull] Action<T5> whenOption5 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -1545,8 +2024,11 @@ namespace System
     /// The sixth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5, T6>
 #if !NET472
@@ -1599,7 +2081,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5, T6>
@@ -1643,7 +2131,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5, T6>
@@ -1687,7 +2181,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5, T6>
@@ -1731,7 +2231,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5, T6>
@@ -1775,7 +2281,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals5(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType6 : Union<T1, T2, T3, T4, T5, T6>
@@ -1819,7 +2331,125 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y) => y.Equals6(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer6.GetHashCode(Value), 5);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5, T6}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the sixth type.
+            /// </summary>
+            public IEqualityComparer<T6> EqualityComparer6 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer6">
+            /// The equality comparer for values of the sixth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null,
+                [AllowNull] IEqualityComparer<T6> equalityComparer6 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+                EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5, T6> x, [AllowNull] Union<T1, T2, T3, T4, T5, T6> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5, T6> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -1876,7 +2506,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -1884,7 +2514,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -1892,7 +2522,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -1900,7 +2530,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -1908,7 +2538,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -1916,7 +2546,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6() => false;
 
@@ -1924,10 +2554,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -1939,10 +2569,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -1954,10 +2584,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -1969,10 +2599,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -1984,10 +2614,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -1999,10 +2629,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the sixth type, if this function returns true; otherwise a default value.
+        /// The value of the sixth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T6 value)
         {
@@ -2156,6 +2786,17 @@ namespace System
             [AllowNull] Action<T5> whenOption5 = null,
             [AllowNull] Action<T6> whenOption6 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+        private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -2183,8 +2824,11 @@ namespace System
     /// The seventh type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5, T6, T7>
 #if !NET472
@@ -2240,7 +2884,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2286,7 +2936,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2332,7 +2988,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2378,7 +3040,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2424,7 +3092,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals5(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType6 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2470,7 +3144,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals6(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer6.GetHashCode(Value), 5);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType7 : Union<T1, T2, T3, T4, T5, T6, T7>
@@ -2516,7 +3196,135 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals7(EqualityComparer equalityComparer, T7 x) => equalityComparer.EqualityComparer7.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y) => y.Equals7(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer7.GetHashCode(Value), 6);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6, T7>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the sixth type.
+            /// </summary>
+            public IEqualityComparer<T6> EqualityComparer6 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the seventh type.
+            /// </summary>
+            public IEqualityComparer<T7> EqualityComparer7 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer6">
+            /// The equality comparer for values of the sixth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer7">
+            /// The equality comparer for values of the seventh type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null,
+                [AllowNull] IEqualityComparer<T6> equalityComparer6 = null,
+                [AllowNull] IEqualityComparer<T7> equalityComparer7 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+                EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+                EqualityComparer7 = equalityComparer7 ?? EqualityComparer<T7>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7> x, [AllowNull] Union<T1, T2, T3, T4, T5, T6, T7> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -2581,7 +3389,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -2589,7 +3397,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -2597,7 +3405,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -2605,7 +3413,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -2613,7 +3421,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -2621,7 +3429,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6() => false;
 
@@ -2629,7 +3437,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7() => false;
 
@@ -2637,10 +3445,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -2652,10 +3460,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -2667,10 +3475,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -2682,10 +3490,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -2697,10 +3505,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -2712,10 +3520,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the sixth type, if this function returns true; otherwise a default value.
+        /// The value of the sixth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T6 value)
         {
@@ -2727,10 +3535,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type.
         /// </summary>
         /// <param name="value">
-        /// The value of the seventh type, if this function returns true; otherwise a default value.
+        /// The value of the seventh type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T7 value)
         {
@@ -2903,6 +3711,18 @@ namespace System
             [AllowNull] Action<T6> whenOption6 = null,
             [AllowNull] Action<T7> whenOption7 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+        private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
+        private protected virtual bool Equals7(EqualityComparer equalityComparer, T7 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 
     /// <summary>
@@ -2933,8 +3753,11 @@ namespace System
     /// The eighth type of the value.
     /// </typeparam>
     /// <remarks>
-    /// This type is deliberately implemented without equality or hash code implementations,
+    /// This type is implemented without Equals or GetHashCode overrides,
     /// as these would have to make assumptions on equality of the contained object or value.
+    /// Instead, this type exposes an <see cref="EqualityComparer"/> inner class
+    /// implementing <see cref="IEqualityComparer{T}"/> for this type with a
+    /// <see cref="EqualityComparer.Default"/> property to access a default implementation.
     /// </remarks>
     public abstract class Union<T1, T2, T3, T4, T5, T6, T7, T8>
 #if !NET472
@@ -2993,7 +3816,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals1(EqualityComparer equalityComparer, T1 x) => equalityComparer.EqualityComparer1.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals1(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => equalityComparer.EqualityComparer1.GetHashCode(Value);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType2 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3041,7 +3870,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals2(EqualityComparer equalityComparer, T2 x) => equalityComparer.EqualityComparer2.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals2(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer2.GetHashCode(Value), 1);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType3 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3089,7 +3924,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals3(EqualityComparer equalityComparer, T3 x) => equalityComparer.EqualityComparer3.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals3(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer3.GetHashCode(Value), 2);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType4 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3137,7 +3978,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals4(EqualityComparer equalityComparer, T4 x) => equalityComparer.EqualityComparer4.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals4(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer4.GetHashCode(Value), 3);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType5 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3185,7 +4032,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals5(EqualityComparer equalityComparer, T5 x) => equalityComparer.EqualityComparer5.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals5(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer5.GetHashCode(Value), 4);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType6 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3233,7 +4086,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals6(EqualityComparer equalityComparer, T6 x) => equalityComparer.EqualityComparer6.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals6(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer6.GetHashCode(Value), 5);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType7 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3281,7 +4140,13 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals7(EqualityComparer equalityComparer, T7 x) => equalityComparer.EqualityComparer7.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals7(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer7.GetHashCode(Value), 6);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
         }
 
         private sealed class ValueOfType8 : Union<T1, T2, T3, T4, T5, T6, T7, T8>
@@ -3329,7 +4194,145 @@ namespace System
                 else otherwise?.Invoke();
             }
 
-            public override string ToString() => Value.ToString() ?? string.Empty;
+            private protected override bool Equals8(EqualityComparer equalityComparer, T8 x) => equalityComparer.EqualityComparer8.Equals(x, Value);
+
+            private protected override bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y) => y.Equals8(equalityComparer, Value);
+
+            private protected override int GetHashCode(EqualityComparer equalityComparer) => Union.ShiftHashCode(equalityComparer.EqualityComparer8.GetHashCode(Value), 7);
+
+            public override string ToString() => Value?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Defines methods to test <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> values for equality and generate their hash codes.
+        /// </summary>
+        public class EqualityComparer : IEqualityComparer<Union<T1, T2, T3, T4, T5, T6, T7, T8>>
+        {
+            /// <summary>
+            /// Returns a default equality comparer for <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> based on default comparers defined in <see cref="EqualityComparer{T}"/>.
+            /// </summary>
+            public static EqualityComparer Default { get; } = new EqualityComparer();
+
+            /// <summary>
+            /// Gets the equality comparer for values of the first type.
+            /// </summary>
+            public IEqualityComparer<T1> EqualityComparer1 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the second type.
+            /// </summary>
+            public IEqualityComparer<T2> EqualityComparer2 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the third type.
+            /// </summary>
+            public IEqualityComparer<T3> EqualityComparer3 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fourth type.
+            /// </summary>
+            public IEqualityComparer<T4> EqualityComparer4 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the fifth type.
+            /// </summary>
+            public IEqualityComparer<T5> EqualityComparer5 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the sixth type.
+            /// </summary>
+            public IEqualityComparer<T6> EqualityComparer6 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the seventh type.
+            /// </summary>
+            public IEqualityComparer<T7> EqualityComparer7 { get; }
+
+            /// <summary>
+            /// Gets the equality comparer for values of the eighth type.
+            /// </summary>
+            public IEqualityComparer<T8> EqualityComparer8 { get; }
+
+            /// <summary>
+            /// Creates a new <see cref="EqualityComparer"/> from equality comparers for each of the possible types.
+            /// </summary>
+            /// <param name="equalityComparer1">
+            /// The equality comparer for values of the first type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer2">
+            /// The equality comparer for values of the second type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer3">
+            /// The equality comparer for values of the third type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer4">
+            /// The equality comparer for values of the fourth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer5">
+            /// The equality comparer for values of the fifth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer6">
+            /// The equality comparer for values of the sixth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer7">
+            /// The equality comparer for values of the seventh type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            /// <param name="equalityComparer8">
+            /// The equality comparer for values of the eighth type. If <see langword="null"/>, <see cref="EqualityComparer{T}.Default"/> is used.
+            /// </param>
+            public EqualityComparer(
+                [AllowNull] IEqualityComparer<T1> equalityComparer1 = null,
+                [AllowNull] IEqualityComparer<T2> equalityComparer2 = null,
+                [AllowNull] IEqualityComparer<T3> equalityComparer3 = null,
+                [AllowNull] IEqualityComparer<T4> equalityComparer4 = null,
+                [AllowNull] IEqualityComparer<T5> equalityComparer5 = null,
+                [AllowNull] IEqualityComparer<T6> equalityComparer6 = null,
+                [AllowNull] IEqualityComparer<T7> equalityComparer7 = null,
+                [AllowNull] IEqualityComparer<T8> equalityComparer8 = null)
+            {
+                EqualityComparer1 = equalityComparer1 ?? EqualityComparer<T1>.Default;
+                EqualityComparer2 = equalityComparer2 ?? EqualityComparer<T2>.Default;
+                EqualityComparer3 = equalityComparer3 ?? EqualityComparer<T3>.Default;
+                EqualityComparer4 = equalityComparer4 ?? EqualityComparer<T4>.Default;
+                EqualityComparer5 = equalityComparer5 ?? EqualityComparer<T5>.Default;
+                EqualityComparer6 = equalityComparer6 ?? EqualityComparer<T6>.Default;
+                EqualityComparer7 = equalityComparer7 ?? EqualityComparer<T7>.Default;
+                EqualityComparer8 = equalityComparer8 ?? EqualityComparer<T8>.Default;
+            }
+
+            /// <summary>
+            /// Tests whether the specified values are equal.
+            /// </summary>
+            /// <param name="x">
+            /// The first value to compare.
+            /// </param>
+            /// <param name="y">
+            /// The second value to compare.
+            /// </param>
+            /// <returns>
+            /// <see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.
+            /// </returns>
+            public bool Equals([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7, T8> x, [AllowNull] Union<T1, T2, T3, T4, T5, T6, T7, T8> y)
+            {
+                if (x is null) return y is null;
+                if (y is null) return false;
+                return x.Equals(this, y);
+            }
+
+            /// <summary>
+            /// Generates a hash code for the specified value.
+            /// </summary>
+            /// <param name="value">
+            /// The value for which a hash code must be generated.
+            /// </param>
+            /// <returns>
+            /// A hash code for the specified value.
+            /// </returns>
+            public int GetHashCode([AllowNull] Union<T1, T2, T3, T4, T5, T6, T7, T8> value)
+            {
+                if (value is null) return 0;
+                return value.GetHashCode(this);
+            }
         }
 
         /// <summary>
@@ -3402,7 +4405,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1() => false;
 
@@ -3410,7 +4413,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2() => false;
 
@@ -3418,7 +4421,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3() => false;
 
@@ -3426,7 +4429,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4() => false;
 
@@ -3434,7 +4437,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5() => false;
 
@@ -3442,7 +4445,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6() => false;
 
@@ -3450,7 +4453,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7() => false;
 
@@ -3458,7 +4461,7 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type.
         /// </summary>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption8() => false;
 
@@ -3466,10 +4469,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type.
         /// </summary>
         /// <param name="value">
-        /// The value of the first type, if this function returns true; otherwise a default value.
+        /// The value of the first type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the first type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption1([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T1 value)
         {
@@ -3481,10 +4484,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type.
         /// </summary>
         /// <param name="value">
-        /// The value of the second type, if this function returns true; otherwise a default value.
+        /// The value of the second type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the second type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption2([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T2 value)
         {
@@ -3496,10 +4499,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type.
         /// </summary>
         /// <param name="value">
-        /// The value of the third type, if this function returns true; otherwise a default value.
+        /// The value of the third type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the third type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption3([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T3 value)
         {
@@ -3511,10 +4514,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fourth type, if this function returns true; otherwise a default value.
+        /// The value of the fourth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fourth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption4([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T4 value)
         {
@@ -3526,10 +4529,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the fifth type, if this function returns true; otherwise a default value.
+        /// The value of the fifth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the fifth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption5([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T5 value)
         {
@@ -3541,10 +4544,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the sixth type, if this function returns true; otherwise a default value.
+        /// The value of the sixth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the sixth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption6([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T6 value)
         {
@@ -3556,10 +4559,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type.
         /// </summary>
         /// <param name="value">
-        /// The value of the seventh type, if this function returns true; otherwise a default value.
+        /// The value of the seventh type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the seventh type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption7([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T7 value)
         {
@@ -3571,10 +4574,10 @@ namespace System
         /// Checks if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type.
         /// </summary>
         /// <param name="value">
-        /// The value of the eighth type, if this function returns true; otherwise a default value.
+        /// The value of the eighth type, if this function returns <see langword="true"/>; otherwise a default value.
         /// </param>
         /// <returns>
-        /// True if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise false.
+        /// <see langword="true"/> if this <see cref="Union{T1, T2, T3, T4, T5, T6, T7, T8}"/> contains a value of the eighth type; otherwise <see langword="false"/>.
         /// </returns>
         public virtual bool IsOption8([AllowNull, NotNullWhen(true), MaybeNullWhen(false)] out T8 value)
         {
@@ -3766,5 +4769,18 @@ namespace System
             [AllowNull] Action<T7> whenOption7 = null,
             [AllowNull] Action<T8> whenOption8 = null,
             [AllowNull] Action otherwise = null);
+
+        private protected virtual bool Equals1(EqualityComparer equalityComparer, T1 y) => false;
+        private protected virtual bool Equals2(EqualityComparer equalityComparer, T2 y) => false;
+        private protected virtual bool Equals3(EqualityComparer equalityComparer, T3 y) => false;
+        private protected virtual bool Equals4(EqualityComparer equalityComparer, T4 y) => false;
+        private protected virtual bool Equals5(EqualityComparer equalityComparer, T5 y) => false;
+        private protected virtual bool Equals6(EqualityComparer equalityComparer, T6 y) => false;
+        private protected virtual bool Equals7(EqualityComparer equalityComparer, T7 y) => false;
+        private protected virtual bool Equals8(EqualityComparer equalityComparer, T8 y) => false;
+
+        private protected abstract bool Equals(EqualityComparer equalityComparer, Union<T1, T2, T3, T4, T5, T6, T7, T8> y);
+
+        private protected abstract int GetHashCode(EqualityComparer equalityComparer);
     }
 }

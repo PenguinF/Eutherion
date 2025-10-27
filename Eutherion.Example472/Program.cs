@@ -140,7 +140,7 @@ namespace Eutherion.Example472
                 Console.WriteLine();
 
                 // Union<T1, T2, T3>, UnreachableException, _void
-                var unionValues = new Union<_void, int, string>[] { _void._, 8, "x", _void._, -1, "-1" };
+                var unionValues = new Union<_void, int, string>[] { _void._, 8, "x", _void._, "X", -1, "-1" };
 
                 string PrintUnionValue(Union<_void, int, string> x) => x.Match(
                     whenOption1: _ => prettyVoidString,
@@ -155,9 +155,9 @@ namespace Eutherion.Example472
                     throw new UnreachableException();
                 }
 
-                // -> Union values: <void>, int: 8, string: "x", <void>, int: -1, string: "-1"
+                // -> Union values: <void>, int: 8, string: "x", <void>, string: "X", int: -1, string: "-1"
                 Console.WriteLine("Union values: " + string.Join(", ", unionValues.Select(PrintUnionValue)));
-                // -> Union values (2): <void>, int: 8, string: "x", <void>, int: -1, string: "-1"
+                // -> Union values (2): <void>, int: 8, string: "x", <void>, string: "X", int: -1, string: "-1"
                 Console.WriteLine("Union values (2): " + string.Join(", ", unionValues.Select(PrintUnionValue2)));
 
                 // LinqExtensions.ForEach
@@ -166,10 +166,42 @@ namespace Eutherion.Example472
                     ? $"There are at least {count} elements, such as this {PrintUnionValue(element)}"
                     : $"There are {count - 1} or fewer elements.";
 
-                // -> There are at least 5 elements, such as this int: -1
-                //    There are at least 6 elements, such as this string: "-1"
-                //    There are 6 or fewer elements.
-                new[] { 5, 6, 7 }.ForEach(n => Console.WriteLine(CheckNumberOfElements(unionValues, n)));
+                // -> There are at least 6 elements, such as this int: -1
+                //    There are at least 7 elements, such as this string: "-1"
+                //    There are 7 or fewer elements.
+                new[] { 6, 7, 8 }.ForEach(n => Console.WriteLine(CheckNumberOfElements(unionValues, n)));
+                Console.WriteLine();
+
+                // Union.EqualityComparer
+                Union<_void, int, string>.EqualityComparer defaultComparer = Union<_void, int, string>.EqualityComparer.Default;
+                Union<_void, int, string>.EqualityComparer ignoreCaseComparer = new Union<_void, int, string>.EqualityComparer(
+                    equalityComparer3: StringComparer.OrdinalIgnoreCase);
+
+                for (int i = 0; i < unionValues.Length; i++)
+                {
+                    for (int j = i; j < unionValues.Length; j++)
+                    {
+                        var value1 = unionValues[i];
+                        var value2 = unionValues[j];
+
+                        // Relevant output:
+                        // -> Equality of string: "x" and string: "X":  False (default)  True (ignore case)
+                        Console.WriteLine($"Equality of {PrintUnionValue(value1)} and {PrintUnionValue(value2)}:  "
+                            + defaultComparer.Equals(value1, value2) + " (default)  "
+                            + ignoreCaseComparer.Equals(value1, value2) + " (ignore case)");
+                    }
+                }
+
+                for (int i = 0; i < unionValues.Length; i++)
+                {
+                    var value = unionValues[i];
+
+                    // -> Hash code of string: "x":  1800933665 (default)  193472829 (ignore case)
+                    //    Hash code of string: "X":  1800968513 (default)  193472829 (ignore case)
+                    Console.WriteLine($"Hash code of {PrintUnionValue(value)}:  "
+                        + defaultComparer.GetHashCode(value) + " (default)  "
+                        + ignoreCaseComparer.GetHashCode(value) + " (ignore case)");
+                }
                 Console.WriteLine();
 
                 // DictionaryExtensions.GetOrAdd

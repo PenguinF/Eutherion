@@ -2,7 +2,7 @@
 /*********************************************************************************
  * TextFormatter.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,13 +26,16 @@ using System.Linq;
 namespace Eutherion.Text
 {
     /// <summary>
-    /// Defines an abstract method to provide formatted text for a <see cref="StringKey{T}"/> of <see cref="ForFormattedText"/>.
+    /// Defines an abstract method to provide formatted text for a <see cref="StringKey{T}"/>.
     /// </summary>
-    public abstract class TextFormatter
+    /// <typeparam name="T">
+    /// A unique type value to distinguish between identifiers of different types.
+    /// </typeparam>
+    public abstract class TextFormatter<T>
     {
-        private sealed class DefaultTextFormatter : TextFormatter
+        private sealed class DefaultTextFormatter : TextFormatter<T>
         {
-            public override string Format(StringKey<ForFormattedText> key, params string[] parameters)
+            public override string Format(StringKey<T> key, params string[] parameters)
             {
                 if (key == null) return string.Empty;
                 return "{" + key.Key + StringUtilities.ToDefaultParameterListDisplayString(parameters) + "}";
@@ -40,16 +43,16 @@ namespace Eutherion.Text
         }
 
         /// <summary>
-        /// Gets a reference to a default <see cref="TextFormatter"/>, which uses <see cref="StringUtilities.ToDefaultParameterListDisplayString(IEnumerable{string})"/>
-        /// to provide formatted text for any <see cref="StringKey{T}"/> of <see cref="ForFormattedText"/>. If the key is null, it returns an empty string.
+        /// Gets a reference to a default <see cref="TextFormatter{T}"/>, which uses <see cref="StringUtilities.ToDefaultParameterListDisplayString(IEnumerable{string})"/>
+        /// to provide formatted text for any <see cref="StringKey{T}"/>. If the key is <see langword="null"/>, it returns the empty string.
         /// </summary>
-        public static readonly TextFormatter Default = new DefaultTextFormatter();
+        public static readonly TextFormatter<T> Default = new DefaultTextFormatter();
 
         /// <summary>
-        /// Formats text given a <see cref="StringKey{T}"/> of <see cref="ForFormattedText"/> and parameters.
+        /// Formats text given a <see cref="StringKey{T}"/> and parameters.
         /// </summary>
         /// <param name="key">
-        /// The <see cref="StringKey{T}"/> of <see cref="ForFormattedText"/> for which to generate the formatted text.
+        /// The <see cref="StringKey{T}"/> for which to generate the formatted text.
         /// </param>
         /// <param name="parameters">
         /// The parameters of the formatted text to generate.
@@ -57,14 +60,14 @@ namespace Eutherion.Text
         /// <returns>
         /// The formatted text.
         /// </returns>
-        public string Format(StringKey<ForFormattedText> key, IEnumerable<string> parameters)
+        public string Format(StringKey<T> key, IEnumerable<string> parameters)
             => Format(key, parameters == null ? Array.Empty<string>() : parameters.ToArrayEx());
 
         /// <summary>
-        /// Formats text given a <see cref="StringKey{T}"/> of <see cref="ForFormattedText"/> and parameters.
+        /// Formats text given a <see cref="StringKey{T}"/> and parameters.
         /// </summary>
         /// <param name="key">
-        /// The <see cref="StringKey{T}"/> of <see cref="ForFormattedText"/> for which to generate the formatted text.
+        /// The <see cref="StringKey{T}"/> for which to generate the formatted text.
         /// </param>
         /// <param name="parameters">
         /// The parameters of the formatted text to generate.
@@ -72,6 +75,6 @@ namespace Eutherion.Text
         /// <returns>
         /// The formatted text.
         /// </returns>
-        public abstract string Format(StringKey<ForFormattedText> key, params string[] parameters);
+        public abstract string Format(StringKey<T> key, params string[] parameters);
     }
 }
