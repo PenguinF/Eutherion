@@ -42,12 +42,12 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the representation of the 'false' literal value in source text.
         /// </summary>
-        public static string False { get; } = "false";
+        public static string FalseString { get; } = "false";
 
         /// <summary>
         /// Gets the representation of the 'true' literal value in source text.
         /// </summary>
-        public static string True { get; } = "true";
+        public static string TrueString { get; } = "true";
 
         /// <summary>
         /// Attempts to create a syntax node from a string value.
@@ -85,12 +85,12 @@ namespace Eutherion.Text.Json
             char firstCharacter = value[0];
             if (firstCharacter == 'f')
             {
-                if (False.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.False.Instance;
+                if (FalseString.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.False.Instance;
                 return null;
             }
             else if (firstCharacter == 't')
             {
-                if (True.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.True.Instance;
+                if (TrueString.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.True.Instance;
                 return null;
             }
 
