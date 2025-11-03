@@ -144,6 +144,25 @@ namespace Eutherion.Text.Json.Tests
             Assert.Equal(1, GreenJsonUnknownSymbolSyntax.Value.Length);
         }
 
+        private static IEnumerable<(int expectedLength, JsonStringSegmentSyntax[] segments)> StringLiterals()
+        {
+            // Add 2 to include quotes for json strings.
+            yield return (2, Array.Empty<JsonStringSegmentSyntax>());
+            yield return (3, new JsonStringSegmentSyntax[] { JsonRegularStringSegmentSyntax.Create(1) });
+            yield return (4, new JsonStringSegmentSyntax[] { JsonSimpleEscapeSequenceSyntax.Value });
+            yield return (8, new JsonStringSegmentSyntax[] { JsonUnicodeEscapeSequenceSyntax.Value });
+        }
+
+        public static IEnumerable<object?[]> WrappedStringLiterals() => TestUtilities.Wrap(StringLiterals());
+
+        [Theory]
+        [MemberData(nameof(WrappedStringLiterals))]
+        public void StringSegmentLengths(int expectedLength, JsonStringSegmentSyntax[] segments)
+        {
+            var stringLiteral = GreenJsonStringLiteralSyntax.Create(segments);
+            Assert.Equal(expectedLength, stringLiteral.Length);
+        }
+
         [Theory]
         [InlineData(1)]
         [InlineData(255)]
