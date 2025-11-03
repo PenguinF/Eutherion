@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonParserTests.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ namespace Eutherion.Text.Json.Tests
             // Sane structure as JsonTokenizerTests.Transition: first check two symbols, then all combinations of three.
             {
                 string json = json1 + json2;
-                var expectedTokens = JsonParser.TokenizeAll(json).Item1;
+                var expectedTokens = JsonTestHelper.TokenizeAll(json).Item1;
                 Action<IJsonSymbol>[] tokenInspectors = expectedTokens.Select<IGreenJsonSymbol, Action<IJsonSymbol>>((IGreenJsonSymbol expectedGreen) => (IJsonSymbol red) =>
                 {
                     IGreenJsonSymbol actualGreen = TerminalSymbolTester.Instance.Visit(red);
@@ -149,7 +149,7 @@ namespace Eutherion.Text.Json.Tests
                 Enumerable.Repeat<Action<(string, Type)>>(x0 =>
                 {
                     string json = x0.Item1 + json1 + json2;
-                    var expectedTokens = JsonParser.TokenizeAll(json).Item1;
+                    var expectedTokens = JsonTestHelper.TokenizeAll(json).Item1;
                     Action<IJsonSymbol>[] tokenInspectors = expectedTokens.Select<IGreenJsonSymbol, Action<IJsonSymbol>>(expectedGreen => symbol =>
                     {
                         IGreenJsonSymbol actualGreen = TerminalSymbolTester.Instance.Visit(symbol);

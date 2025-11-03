@@ -22,7 +22,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -100,25 +99,6 @@ namespace Eutherion.Text.Json
         /// </exception>
         public static RootJsonSyntax Parse(string json, int maximumDepth) => new JsonParser(json, maximumDepth).Parse();
 
-        /// <summary>
-        /// Tokenizes the source Json from start to end.
-        /// </summary>
-        /// <param name="json">
-        /// The Json to tokenize.
-        /// </param>
-        /// <returns>
-        /// A list of <see cref="IGreenJsonSymbol"/> instances together with a list of generated tokenization errors.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="json"/> is <see langword="null"/>.
-        /// </exception>
-        internal static (List<IGreenJsonSymbol>, ReadOnlyList<JsonErrorInfo>) TokenizeAll(string json)
-        {
-            var parser = new JsonParser(json, DefaultMaximumDepth);
-            var tokens = parser.TokenizeAllHelper().ToList();
-            return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
-        }
-
         private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(string json, int startPosition)
             => new RootJsonSyntax(
                 json,
@@ -136,7 +116,7 @@ namespace Eutherion.Text.Json
         private IEnumerator<IGreenJsonSymbol> Tokens;
         private readonly string Json;
         private readonly int MaximumDepth;
-        private readonly ArrayBuilder<JsonErrorInfo> Errors = new ArrayBuilder<JsonErrorInfo>();
+        internal readonly ArrayBuilder<JsonErrorInfo> Errors = new ArrayBuilder<JsonErrorInfo>();
         private readonly ArrayBuilder<GreenJsonBackgroundSyntax> BackgroundBuilder = new ArrayBuilder<GreenJsonBackgroundSyntax>();
 
         // Invariant is that this index is always at the start of the yielded symbol.
@@ -149,7 +129,7 @@ namespace Eutherion.Text.Json
 
         private int CurrentDepth;
 
-        private JsonParser(string json, int maximumDepth)
+        internal JsonParser(string json, int maximumDepth)
         {
             Json = json ?? throw new ArgumentNullException(nameof(json));
             if (maximumDepth <= 0) throw new ArgumentOutOfRangeException(nameof(maximumDepth), maximumDepth, $"{maximumDepth} should be 1 or greater.");
@@ -522,7 +502,7 @@ namespace Eutherion.Text.Json
             }
         }
 
-        private IEnumerable<IGreenJsonSymbol> TokenizeAllHelper()
+        internal IEnumerable<IGreenJsonSymbol> TokenizeAllHelper()
         {
             // This tokenizer uses labels with goto to switch between modes of tokenization.
 

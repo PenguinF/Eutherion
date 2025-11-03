@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonTokenizerTests.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ namespace Eutherion.Text.Json.Tests
 
         private static void AssertTokens(string json, params Action<IGreenJsonSymbol>[] tokenInspectors)
         {
-            Assert.Collection(JsonParser.TokenizeAll(json).Item1, tokenInspectors);
+            Assert.Collection(JsonTestHelper.TokenizeAll(json).Item1, tokenInspectors);
         }
 
         private static Action<IGreenJsonSymbol> ExpectToken(Type expectedTokenType, int expectedLength)
@@ -107,7 +107,7 @@ namespace Eutherion.Text.Json.Tests
         [Fact]
         public void NullSourceThrows()
         {
-            Assert.Throws<ArgumentNullException>(() => JsonParser.TokenizeAll(null!));
+            Assert.Throws<ArgumentNullException>(() => JsonTestHelper.TokenizeAll(null!));
             Assert.Throws<ArgumentNullException>(() => JsonParser.Parse(null!));
         }
 
@@ -414,7 +414,7 @@ namespace Eutherion.Text.Json.Tests
             if (linefeedIndex >= 0)
             {
                 // Only assert the single line comment, and that the next symbol is whitespace ('\n').
-                var symbols = JsonParser.TokenizeAll(commentThenSymbolText).Item1;
+                var symbols = JsonTestHelper.TokenizeAll(commentThenSymbolText).Item1;
                 Assert.True(symbols.Count >= 2);
                 ExpectToken<GreenJsonCommentSyntax>(2 + linefeedIndex)(symbols[0]);
                 Assert.IsType<GreenJsonWhitespaceSyntax>(symbols[1]);
@@ -571,7 +571,7 @@ namespace Eutherion.Text.Json.Tests
         [MemberData(nameof(WrappedErrorStrings))]
         public void Errors(string json, JsonErrorInfo[] expectedErrors)
         {
-            var tokensAndErrors = JsonParser.TokenizeAll(json);
+            var tokensAndErrors = JsonTestHelper.TokenizeAll(json);
             var generatedErrors = tokensAndErrors.Item2;
 
             Assert.Collection(generatedErrors, expectedErrors.Select(expectedError => new Action<JsonErrorInfo>(generatedError =>
