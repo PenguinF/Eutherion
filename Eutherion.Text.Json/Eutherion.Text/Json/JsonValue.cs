@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonValue.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,12 +42,12 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the representation of the 'false' literal value in source text.
         /// </summary>
-        public static readonly string False = "false";
+        public static string False { get; } = "false";
 
         /// <summary>
         /// Gets the representation of the 'true' literal value in source text.
         /// </summary>
-        public static readonly string True = "true";
+        public static string True { get; } = "true";
 
         /// <summary>
         /// Attempts to create a syntax node from a string value.

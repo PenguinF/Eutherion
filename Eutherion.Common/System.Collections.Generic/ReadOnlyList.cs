@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ReadOnlyList.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ namespace System.Collections.Generic
         /// Gets the empty <see cref="ReadOnlyList{T}"/>.
         /// </summary>
 #if NET5_0_OR_GREATER
-        public static readonly ReadOnlyList<T> Empty = new(Array.Empty<T>(), 0);
+        public static ReadOnlyList<T> Empty { get; } = new(Array.Empty<T>(), 0);
 #else
-        public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>(Array.Empty<T>(), 0);
+        public static ReadOnlyList<T> Empty { get; } = new ReadOnlyList<T>(Array.Empty<T>(), 0);
 #endif
 
         /// <summary>

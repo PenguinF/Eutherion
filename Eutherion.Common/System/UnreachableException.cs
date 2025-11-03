@@ -2,7 +2,7 @@
 /*********************************************************************************
  * UnreachableException.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace System
         /// <summary>
         /// Gets the standard message for an <see cref="UnreachableException"/>. This message is never supposed to be shown, and so is not multilingual.
         /// </summary>
-        public static readonly string UnreachableExceptionMessage = "This part of the software was assumed to be unreachable.";
+        public static string UnreachableExceptionMessage { get; } = "This part of the software was assumed to be unreachable.";
 
         /// <summary>
         /// Initializes a new instance of <see cref="UnreachableException"/>.

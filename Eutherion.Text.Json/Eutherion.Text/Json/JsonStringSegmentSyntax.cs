@@ -102,7 +102,7 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Returns the singleton instance.
         /// </summary>
-        public static readonly JsonSimpleEscapeSequenceSyntax Value
+        public static JsonSimpleEscapeSequenceSyntax Value { get; }
 #if NET5_0_OR_GREATER
             = new();
 #else
@@ -169,7 +169,7 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Returns the singleton instance.
         /// </summary>
-        public static readonly JsonUnicodeEscapeSequenceSyntax Value
+        public static JsonUnicodeEscapeSequenceSyntax Value { get; }
 #if NET5_0_OR_GREATER
             = new();
 #else
