@@ -20,6 +20,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Eutherion.Text.Json
 {
@@ -28,12 +30,15 @@ namespace Eutherion.Text.Json
     /// </summary>
     public sealed class GreenJsonStringLiteralSyntax : GreenJsonValueSyntax, IGreenJsonSymbol
     {
-        private string Value { get; }
+        /// <summary>
+        /// Returns the list of string segments contained in this string literal.
+        /// </summary>
+        internal ReadOnlySpanList<JsonStringSegmentSyntax> Segments { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
-        public override int Length { get; }
+        public override int Length => Segments.Length + JsonSpecialCharacter.SingleCharacterLength * 2;  // Add opening and closing quote characters.
 
         /// <summary>
         /// Gets the type of this symbol.
@@ -45,16 +50,16 @@ namespace Eutherion.Text.Json
         /// </summary>
         public override bool IsStringLiteral => true;
 
-        internal GreenJsonStringLiteralSyntax(string value, int length)
+        private GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax> segments) => Segments = segments;
+
+        internal static GreenJsonStringLiteralSyntax FromBuilder(ArrayBuilder<JsonStringSegmentSyntax> source)
         {
-            Value = value ?? throw new ArgumentNullException(nameof(value));
-            if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
-            Length = length;
+            return new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(source));
         }
 
         internal string CalculateValue(ReadOnlySpan<char> source)
         {
-            return Value;
+            return string.Concat(Segments.Select(x => x.Value));
         }
 
         internal override TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitStringLiteralSyntax(this, arg);

@@ -22,7 +22,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Eutherion.Text.Json
@@ -696,9 +695,7 @@ namespace Eutherion.Text.Json
                         }
                         else
                         {
-                            ReadOnlySpanList<JsonStringSegmentSyntax> segments = ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(stringSegmentBuilder);
-                            int stringLiteralLength = segments.Length + 2;  // Add opening and closing quote characters.
-                            yield return new GreenJsonStringLiteralSyntax(string.Concat(segments.Select(x => x.Value)), stringLiteralLength);
+                            yield return GreenJsonStringLiteralSyntax.FromBuilder(stringSegmentBuilder);
                         }
                         SymbolStartIndex = currentIndex;
                         goto inWhitespace;
