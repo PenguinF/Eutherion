@@ -678,6 +678,9 @@ namespace Eutherion.Text.Json
             // Eat " character, but leave SymbolStartIndex unchanged.
             currentIndex++;
 
+            // Keeps track of number of characters seen for a regular string segment.
+            int regularSegmentLength = 0;
+
             while (currentIndex < length)
             {
                 char c = Json[currentIndex];
@@ -695,12 +698,25 @@ namespace Eutherion.Text.Json
                         }
                         else
                         {
+                            // Capture trailing segment.
+                            if (regularSegmentLength > 0)
+                            {
+                                stringSegmentBuilder.Add(JsonRegularStringSegmentSyntax.Create(regularSegmentLength));
+                            }
+
                             yield return GreenJsonStringLiteralSyntax.FromBuilder(stringSegmentBuilder);
                         }
                         SymbolStartIndex = currentIndex;
                         goto inWhitespace;
                     case CStyleStringLiteral.EscapeCharacter:
                         // Escape sequence.
+                        // Capture possible regular segment.
+                        if (regularSegmentLength > 0)
+                        {
+                            stringSegmentBuilder.Add(JsonRegularStringSegmentSyntax.Create(regularSegmentLength));
+                            regularSegmentLength = 0;
+                        }
+
                         // Look ahead one character.
                         int escapeSequenceStart = currentIndex;
                         currentIndex++;
@@ -800,15 +816,12 @@ namespace Eutherion.Text.Json
                         }
                         break;
                     default:
+                        regularSegmentLength++;
                         if (CStyleStringLiteral.CharacterMustBeEscaped(c))
                         {
                             // Generate user friendly representation of the illegal character in error message.
                             hasStringErrors = true;
                             Report(JsonParseErrors.IllegalControlCharacterInString(c, currentIndex));
-                        }
-                        else
-                        {
-                            stringSegmentBuilder.Add(new JsonRegularStringSegmentSyntax(c.ToString(), 1));
                         }
                         break;
                 }

@@ -49,22 +49,37 @@ namespace Eutherion.Text.Json
     /// </summary>
     internal sealed class JsonRegularStringSegmentSyntax : JsonStringSegmentSyntax
     {
-        public string Value { get; }
-
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public override int Length { get; }
 
-        internal JsonRegularStringSegmentSyntax(string value, int length)
-        {
-            Value = value;
-            Length = length;
-        }
+        /// <summary>
+        /// Initializes a new instance of <see cref="JsonRegularStringSegmentSyntax"/> with a specified length.
+        /// </summary>
+        /// <param name="length">
+        /// The length of the text span corresponding with the node to create.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="JsonRegularStringSegmentSyntax"/>.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="length"/> is 0 or lower.
+        /// </exception>
+        internal static JsonRegularStringSegmentSyntax Create(int length)
+            => length <= 0 ? throw new ArgumentOutOfRangeException(nameof(length))
+            : new JsonRegularStringSegmentSyntax(length);
+
+        private JsonRegularStringSegmentSyntax(int length) => Length = length;
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
         {
-            valueBuilder.Append(Value);
+#if NET472
+            // .NET 4.7.2 doesn't have the desired overload yet.
+            for (int i = 0; i < source.Length; i++) valueBuilder.Append(source[i]);
+#else
+            valueBuilder.Append(source);
+#endif
         }
     }
 
