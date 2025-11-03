@@ -52,9 +52,45 @@ namespace Eutherion.Text.Json
 
         private GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax> segments) => Segments = segments;
 
-        internal static GreenJsonStringLiteralSyntax FromBuilder(ArrayBuilder<JsonStringSegmentSyntax> source)
+        /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonStringLiteralSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="source">
+        /// The builder with string segments contained in this string literal.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="GreenJsonStringLiteralSyntax"/> representing the string literal with the given segments.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
+        /// </exception>
+        public static GreenJsonStringLiteralSyntax FromBuilder(ArrayBuilder<JsonStringSegmentSyntax> source)
         {
             return new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(source));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonStringLiteralSyntax"/>.
+        /// </summary>
+        /// <param name="source">
+        /// The enumeration of string segments contained in this string literal.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="GreenJsonStringLiteralSyntax"/> representing the string literal with the given segments.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
+        /// </exception>
+        public static GreenJsonStringLiteralSyntax Create(IEnumerable<JsonStringSegmentSyntax> source)
+        {
+            return new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.Create(source));
         }
 
         internal string CalculateValue(ReadOnlySpan<char> source)

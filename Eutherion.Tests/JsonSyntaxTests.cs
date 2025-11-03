@@ -72,6 +72,9 @@ namespace Eutherion.Text.Json.Tests
             Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonCurlyCloseSyntax)null!));
             Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonSquareBracketCloseSyntax)null!));
 
+            Assert.Throws<ArgumentNullException>("source", () => GreenJsonStringLiteralSyntax.FromBuilder(null!));
+            Assert.Throws<ArgumentNullException>("source", () => GreenJsonStringLiteralSyntax.Create(null!));
+
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonUndefinedValueSyntax(0));
 
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonUnterminatedMultiLineCommentSyntax(-1));
