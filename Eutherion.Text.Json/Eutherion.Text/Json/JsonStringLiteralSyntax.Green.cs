@@ -31,6 +31,11 @@ namespace Eutherion.Text.Json
     public sealed class GreenJsonStringLiteralSyntax : GreenJsonValueSyntax, IGreenJsonSymbol
     {
         /// <summary>
+        /// Gets the empty <see cref="GreenJsonStringLiteralSyntax"/>.
+        /// </summary>
+        public static GreenJsonStringLiteralSyntax Empty { get; } = new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.Empty);
+
+        /// <summary>
         /// Returns the list of string segments contained in this string literal.
         /// </summary>
         public ReadOnlySpanList<JsonStringSegmentSyntax> Segments { get; }
@@ -70,7 +75,9 @@ namespace Eutherion.Text.Json
         /// </exception>
         public static GreenJsonStringLiteralSyntax FromBuilder(ArrayBuilder<JsonStringSegmentSyntax> source)
         {
-            return new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(source));
+            ReadOnlySpanList<JsonStringSegmentSyntax> segments = ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(source);
+            if (segments.Count == 0) return Empty;
+            return new GreenJsonStringLiteralSyntax(segments);
         }
 
         /// <summary>
@@ -90,7 +97,9 @@ namespace Eutherion.Text.Json
         /// </exception>
         public static GreenJsonStringLiteralSyntax Create(IEnumerable<JsonStringSegmentSyntax> source)
         {
-            return new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.Create(source));
+            ReadOnlySpanList<JsonStringSegmentSyntax> segments = ReadOnlySpanList<JsonStringSegmentSyntax>.Create(source);
+            if (segments.Count == 0) return Empty;
+            return new GreenJsonStringLiteralSyntax(segments);
         }
 
         internal string CalculateValue(ReadOnlySpan<char> source)
