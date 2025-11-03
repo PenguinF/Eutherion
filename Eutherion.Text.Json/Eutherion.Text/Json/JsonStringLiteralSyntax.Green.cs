@@ -21,7 +21,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 
 namespace Eutherion.Text.Json
 {
@@ -59,7 +59,14 @@ namespace Eutherion.Text.Json
 
         internal string CalculateValue(ReadOnlySpan<char> source)
         {
-            return string.Concat(Segments.Select(x => x.Value));
+            StringBuilder valueBuilder = new StringBuilder();
+
+            foreach (var segment in Segments)
+            {
+                valueBuilder.Append(segment.Value);
+            }
+
+            return valueBuilder.ToString();
         }
 
         internal override TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitStringLiteralSyntax(this, arg);
