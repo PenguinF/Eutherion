@@ -274,7 +274,7 @@ namespace Eutherion.Text.Json.Tests
                 Assert.NotNull(symbol);
                 var stringSymbol = Assert.IsType<GreenJsonStringLiteralSyntax>(symbol);
                 Assert.Equal(json.Length, symbol.Length);
-                Assert.Equal(expectedValue, stringSymbol.Value);
+                Assert.Equal(expectedValue, stringSymbol.CalculateValue(json.AsSpan()));
             });
         }
 
