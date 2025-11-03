@@ -59,11 +59,16 @@ namespace Eutherion.Text.Json
 
         internal string CalculateValue(ReadOnlySpan<char> source)
         {
+            // Skip opening quote.
+            int currentIndex = JsonSpecialCharacter.SingleCharacterLength;
+
             StringBuilder valueBuilder = new StringBuilder();
 
             foreach (var segment in Segments)
             {
-                valueBuilder.Append(segment.Value);
+                int length = segment.Length;
+                segment.AppendToStringLiteralValue(valueBuilder, source.Slice(currentIndex, length));
+                currentIndex += length;
             }
 
             return valueBuilder.ToString();

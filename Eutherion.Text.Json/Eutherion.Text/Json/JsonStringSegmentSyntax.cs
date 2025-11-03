@@ -19,6 +19,9 @@
 **********************************************************************************/
 #endregion
 
+using System;
+using System.Text;
+
 namespace Eutherion.Text.Json
 {
     /// <summary>
@@ -42,6 +45,11 @@ namespace Eutherion.Text.Json
         {
             Value = value;
             Length = length;
+        }
+
+        internal void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
+        {
+            valueBuilder.Append(Value);
         }
     }
 }
