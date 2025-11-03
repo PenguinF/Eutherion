@@ -88,17 +88,21 @@ namespace Eutherion.Text.Json
     /// </summary>
     internal sealed class JsonSimpleEscapeSequenceSyntax : JsonStringSegmentSyntax
     {
+        /// <summary>
+        /// Represents the length of a simple escape sequence within a string literal.
+        /// </summary>
+        public const int SimpleEscapeSequenceLength = 2;
+
         public string Value { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
-        public override int Length { get; }
+        public override int Length => SimpleEscapeSequenceLength;
 
-        internal JsonSimpleEscapeSequenceSyntax(string value, int length)
+        internal JsonSimpleEscapeSequenceSyntax(string value)
         {
             Value = value;
-            Length = length;
         }
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
