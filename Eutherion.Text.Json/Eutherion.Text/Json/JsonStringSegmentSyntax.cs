@@ -42,7 +42,10 @@ namespace Eutherion.Text.Json
 
         internal JsonStringSegmentSyntax() { }
 
+        // Would conceptually be a visitor, except ReadOnlySpan<char> is not accepted as a generic type parameter.
         internal abstract void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source);
+
+        internal abstract TResult Accept<T, TResult>(JsonStringSegmentSyntaxVisitor<T, TResult> visitor, T arg);
     }
 
     /// <summary>
@@ -82,6 +85,8 @@ namespace Eutherion.Text.Json
             valueBuilder.Append(source);
 #endif
         }
+
+        internal override TResult Accept<T, TResult>(JsonStringSegmentSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitRegularStringSegmentSyntax(this, arg);
     }
 
     /// <summary>
@@ -141,6 +146,8 @@ namespace Eutherion.Text.Json
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
             => valueBuilder.Append(SimpleEscapeSequenceValue(source));
+
+        internal override TResult Accept<T, TResult>(JsonStringSegmentSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitSimpleEscapeSequenceSyntax(this, arg);
     }
 
     /// <summary>
@@ -205,5 +212,7 @@ namespace Eutherion.Text.Json
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
             => valueBuilder.Append(UnicodeEscapeSequenceValue(source));
+
+        internal override TResult Accept<T, TResult>(JsonStringSegmentSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitUnicodeEscapeSequenceSyntax(this, arg);
     }
 }
