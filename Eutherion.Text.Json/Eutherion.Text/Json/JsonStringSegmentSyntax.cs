@@ -159,21 +159,51 @@ namespace Eutherion.Text.Json
         // "\u" plus 4 hexadecimal digits.
         public const int UnicodeEscapeSequenceLength = JsonSpecialCharacter.SingleCharacterLength * 2 + ExpectedHexValueLength;
 
-        public string Value { get; }
+        /// <summary>
+        /// Returns the singleton instance.
+        /// </summary>
+        public static readonly JsonUnicodeEscapeSequenceSyntax Value
+#if NET5_0_OR_GREATER
+            = new();
+#else
+            = new JsonUnicodeEscapeSequenceSyntax();
+#endif
+
+        private static char UnicodeEscapeSequenceValue(ReadOnlySpan<char> source)
+        {
+            int unicodeValue = 0;
+            for (int i = 0; i < ExpectedHexValueLength; i++)
+            {
+                // 1 hex character = 4 bits.
+                unicodeValue <<= 4;
+                char hexChar = source[i + 2];
+                if ('0' <= hexChar && hexChar <= '9')
+                {
+                    unicodeValue = unicodeValue + hexChar - '0';
+                }
+                else if ('a' <= hexChar && hexChar <= 'f')
+                {
+                    const int aValue = 'a' - 10;
+                    unicodeValue = unicodeValue + hexChar - aValue;
+                }
+                else
+                {
+                    Debug.Assert('A' <= hexChar && hexChar <= 'F');
+                    const int aValue = 'A' - 10;
+                    unicodeValue = unicodeValue + hexChar - aValue;
+                }
+            }
+            return (char)unicodeValue;
+        }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public override int Length => UnicodeEscapeSequenceLength;
 
-        internal JsonUnicodeEscapeSequenceSyntax(string value)
-        {
-            Value = value;
-        }
+        private JsonUnicodeEscapeSequenceSyntax() { }
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
-        {
-            valueBuilder.Append(Value);
-        }
+            => valueBuilder.Append(UnicodeEscapeSequenceValue(source));
     }
 }

@@ -740,7 +740,6 @@ namespace Eutherion.Text.Json
                                     break;
                                 case 'u':
                                     bool validUnicodeSequence = true;
-                                    int unicodeValue = 0;
 
                                     // Expect exactly 4 hex characters.
                                     for (int i = 0; i < JsonUnicodeEscapeSequenceSyntax.ExpectedHexValueLength; i++)
@@ -748,24 +747,10 @@ namespace Eutherion.Text.Json
                                         currentIndex++;
                                         if (currentIndex < length)
                                         {
-                                            // 1 hex character = 4 bits.
-                                            unicodeValue <<= 4;
                                             char hexChar = Json[currentIndex];
-                                            if ('0' <= hexChar && hexChar <= '9')
-                                            {
-                                                unicodeValue = unicodeValue + hexChar - '0';
-                                            }
-                                            else if ('a' <= hexChar && hexChar <= 'f')
-                                            {
-                                                const int aValue = 'a' - 10;
-                                                unicodeValue = unicodeValue + hexChar - aValue;
-                                            }
-                                            else if ('A' <= hexChar && hexChar <= 'F')
-                                            {
-                                                const int aValue = 'A' - 10;
-                                                unicodeValue = unicodeValue + hexChar - aValue;
-                                            }
-                                            else
+                                            if (!('0' <= hexChar && hexChar <= '9'
+                                                || 'a' <= hexChar && hexChar <= 'f'
+                                                || 'A' <= hexChar && hexChar <= 'F'))
                                             {
                                                 currentIndex--;
                                                 validUnicodeSequence = false;
@@ -782,7 +767,7 @@ namespace Eutherion.Text.Json
 
                                     if (validUnicodeSequence)
                                     {
-                                        stringSegmentBuilder.Add(new JsonUnicodeEscapeSequenceSyntax(Convert.ToChar(unicodeValue).ToString()));
+                                        stringSegmentBuilder.Add(JsonUnicodeEscapeSequenceSyntax.Value);
                                     }
                                     else
                                     {
