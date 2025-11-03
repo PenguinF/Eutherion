@@ -42,7 +42,7 @@ namespace Eutherion.Text.Json
         public override int Length => Green.Length;
 
         /// <summary>
-        /// Returns <see langword="true"/> because this sytnax node represents a valid JSON value.
+        /// Returns <see langword="true"/> because this syntax node represents a valid JSON value.
         /// </summary>
         public override bool IsValidValue => true;
 
