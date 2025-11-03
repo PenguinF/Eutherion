@@ -45,22 +45,7 @@ namespace Eutherion.Text.Json
         /// </summary>
         public override bool IsStringLiteral => true;
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="GreenJsonStringLiteralSyntax"/>.
-        /// </summary>
-        /// <param name="value">
-        /// The string value to be represented by this literal syntax.
-        /// </param>
-        /// <param name="length">
-        /// The length of the text span corresponding with this syntax node.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="value"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="length"/> is 0 or lower.
-        /// </exception>
-        public GreenJsonStringLiteralSyntax(string value, int length)
+        internal GreenJsonStringLiteralSyntax(string value, int length)
         {
             Value = value ?? throw new ArgumentNullException(nameof(value));
             if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
