@@ -28,10 +28,7 @@ namespace Eutherion.Text.Json
     /// </summary>
     public sealed class GreenJsonStringLiteralSyntax : GreenJsonValueSyntax, IGreenJsonSymbol
     {
-        /// <summary>
-        /// Gets the string value represented by this literal syntax.
-        /// </summary>
-        public string Value { get; }
+        private string Value { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
