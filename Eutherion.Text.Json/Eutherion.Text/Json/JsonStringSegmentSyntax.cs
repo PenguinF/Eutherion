@@ -32,22 +32,85 @@ namespace Eutherion.Text.Json
     /// Nor are they significant outside of the context of a string literal, and so they do not implement <see cref="IGreenJsonSymbol"/>.
     /// However, these classes do expose a structure similar to regular syntax nodes, so they follow some of their conventions.
     /// </remarks>
-    internal class JsonStringSegmentSyntax : ISpan
+    internal abstract class JsonStringSegmentSyntax : ISpan
+    {
+        /// <summary>
+        /// Gets the length of the text span corresponding with this syntax node.
+        /// </summary>
+        public abstract int Length { get; }
+
+        internal JsonStringSegmentSyntax() { }
+
+        internal abstract void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source);
+    }
+
+    /// <summary>
+    /// Represents a syntax node which contains a string literal segment with only regular unescaped characters.
+    /// </summary>
+    internal sealed class JsonRegularStringSegmentSyntax : JsonStringSegmentSyntax
     {
         public string Value { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
-        public int Length { get; }
+        public override int Length { get; }
 
-        internal JsonStringSegmentSyntax(string value, int length)
+        internal JsonRegularStringSegmentSyntax(string value, int length)
         {
             Value = value;
             Length = length;
         }
 
-        internal void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
+        internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
+        {
+            valueBuilder.Append(Value);
+        }
+    }
+
+    /// <summary>
+    /// Represents a syntax node containing a single escaped character.
+    /// </summary>
+    internal sealed class JsonSimpleEscapeSequenceSyntax : JsonStringSegmentSyntax
+    {
+        public string Value { get; }
+
+        /// <summary>
+        /// Gets the length of the text span corresponding with this syntax node.
+        /// </summary>
+        public override int Length { get; }
+
+        internal JsonSimpleEscapeSequenceSyntax(string value, int length)
+        {
+            Value = value;
+            Length = length;
+        }
+
+        internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
+        {
+            valueBuilder.Append(Value);
+        }
+    }
+
+    /// <summary>
+    /// Represents a syntax node containing a unicode escape sequence.
+    /// </summary>
+    internal sealed class JsonUnicodeEscapeSequenceSyntax : JsonStringSegmentSyntax
+    {
+        public string Value { get; }
+
+        /// <summary>
+        /// Gets the length of the text span corresponding with this syntax node.
+        /// </summary>
+        public override int Length { get; }
+
+        internal JsonUnicodeEscapeSequenceSyntax(string value, int length)
+        {
+            Value = value;
+            Length = length;
+        }
+
+        internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
         {
             valueBuilder.Append(Value);
         }
