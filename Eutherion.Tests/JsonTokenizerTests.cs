@@ -263,10 +263,18 @@ namespace Eutherion.Text.Json.Tests
         [InlineData("\"\\t\"", "\t")]
         [InlineData("\"\\v\"", "\v")]  // Support \v, contrary to JSON specification.
 
+        // Explicitly avoid automatic newline conversions.
+        [InlineData("\"\\r\\n\"", "\r\n")]
+        [InlineData("\"\\n\\r\"", "\n\r")]
+        [InlineData("\"\\r\\r\"", "\r\r")]
+        [InlineData("\"\\n\\n\"", "\n\n")]
+
         // \u escape sequences.
         [InlineData("\"\\u000d\\u000a\"", "\r\n")]
         [InlineData("\"\\u0020\\u004E\"", " N")]
         [InlineData("\"\\u00200\"", " 0")] // last 0 is not part of the \u escape sequence
+        [InlineData("\"\\u0020a\"", " a")]
+        [InlineData("\"\\u0020F\"", " F")]
         public void StringValue(string json, string expectedValue)
         {
             AssertTokens(json, symbol =>

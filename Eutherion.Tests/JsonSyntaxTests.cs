@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonSyntaxTests.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -142,20 +142,6 @@ namespace Eutherion.Text.Json.Tests
             Assert.Equal(1, GreenJsonSquareBracketCloseSyntax.Value.Length);
             Assert.Equal(1, GreenJsonSquareBracketOpenSyntax.Value.Length);
             Assert.Equal(1, GreenJsonUnknownSymbolSyntax.Value.Length);
-        }
-
-        [Theory]
-        [InlineData("\"", 10)]
-        [InlineData("{}", 3)]
-        // No newline conversions.
-        [InlineData("\n", 1)]
-        [InlineData("\r\n", 2)]
-        public void UnchangedStringLiteralValueParameter(string value, int length)
-        {
-            // Length includes quotes for json strings.
-            var jsonString = new GreenJsonStringLiteralSyntax(value, length + 2);
-            Assert.Equal(value, jsonString.Value);
-            Assert.Equal(length + 2, jsonString.Length);
         }
 
         [Theory]
