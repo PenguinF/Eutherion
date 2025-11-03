@@ -22,8 +22,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Eutherion.Text.Json
 {
@@ -508,7 +508,7 @@ namespace Eutherion.Text.Json
 
             int length = Json.Length;
             int currentIndex = SymbolStartIndex;
-            StringBuilder stringSegmentBuilder = new StringBuilder();
+            ArrayBuilder<JsonStringSegmentSyntax> stringSegmentBuilder = new ArrayBuilder<JsonStringSegmentSyntax>();
 
         inWhitespace:
 
@@ -679,9 +679,6 @@ namespace Eutherion.Text.Json
             // Eat " character, but leave SymbolStartIndex unchanged.
             currentIndex++;
 
-            // Prepare for use.
-            stringSegmentBuilder.Clear();
-
             while (currentIndex < length)
             {
                 char c = Json[currentIndex];
@@ -693,11 +690,15 @@ namespace Eutherion.Text.Json
                         currentIndex++;
                         if (hasStringErrors)
                         {
+                            // Discards built string segments.
+                            stringSegmentBuilder.Commit();
                             yield return new GreenJsonErrorStringSyntax(currentIndex - SymbolStartIndex);
                         }
                         else
                         {
-                            yield return new GreenJsonStringLiteralSyntax(stringSegmentBuilder.ToString(), currentIndex - SymbolStartIndex);
+                            ReadOnlySpanList<JsonStringSegmentSyntax> segments = ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(stringSegmentBuilder);
+                            int stringLiteralLength = segments.Length + 2;  // Add opening and closing quote characters.
+                            yield return new GreenJsonStringLiteralSyntax(string.Concat(segments.Select(x => x.Value)), stringLiteralLength);
                         }
                         SymbolStartIndex = currentIndex;
                         goto inWhitespace;
@@ -716,25 +717,25 @@ namespace Eutherion.Text.Json
                                 case CStyleStringLiteral.QuoteCharacter:
                                 case CStyleStringLiteral.EscapeCharacter:
                                 case '/':  // Weird one, but it's in the specification.
-                                    stringSegmentBuilder.Append(escapedChar);
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax(escapedChar.ToString(), 2));
                                     break;
                                 case 'b':
-                                    stringSegmentBuilder.Append('\b');
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax("\b", 2));
                                     break;
                                 case 'f':
-                                    stringSegmentBuilder.Append('\f');
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax("\f", 2));
                                     break;
                                 case 'n':
-                                    stringSegmentBuilder.Append('\n');
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax("\n", 2));
                                     break;
                                 case 'r':
-                                    stringSegmentBuilder.Append('\r');
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax("\r", 2));
                                     break;
                                 case 't':
-                                    stringSegmentBuilder.Append('\t');
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax("\t", 2));
                                     break;
                                 case 'v':
-                                    stringSegmentBuilder.Append('\v');
+                                    stringSegmentBuilder.Add(new JsonStringSegmentSyntax("\v", 2));
                                     break;
                                 case 'u':
                                     bool validUnicodeSequence = true;
@@ -781,7 +782,7 @@ namespace Eutherion.Text.Json
 
                                     if (validUnicodeSequence)
                                     {
-                                        stringSegmentBuilder.Append(Convert.ToChar(unicodeValue));
+                                        stringSegmentBuilder.Add(new JsonStringSegmentSyntax(Convert.ToChar(unicodeValue).ToString(), 6));
                                     }
                                     else
                                     {
@@ -810,7 +811,7 @@ namespace Eutherion.Text.Json
                         }
                         else
                         {
-                            stringSegmentBuilder.Append(c);
+                            stringSegmentBuilder.Add(new JsonStringSegmentSyntax(c.ToString(), 1));
                         }
                         break;
                 }

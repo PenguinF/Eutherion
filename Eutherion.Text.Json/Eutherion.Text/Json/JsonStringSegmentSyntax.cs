@@ -21,4 +21,27 @@
 
 namespace Eutherion.Text.Json
 {
+    /// <summary>
+    /// Represents a syntax node which contains a segment of a string literal.
+    /// </summary>
+    /// <remarks>
+    /// These are not considered to be separate tokens as they don't play a separate role in a grammar.
+    /// Nor are they significant outside of the context of a string literal, and so they do not implement <see cref="IGreenJsonSymbol"/>.
+    /// However, these classes do expose a structure similar to regular syntax nodes, so they follow some of their conventions.
+    /// </remarks>
+    internal class JsonStringSegmentSyntax : ISpan
+    {
+        public string Value { get; }
+
+        /// <summary>
+        /// Gets the length of the text span corresponding with this syntax node.
+        /// </summary>
+        public int Length { get; }
+
+        internal JsonStringSegmentSyntax(string value, int length)
+        {
+            Value = value;
+            Length = length;
+        }
+    }
 }
