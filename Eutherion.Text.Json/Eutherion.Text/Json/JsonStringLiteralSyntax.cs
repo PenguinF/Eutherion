@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonStringLiteralSyntax.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@
 **********************************************************************************/
 #endregion
 
+using Eutherion.Threading;
+using System;
+
 namespace Eutherion.Text.Json
 {
     /// <summary>
@@ -31,10 +34,12 @@ namespace Eutherion.Text.Json
         /// </summary>
         public GreenJsonStringLiteralSyntax Green { get; }
 
+        private readonly SafeLazy<string> LazyValue;
+
         /// <summary>
         /// Gets the string value represented by this literal syntax.
         /// </summary>
-        public string Value => Green.Value;
+        public string Value => LazyValue.Value;
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
@@ -46,7 +51,12 @@ namespace Eutherion.Text.Json
         /// </summary>
         public override bool IsValidValue => true;
 
-        internal JsonStringLiteralSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonStringLiteralSyntax green) : base(parent) => Green = green;
+        internal JsonStringLiteralSyntax(JsonValueWithBackgroundSyntax parent, GreenJsonStringLiteralSyntax green)
+            : base(parent)
+        {
+            Green = green;
+            LazyValue = new SafeLazy<string>(() => Green.CalculateValue(Root.Json.AsSpan(AbsoluteStart, Length)));
+        }
 
         internal override TResult Accept<T, TResult>(JsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitStringLiteralSyntax(this, arg);
         TResult IJsonSymbol.Accept<T, TResult>(JsonSymbolVisitor<T, TResult> visitor, T arg) => visitor.VisitStringLiteralSyntax(this, arg);

@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonStringLiteralSyntax.Green.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -68,6 +68,11 @@ namespace Eutherion.Text.Json
             Value = value ?? throw new ArgumentNullException(nameof(value));
             if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
             Length = length;
+        }
+
+        internal string CalculateValue(ReadOnlySpan<char> source)
+        {
+            return Value;
         }
 
         internal override TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitStringLiteralSyntax(this, arg);
