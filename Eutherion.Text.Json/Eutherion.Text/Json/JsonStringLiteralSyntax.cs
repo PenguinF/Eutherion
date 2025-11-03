@@ -34,6 +34,11 @@ namespace Eutherion.Text.Json
         /// </summary>
         public GreenJsonStringLiteralSyntax Green { get; }
 
+        /// <summary>
+        /// Returns the list of string segments contained in this string literal.
+        /// </summary>
+        public ReadOnlySpanList<JsonStringSegmentSyntax> Segments => Green.Segments;
+
         private readonly SafeLazy<string> LazyValue;
 
         /// <summary>

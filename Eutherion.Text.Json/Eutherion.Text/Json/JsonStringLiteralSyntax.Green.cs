@@ -33,7 +33,7 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Returns the list of string segments contained in this string literal.
         /// </summary>
-        internal ReadOnlySpanList<JsonStringSegmentSyntax> Segments { get; }
+        public ReadOnlySpanList<JsonStringSegmentSyntax> Segments { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.

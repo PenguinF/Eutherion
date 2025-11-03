@@ -33,7 +33,7 @@ namespace Eutherion.Text.Json
     /// Nor are they significant outside of the context of a string literal, and so they do not implement <see cref="IGreenJsonSymbol"/>.
     /// However, these classes do expose a structure similar to regular syntax nodes, so they follow some of their conventions.
     /// </remarks>
-    internal abstract class JsonStringSegmentSyntax : ISpan
+    public abstract class JsonStringSegmentSyntax : ISpan
     {
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
@@ -48,7 +48,7 @@ namespace Eutherion.Text.Json
     /// <summary>
     /// Represents a syntax node which contains a string literal segment with only regular unescaped characters.
     /// </summary>
-    internal sealed class JsonRegularStringSegmentSyntax : JsonStringSegmentSyntax
+    public sealed class JsonRegularStringSegmentSyntax : JsonStringSegmentSyntax
     {
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
@@ -87,7 +87,7 @@ namespace Eutherion.Text.Json
     /// <summary>
     /// Represents a syntax node containing a single escaped character.
     /// </summary>
-    internal sealed class JsonSimpleEscapeSequenceSyntax : JsonStringSegmentSyntax
+    public sealed class JsonSimpleEscapeSequenceSyntax : JsonStringSegmentSyntax
     {
         /// <summary>
         /// Represents the length of a simple escape sequence within a string literal.
@@ -146,7 +146,7 @@ namespace Eutherion.Text.Json
     /// <summary>
     /// Represents a syntax node containing a unicode escape sequence.
     /// </summary>
-    internal sealed class JsonUnicodeEscapeSequenceSyntax : JsonStringSegmentSyntax
+    public sealed class JsonUnicodeEscapeSequenceSyntax : JsonStringSegmentSyntax
     {
         /// <summary>
         /// Represents the expected length of the character sequence after the "\u" in a string literal.
