@@ -112,17 +112,27 @@ namespace Eutherion.Text.Json
     /// </summary>
     internal sealed class JsonUnicodeEscapeSequenceSyntax : JsonStringSegmentSyntax
     {
+        /// <summary>
+        /// Represents the expected length of the character sequence after the "\u" in a string literal.
+        /// </summary>
+        public const int ExpectedHexValueLength = 4;
+
+        /// <summary>
+        /// Represents the length of a unicode escape sequence within a string literal.
+        /// </summary>
+        // "\u" plus 4 hexadecimal digits.
+        public const int UnicodeEscapeSequenceLength = JsonSpecialCharacter.SingleCharacterLength * 2 + ExpectedHexValueLength;
+
         public string Value { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
-        public override int Length { get; }
+        public override int Length => UnicodeEscapeSequenceLength;
 
-        internal JsonUnicodeEscapeSequenceSyntax(string value, int length)
+        internal JsonUnicodeEscapeSequenceSyntax(string value)
         {
             Value = value;
-            Length = length;
         }
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
