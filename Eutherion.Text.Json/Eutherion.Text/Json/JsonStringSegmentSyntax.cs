@@ -20,6 +20,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace Eutherion.Text.Json
@@ -93,22 +94,53 @@ namespace Eutherion.Text.Json
         /// </summary>
         public const int SimpleEscapeSequenceLength = 2;
 
-        public string Value { get; }
+        /// <summary>
+        /// Returns the singleton instance.
+        /// </summary>
+        public static readonly JsonSimpleEscapeSequenceSyntax Value
+#if NET5_0_OR_GREATER
+            = new();
+#else
+            = new JsonSimpleEscapeSequenceSyntax();
+#endif
+
+        private static char SimpleEscapeSequenceValue(ReadOnlySpan<char> source)
+        {
+            char escapedChar = source[1];
+            switch (escapedChar)
+            {
+                case CStyleStringLiteral.QuoteCharacter:
+                case CStyleStringLiteral.EscapeCharacter:
+                case '/':
+                    return escapedChar;
+                case 'b':
+                    return '\b';
+                case 'f':
+                    return '\f';
+                case 'n':
+                    return '\n';
+                case 'r':
+                    return '\r';
+                case 't':
+                    return '\t';
+                case 'v':
+                    return '\v';
+                default:
+                    // JsonParser makes sure this never happens.
+                    Debug.Assert(false);
+                    throw new UnreachableException();
+            }
+        }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
         public override int Length => SimpleEscapeSequenceLength;
 
-        internal JsonSimpleEscapeSequenceSyntax(string value)
-        {
-            Value = value;
-        }
+        private JsonSimpleEscapeSequenceSyntax() { }
 
         internal override void AppendToStringLiteralValue(StringBuilder valueBuilder, ReadOnlySpan<char> source)
-        {
-            valueBuilder.Append(Value);
-        }
+            => valueBuilder.Append(SimpleEscapeSequenceValue(source));
     }
 
     /// <summary>

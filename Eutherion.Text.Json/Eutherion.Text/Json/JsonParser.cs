@@ -730,25 +730,13 @@ namespace Eutherion.Text.Json
                                 case CStyleStringLiteral.QuoteCharacter:
                                 case CStyleStringLiteral.EscapeCharacter:
                                 case '/':  // Weird one, but it's in the specification.
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax(escapedChar.ToString()));
-                                    break;
                                 case 'b':
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax("\b"));
-                                    break;
                                 case 'f':
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax("\f"));
-                                    break;
                                 case 'n':
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax("\n"));
-                                    break;
                                 case 'r':
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax("\r"));
-                                    break;
                                 case 't':
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax("\t"));
-                                    break;
                                 case 'v':
-                                    stringSegmentBuilder.Add(new JsonSimpleEscapeSequenceSyntax("\v"));
+                                    stringSegmentBuilder.Add(JsonSimpleEscapeSequenceSyntax.Value);
                                     break;
                                 case 'u':
                                     bool validUnicodeSequence = true;
