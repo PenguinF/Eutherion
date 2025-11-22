@@ -182,8 +182,8 @@ namespace System
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *
-**********************************************************************************/
-#endregion
+**********************************************************************************/" +
+$@"#endregion
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
