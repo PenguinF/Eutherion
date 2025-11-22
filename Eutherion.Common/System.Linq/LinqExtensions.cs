@@ -480,6 +480,33 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Surrounds a sequence with start and end elements.
+        /// </summary>
+        /// <typeparam name="TSource">
+        /// The type of the elements of <paramref name="source"/>.
+        /// </typeparam>
+        /// <param name="source">
+        /// A sequence of elements.
+        /// </param>
+        /// <param name="startElement">
+        /// The element to prepend to <paramref name="source"/>.
+        /// </param>
+        /// <param name="endElement">
+        /// The element to append to <paramref name="source"/>.
+        /// </param>
+        /// <returns>
+        /// A new sequence that begins with <paramref name="startElement"/> followed by all elements of <paramref name="source"/>
+        /// and ends with <paramref name="endElement"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        public static IEnumerable<TSource> Surround<TSource>(this IEnumerable<TSource> source, TSource startElement, TSource endElement)
+        {
+            return source.Prepend(startElement).Append(endElement);
+        }
+
+        /// <summary>
         /// Surrounds a sequence with start and end elements if and only if the sequence is non-empty.
         /// </summary>
         /// <typeparam name="TSource">
