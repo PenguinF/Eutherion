@@ -528,12 +528,6 @@ namespace System.Linq
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
-        /// <remarks>
-        /// To surround <paramref name="source"/> with elements regardless of whether or not it is empty, use e.g:
-        /// <code>
-        /// <paramref name="source"/>.Prepend(<paramref name="startElement"/>).Append(<paramref name="endElement"/>);
-        /// </code>
-        /// </remarks>
         public static IEnumerable<TSource> SurroundIfAny<TSource>(this IEnumerable<TSource> source, TSource startElement, TSource endElement)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
