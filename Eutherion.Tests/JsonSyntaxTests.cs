@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonSyntaxTests.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -72,8 +72,8 @@ namespace Eutherion.Text.Json.Tests
             Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonCurlyCloseSyntax)null!));
             Assert.Throws<ArgumentNullException>("valueDelimiter", () => new GreenJsonRootLevelValueDelimiterSyntax((GreenJsonSquareBracketCloseSyntax)null!));
 
-            Assert.Throws<ArgumentNullException>("value", () => new GreenJsonStringLiteralSyntax(null!, 2));
-            Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonStringLiteralSyntax(string.Empty, -1));
+            Assert.Throws<ArgumentNullException>("source", () => GreenJsonStringLiteralSyntax.FromBuilder(null!));
+            Assert.Throws<ArgumentNullException>("source", () => GreenJsonStringLiteralSyntax.Create(null!));
 
             Assert.Throws<ArgumentOutOfRangeException>("length", () => new GreenJsonUndefinedValueSyntax(0));
 
@@ -144,18 +144,23 @@ namespace Eutherion.Text.Json.Tests
             Assert.Equal(1, GreenJsonUnknownSymbolSyntax.Value.Length);
         }
 
-        [Theory]
-        [InlineData("\"", 10)]
-        [InlineData("{}", 3)]
-        // No newline conversions.
-        [InlineData("\n", 1)]
-        [InlineData("\r\n", 2)]
-        public void UnchangedStringLiteralValueParameter(string value, int length)
+        private static IEnumerable<(int expectedLength, JsonStringSegmentSyntax[] segments)> StringLiterals()
         {
-            // Length includes quotes for json strings.
-            var jsonString = new GreenJsonStringLiteralSyntax(value, length + 2);
-            Assert.Equal(value, jsonString.Value);
-            Assert.Equal(length + 2, jsonString.Length);
+            // Add 2 to include quotes for json strings.
+            yield return (2, Array.Empty<JsonStringSegmentSyntax>());
+            yield return (3, new JsonStringSegmentSyntax[] { JsonRegularStringSegmentSyntax.Create(1) });
+            yield return (4, new JsonStringSegmentSyntax[] { JsonSimpleEscapeSequenceSyntax.Value });
+            yield return (8, new JsonStringSegmentSyntax[] { JsonUnicodeEscapeSequenceSyntax.Value });
+        }
+
+        public static IEnumerable<object?[]> WrappedStringLiterals() => TestUtilities.Wrap(StringLiterals());
+
+        [Theory]
+        [MemberData(nameof(WrappedStringLiterals))]
+        public void StringSegmentLengths(int expectedLength, JsonStringSegmentSyntax[] segments)
+        {
+            var stringLiteral = GreenJsonStringLiteralSyntax.Create(segments);
+            Assert.Equal(expectedLength, stringLiteral.Length);
         }
 
         [Theory]

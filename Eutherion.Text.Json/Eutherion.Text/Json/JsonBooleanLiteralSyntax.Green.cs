@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonBooleanLiteralSyntax.Green.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Eutherion.Text.Json
             /// <summary>
             /// Returns the singleton instance.
             /// </summary>
-            public static readonly False Instance
+            public static False Instance { get; }
 #if NET5_0_OR_GREATER
                 = new();
 #else
@@ -53,7 +53,7 @@ namespace Eutherion.Text.Json
             /// <summary>
             /// Gets the representation of this literal value in JSON source text.
             /// </summary>
-            public override string LiteralJsonValue => JsonValue.False;
+            public override string LiteralJsonValue => JsonValue.FalseString;
 
             /// <summary>
             /// Gets the length of the text span corresponding with this syntax node.
@@ -90,7 +90,7 @@ namespace Eutherion.Text.Json
             /// <summary>
             /// Returns the singleton instance.
             /// </summary>
-            public static readonly True Instance
+            public static True Instance { get; }
 #if NET5_0_OR_GREATER
                 = new();
 #else
@@ -107,7 +107,7 @@ namespace Eutherion.Text.Json
             /// <summary>
             /// Gets the representation of this literal value in JSON source text.
             /// </summary>
-            public override string LiteralJsonValue => JsonValue.True;
+            public override string LiteralJsonValue => JsonValue.TrueString;
 
             /// <summary>
             /// Gets the length of the text span corresponding with this syntax node.

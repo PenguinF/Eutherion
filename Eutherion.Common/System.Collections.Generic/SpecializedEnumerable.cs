@@ -2,7 +2,7 @@
 /*********************************************************************************
  * SpecializedEnumerable.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,9 +35,9 @@ namespace System.Collections.Generic
         /// Gets the only <see cref="EmptyEnumerable{TResult}"/> instance.
         /// </summary>
 #if NET5_0_OR_GREATER
-        public static readonly EmptyEnumerable<TResult> Instance = new();
+        public static EmptyEnumerable<TResult> Instance { get; } = new();
 #else
-        public static readonly EmptyEnumerable<TResult> Instance = new EmptyEnumerable<TResult>();
+        public static EmptyEnumerable<TResult> Instance { get; } = new EmptyEnumerable<TResult>();
 #endif
 
         private EmptyEnumerable() { }
@@ -64,9 +64,9 @@ namespace System.Collections.Generic
         /// Gets the only <see cref="EmptyEnumerator{TResult}"/> instance.
         /// </summary>
 #if NET5_0_OR_GREATER
-        public static readonly EmptyEnumerator<TResult> Instance = new();
+        public static EmptyEnumerator<TResult> Instance { get; } = new();
 #else
-        public static readonly EmptyEnumerator<TResult> Instance = new EmptyEnumerator<TResult>();
+        public static EmptyEnumerator<TResult> Instance { get; } = new EmptyEnumerator<TResult>();
 #endif
 
         private EmptyEnumerator() { }

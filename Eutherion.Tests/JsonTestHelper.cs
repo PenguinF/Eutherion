@@ -1,6 +1,6 @@
 ﻿#region License
 /*********************************************************************************
- * JsonCommaSyntax.Green.cs
+ * JsonTestHelper.cs
  *
  * Copyright (c) 2004-2025 Henk Nicolai
  *
@@ -19,33 +19,18 @@
 **********************************************************************************/
 #endregion
 
-namespace Eutherion.Text.Json
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Eutherion.Text.Json.Tests
 {
-    /// <summary>
-    /// Represents a comma syntax node.
-    /// </summary>
-    public sealed class GreenJsonCommaSyntax : IGreenJsonSymbol
+    public static class JsonTestHelper
     {
-        /// <summary>
-        /// Returns the singleton instance.
-        /// </summary>
-        public static GreenJsonCommaSyntax Value { get; }
-#if NET5_0_OR_GREATER
-            = new();
-#else
-            = new GreenJsonCommaSyntax();
-#endif
-
-        /// <summary>
-        /// Gets the length of the text span corresponding with this syntax node.
-        /// </summary>
-        public int Length => JsonSpecialCharacter.SingleCharacterLength;
-
-        /// <summary>
-        /// Gets the type of this symbol.
-        /// </summary>
-        public JsonSymbolType SymbolType => JsonSymbolType.Comma;
-
-        private GreenJsonCommaSyntax() { }
+        internal static (List<IGreenJsonSymbol>, ReadOnlyList<JsonErrorInfo>) TokenizeAll(string json)
+        {
+            var parser = new JsonParser(json, JsonParser.DefaultMaximumDepth);
+            var tokens = parser.TokenizeAllHelper().ToList();
+            return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
+        }
     }
 }

@@ -46,7 +46,7 @@ namespace Eutherion.Text
         /// Gets a reference to a default <see cref="TextFormatter{T}"/>, which uses <see cref="StringUtilities.ToDefaultParameterListDisplayString(IEnumerable{string})"/>
         /// to provide formatted text for any <see cref="StringKey{T}"/>. If the key is <see langword="null"/>, it returns the empty string.
         /// </summary>
-        public static readonly TextFormatter<T> Default = new DefaultTextFormatter();
+        public static TextFormatter<T> Default { get; } = new DefaultTextFormatter();
 
         /// <summary>
         /// Formats text given a <see cref="StringKey{T}"/> and parameters.

@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonStringLiteralSyntax.Green.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Eutherion.Text.Json
 {
@@ -29,14 +31,19 @@ namespace Eutherion.Text.Json
     public sealed class GreenJsonStringLiteralSyntax : GreenJsonValueSyntax, IGreenJsonSymbol
     {
         /// <summary>
-        /// Gets the string value represented by this literal syntax.
+        /// Gets the empty <see cref="GreenJsonStringLiteralSyntax"/>.
         /// </summary>
-        public string Value { get; }
+        public static GreenJsonStringLiteralSyntax Empty { get; } = new GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax>.Empty);
+
+        /// <summary>
+        /// Returns the list of string segments contained in this string literal.
+        /// </summary>
+        public ReadOnlySpanList<JsonStringSegmentSyntax> Segments { get; }
 
         /// <summary>
         /// Gets the length of the text span corresponding with this syntax node.
         /// </summary>
-        public override int Length { get; }
+        public override int Length => Segments.Length + JsonSpecialCharacter.SingleCharacterLength * 2;  // Add opening and closing quote characters.
 
         /// <summary>
         /// Gets the type of this symbol.
@@ -48,26 +55,68 @@ namespace Eutherion.Text.Json
         /// </summary>
         public override bool IsStringLiteral => true;
 
+        private GreenJsonStringLiteralSyntax(ReadOnlySpanList<JsonStringSegmentSyntax> segments) => Segments = segments;
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="GreenJsonStringLiteralSyntax"/> from an <see cref="ArrayBuilder{T}"/>.
+        /// This empties the array builder.
+        /// </summary>
+        /// <param name="source">
+        /// The builder with string segments contained in this string literal.
+        /// </param>
+        /// <returns>
+        /// The new <see cref="GreenJsonStringLiteralSyntax"/> representing the string literal with the given segments.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
+        /// </exception>
+        public static GreenJsonStringLiteralSyntax FromBuilder(ArrayBuilder<JsonStringSegmentSyntax> source)
+        {
+            ReadOnlySpanList<JsonStringSegmentSyntax> segments = ReadOnlySpanList<JsonStringSegmentSyntax>.FromBuilder(source);
+            if (segments.Count == 0) return Empty;
+            return new GreenJsonStringLiteralSyntax(segments);
+        }
+
         /// <summary>
         /// Initializes a new instance of <see cref="GreenJsonStringLiteralSyntax"/>.
         /// </summary>
-        /// <param name="value">
-        /// The string value to be represented by this literal syntax.
+        /// <param name="source">
+        /// The enumeration of string segments contained in this string literal.
         /// </param>
-        /// <param name="length">
-        /// The length of the text span corresponding with this syntax node.
-        /// </param>
+        /// <returns>
+        /// The new <see cref="GreenJsonStringLiteralSyntax"/> representing the string literal with the given segments.
+        /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="value"/> is <see langword="null"/>.
+        /// <paramref name="source"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="length"/> is 0 or lower.
+        /// <exception cref="ArgumentException">
+        /// One or more elements in <paramref name="source"/> are <see langword="null"/>.
         /// </exception>
-        public GreenJsonStringLiteralSyntax(string value, int length)
+        public static GreenJsonStringLiteralSyntax Create(IEnumerable<JsonStringSegmentSyntax> source)
         {
-            Value = value ?? throw new ArgumentNullException(nameof(value));
-            if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
-            Length = length;
+            ReadOnlySpanList<JsonStringSegmentSyntax> segments = ReadOnlySpanList<JsonStringSegmentSyntax>.Create(source);
+            if (segments.Count == 0) return Empty;
+            return new GreenJsonStringLiteralSyntax(segments);
+        }
+
+        internal string CalculateValue(ReadOnlySpan<char> source)
+        {
+            // Skip opening quote.
+            int currentIndex = JsonSpecialCharacter.SingleCharacterLength;
+
+            StringBuilder valueBuilder = new StringBuilder();
+
+            foreach (var segment in Segments)
+            {
+                int length = segment.Length;
+                segment.AppendToStringLiteralValue(valueBuilder, source.Slice(currentIndex, length));
+                currentIndex += length;
+            }
+
+            return valueBuilder.ToString();
         }
 
         internal override TResult Accept<T, TResult>(GreenJsonValueSyntaxVisitor<T, TResult> visitor, T arg) => visitor.VisitStringLiteralSyntax(this, arg);

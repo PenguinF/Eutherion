@@ -22,9 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Eutherion.Text.Json
 {
@@ -100,25 +98,6 @@ namespace Eutherion.Text.Json
         /// </exception>
         public static RootJsonSyntax Parse(string json, int maximumDepth) => new JsonParser(json, maximumDepth).Parse();
 
-        /// <summary>
-        /// Tokenizes the source Json from start to end.
-        /// </summary>
-        /// <param name="json">
-        /// The Json to tokenize.
-        /// </param>
-        /// <returns>
-        /// A list of <see cref="IGreenJsonSymbol"/> instances together with a list of generated tokenization errors.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="json"/> is <see langword="null"/>.
-        /// </exception>
-        internal static (List<IGreenJsonSymbol>, ReadOnlyList<JsonErrorInfo>) TokenizeAll(string json)
-        {
-            var parser = new JsonParser(json, DefaultMaximumDepth);
-            var tokens = parser.TokenizeAllHelper().ToList();
-            return (tokens, ReadOnlyList<JsonErrorInfo>.FromBuilder(parser.Errors));
-        }
-
         private static RootJsonSyntax CreateParseTreeTooDeepRootSyntax(string json, int startPosition)
             => new RootJsonSyntax(
                 json,
@@ -136,7 +115,7 @@ namespace Eutherion.Text.Json
         private IEnumerator<IGreenJsonSymbol> Tokens;
         private readonly string Json;
         private readonly int MaximumDepth;
-        private readonly ArrayBuilder<JsonErrorInfo> Errors = new ArrayBuilder<JsonErrorInfo>();
+        internal readonly ArrayBuilder<JsonErrorInfo> Errors = new ArrayBuilder<JsonErrorInfo>();
         private readonly ArrayBuilder<GreenJsonBackgroundSyntax> BackgroundBuilder = new ArrayBuilder<GreenJsonBackgroundSyntax>();
 
         // Invariant is that this index is always at the start of the yielded symbol.
@@ -149,7 +128,7 @@ namespace Eutherion.Text.Json
 
         private int CurrentDepth;
 
-        private JsonParser(string json, int maximumDepth)
+        internal JsonParser(string json, int maximumDepth)
         {
             Json = json ?? throw new ArgumentNullException(nameof(json));
             if (maximumDepth <= 0) throw new ArgumentOutOfRangeException(nameof(maximumDepth), maximumDepth, $"{maximumDepth} should be 1 or greater.");
@@ -522,13 +501,13 @@ namespace Eutherion.Text.Json
             }
         }
 
-        private IEnumerable<IGreenJsonSymbol> TokenizeAllHelper()
+        internal IEnumerable<IGreenJsonSymbol> TokenizeAllHelper()
         {
             // This tokenizer uses labels with goto to switch between modes of tokenization.
 
             int length = Json.Length;
             int currentIndex = SymbolStartIndex;
-            StringBuilder valueBuilder = new StringBuilder();
+            ArrayBuilder<JsonStringSegmentSyntax> stringSegmentBuilder = new ArrayBuilder<JsonStringSegmentSyntax>();
 
         inWhitespace:
 
@@ -699,8 +678,8 @@ namespace Eutherion.Text.Json
             // Eat " character, but leave SymbolStartIndex unchanged.
             currentIndex++;
 
-            // Prepare for use.
-            valueBuilder.Clear();
+            // Keeps track of number of characters seen for a regular string segment.
+            int regularSegmentLength = 0;
 
             while (currentIndex < length)
             {
@@ -713,16 +692,31 @@ namespace Eutherion.Text.Json
                         currentIndex++;
                         if (hasStringErrors)
                         {
+                            // Discards built string segments.
+                            stringSegmentBuilder.Commit();
                             yield return new GreenJsonErrorStringSyntax(currentIndex - SymbolStartIndex);
                         }
                         else
                         {
-                            yield return new GreenJsonStringLiteralSyntax(valueBuilder.ToString(), currentIndex - SymbolStartIndex);
+                            // Capture trailing segment.
+                            if (regularSegmentLength > 0)
+                            {
+                                stringSegmentBuilder.Add(JsonRegularStringSegmentSyntax.Create(regularSegmentLength));
+                            }
+
+                            yield return GreenJsonStringLiteralSyntax.FromBuilder(stringSegmentBuilder);
                         }
                         SymbolStartIndex = currentIndex;
                         goto inWhitespace;
                     case CStyleStringLiteral.EscapeCharacter:
                         // Escape sequence.
+                        // Capture possible regular segment.
+                        if (regularSegmentLength > 0)
+                        {
+                            stringSegmentBuilder.Add(JsonRegularStringSegmentSyntax.Create(regularSegmentLength));
+                            regularSegmentLength = 0;
+                        }
+
                         // Look ahead one character.
                         int escapeSequenceStart = currentIndex;
                         currentIndex++;
@@ -736,55 +730,27 @@ namespace Eutherion.Text.Json
                                 case CStyleStringLiteral.QuoteCharacter:
                                 case CStyleStringLiteral.EscapeCharacter:
                                 case '/':  // Weird one, but it's in the specification.
-                                    valueBuilder.Append(escapedChar);
-                                    break;
                                 case 'b':
-                                    valueBuilder.Append('\b');
-                                    break;
                                 case 'f':
-                                    valueBuilder.Append('\f');
-                                    break;
                                 case 'n':
-                                    valueBuilder.Append('\n');
-                                    break;
                                 case 'r':
-                                    valueBuilder.Append('\r');
-                                    break;
                                 case 't':
-                                    valueBuilder.Append('\t');
-                                    break;
                                 case 'v':
-                                    valueBuilder.Append('\v');
+                                    stringSegmentBuilder.Add(JsonSimpleEscapeSequenceSyntax.Value);
                                     break;
                                 case 'u':
                                     bool validUnicodeSequence = true;
-                                    int unicodeValue = 0;
 
                                     // Expect exactly 4 hex characters.
-                                    const int expectedHexLength = 4;
-                                    for (int i = 0; i < expectedHexLength; i++)
+                                    for (int i = 0; i < JsonUnicodeEscapeSequenceSyntax.ExpectedHexValueLength; i++)
                                     {
                                         currentIndex++;
                                         if (currentIndex < length)
                                         {
-                                            // 1 hex character = 4 bits.
-                                            unicodeValue <<= 4;
                                             char hexChar = Json[currentIndex];
-                                            if ('0' <= hexChar && hexChar <= '9')
-                                            {
-                                                unicodeValue = unicodeValue + hexChar - '0';
-                                            }
-                                            else if ('a' <= hexChar && hexChar <= 'f')
-                                            {
-                                                const int aValue = 'a' - 10;
-                                                unicodeValue = unicodeValue + hexChar - aValue;
-                                            }
-                                            else if ('A' <= hexChar && hexChar <= 'F')
-                                            {
-                                                const int aValue = 'A' - 10;
-                                                unicodeValue = unicodeValue + hexChar - aValue;
-                                            }
-                                            else
+                                            if (!('0' <= hexChar && hexChar <= '9'
+                                                || 'a' <= hexChar && hexChar <= 'f'
+                                                || 'A' <= hexChar && hexChar <= 'F'))
                                             {
                                                 currentIndex--;
                                                 validUnicodeSequence = false;
@@ -801,7 +767,7 @@ namespace Eutherion.Text.Json
 
                                     if (validUnicodeSequence)
                                     {
-                                        valueBuilder.Append(Convert.ToChar(unicodeValue));
+                                        stringSegmentBuilder.Add(JsonUnicodeEscapeSequenceSyntax.Value);
                                     }
                                     else
                                     {
@@ -822,15 +788,12 @@ namespace Eutherion.Text.Json
                         }
                         break;
                     default:
+                        regularSegmentLength++;
                         if (CStyleStringLiteral.CharacterMustBeEscaped(c))
                         {
                             // Generate user friendly representation of the illegal character in error message.
                             hasStringErrors = true;
                             Report(JsonParseErrors.IllegalControlCharacterInString(c, currentIndex));
-                        }
-                        else
-                        {
-                            valueBuilder.Append(c);
                         }
                         break;
                 }

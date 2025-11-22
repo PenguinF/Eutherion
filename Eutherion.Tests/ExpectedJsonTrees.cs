@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ExpectedJsonTrees.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ namespace Eutherion.Text.Json.Tests
         private static readonly ExpectedJsonTree SquareBracketClose = new ExpectedJsonTree<JsonSquareBracketCloseSyntax>();
         private static readonly ExpectedJsonTree SquareBracketOpen = new ExpectedJsonTree<JsonSquareBracketOpenSyntax>();
 
+        private static readonly ExpectedJsonTree TrueValue = new ExpectedJsonTree<JsonBooleanLiteralSyntax.True>();
         private static readonly ExpectedJsonTree IntegerValue = new ExpectedJsonTree<JsonIntegerLiteralSyntax>();
         private static readonly ExpectedJsonTree StringValue = new ExpectedJsonTree<JsonStringLiteralSyntax>();
 
@@ -261,6 +262,41 @@ namespace Eutherion.Text.Json.Tests
                         },
                         Comma,
                         new ExpectedJsonTree<JsonKeyValueSyntax> { NoValuesOrBackground },
+                        CurlyClose
+                    }
+                },
+                NoBackground
+            }),
+
+            ("{\"key1\":true,\"key2\":\"a longer and slightly \\n more complicated \\u2028 string like people use sometimes\"}", new ExpectedJsonTree<JsonMultiValueSyntax>
+            {
+                new ExpectedJsonTree<JsonValueWithBackgroundSyntax>
+                {
+                    NoBackground,
+                    new ExpectedJsonTree<JsonMapSyntax>
+                    {
+                        CurlyOpen,
+                        new ExpectedJsonTree<JsonKeyValueSyntax>
+                        {
+                            StringValueWithoutBackground,
+                            Colon,
+                            new ExpectedJsonTree<JsonMultiValueSyntax>
+                            {
+                                new ExpectedJsonTree<JsonValueWithBackgroundSyntax>
+                                {
+                                    NoBackground,
+                                    TrueValue
+                                },
+                                NoBackground
+                            }
+                        },
+                        Comma,
+                        new ExpectedJsonTree<JsonKeyValueSyntax>
+                        {
+                            StringValueWithoutBackground,
+                            Colon,
+                            StringValueWithoutBackground
+                        },
                         CurlyClose
                     }
                 },

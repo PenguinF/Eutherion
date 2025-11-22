@@ -2,7 +2,7 @@
 /*********************************************************************************
  * JsonValue.cs
  *
- * Copyright (c) 2004-2022 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -42,12 +42,12 @@ namespace Eutherion.Text.Json
         /// <summary>
         /// Gets the representation of the 'false' literal value in source text.
         /// </summary>
-        public static readonly string False = "false";
+        public static string FalseString { get; } = "false";
 
         /// <summary>
         /// Gets the representation of the 'true' literal value in source text.
         /// </summary>
-        public static readonly string True = "true";
+        public static string TrueString { get; } = "true";
 
         /// <summary>
         /// Attempts to create a syntax node from a string value.
@@ -85,12 +85,12 @@ namespace Eutherion.Text.Json
             char firstCharacter = value[0];
             if (firstCharacter == 'f')
             {
-                if (False.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.False.Instance;
+                if (FalseString.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.False.Instance;
                 return null;
             }
             else if (firstCharacter == 't')
             {
-                if (True.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.True.Instance;
+                if (TrueString.AsSpan().SequenceEqual(value)) return GreenJsonBooleanLiteralSyntax.True.Instance;
                 return null;
             }
 

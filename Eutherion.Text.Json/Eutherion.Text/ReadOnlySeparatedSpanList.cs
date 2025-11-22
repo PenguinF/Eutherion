@@ -2,7 +2,7 @@
 /*********************************************************************************
  * ReadOnlySeparatedSpanList.cs
  *
- * Copyright (c) 2004-2023 Henk Nicolai
+ * Copyright (c) 2004-2025 Henk Nicolai
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -150,7 +150,7 @@ namespace Eutherion.Text
         /// <summary>
         /// Gets the empty <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/>.
         /// </summary>
-        public static readonly ReadOnlySeparatedSpanList<TSpan, TSeparator> Empty = new ZeroElements();
+        public static ReadOnlySeparatedSpanList<TSpan, TSeparator> Empty { get; } = new ZeroElements();
 
         /// <summary>
         /// Initializes a new instance of <see cref="ReadOnlySeparatedSpanList{TSpan, TSeparator}"/> from an <see cref="ArrayBuilder{TSpan}"/>.
