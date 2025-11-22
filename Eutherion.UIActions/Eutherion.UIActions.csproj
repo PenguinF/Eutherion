@@ -2,13 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net5.0;netcoreapp3.1;net472</TargetFrameworks>
-    <FileVersion>1.5.1.0</FileVersion>
-    <AssemblyVersion>1.5.1.0</AssemblyVersion>
-    <Version>1.5.1</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Models user actions, focusing on maximum flexibility to bind these to user interface elements.</Description>
-    <Authors>Henk Nicolai</Authors>
-    <Copyright>Copyright © 2004-2023 - Henk Nicolai</Copyright>
     <Summary>Models user actions, focusing on maximum flexibility to bind these to user interface elements.</Summary>
     <PackageProjectUrl>https://github.com/PenguinF/Eutherion</PackageProjectUrl>
     <PackageIcon>penguinf128x128.png</PackageIcon>

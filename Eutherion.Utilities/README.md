@@ -9,5 +9,6 @@ Contains miscellaneous .NET utilities:
   * _IFunc\<out TResult\>_, to be able to model a _Func\<TResult\>_ as an interface.
   * _ObservableValue\<TValue\>_, which adds events to a value to observe updates to it.
   * _ImplementationSet\<TInterface\>_, to manage a set of objects keyed by their type, that all share a common base class or interface.
+  * _DisposableResourceCollection_, to deterministically dispose of a variable set of disposable resources.
   * _ExceptionSink_, a shared point of reference to help track suppressed Exceptions.
   * _TestUtilities_, which has methods to wrap unit test cases in a way xunit can consume them, and to create cross joins (Cartesian products) of independent parameter sets.
